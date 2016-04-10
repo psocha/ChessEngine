@@ -38,7 +38,6 @@ int main() {
 
             while (position_line >> current_word) {
                 if (current_word == "moves") continue;
-
                 board->LoadMove(current_word);
             }
         } else if (line.substr(0, 3) == "go ") {
@@ -53,4 +52,3 @@ int main() {
 
     return 0;
 }
-

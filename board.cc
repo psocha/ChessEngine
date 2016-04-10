@@ -1,11 +1,15 @@
 #include "board.h"
+#include "position.h"
+#include "movegen.h"
 
 Board::Board() {
-
+    position = new Position();
+    move_generator = new MoveGen();
 }
 
 Board::~Board() {
-
+    delete position;
+	delete move_generator;
 }
 
 void Board::LoadStartPos() {
@@ -14,15 +18,15 @@ void Board::LoadStartPos() {
 
 void Board::LoadFromFen(string position, string active_color, string castle,
         string en_passant, string halfmove_clock, string fullmove_number) {
+	
 
 }
-
 
 void Board::LoadMove(string move) {
 
 }
 
 string Board::BestMove() {
-    return "d7d5";
-}
+    vector<string> legal_moves = move_generator->AllLegalMoves(position);
 
+}

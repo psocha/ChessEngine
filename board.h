@@ -1,8 +1,10 @@
 #ifndef BOARD_H__
 #define BOARD_H__
 
+#include "position.h"
+#include "movegen.h"
+
 #include <string>
-using namespace std;
 
 class Board {
 public:  
@@ -11,13 +13,17 @@ public:
 
     void LoadStartPos();
 
-    void LoadFromFen(string position, string active_color, string castle,
-                     string en_passant, string halfmove_clock, string fullmove_number);
+    void LoadFromFen(std::string position, std::string active_color,
+		std::string castle, std::string en_passant, std::string halfmove_clock,
+		std::string fullmove_number);
 
-    void LoadMove(string move);
+    void LoadMove(std::string move);
 
-    string BestMove();
+    std::string BestMove();
+
+private:
+    Position *position;
+	MoveGen *move_generator;
 };
 
 #endif
-

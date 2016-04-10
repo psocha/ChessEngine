@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -g -Wall -MMD
+CXXFLAGS = -g -std=c++11 -Wall -MMD
 
-OBJECTS = main.o board.o
+OBJECTS = main.o board.o position.o movegen.o
 EXEC = random.exe
 DEPENDS = ${OBJECTS:.o=.d}
 EXECS = ${EXEC}

@@ -1,7 +1,11 @@
 #ifndef COORDINATES_H__
 #define COORDINATES_H__
 
+#include <string>
+
 struct Square {
+	bool is_real_square = true;
+	
 	int rank;
 	int file;
 	
@@ -10,8 +14,8 @@ struct Square {
 };
 
 struct Move {
-	Square start;
-	Square end;
+	Square start_square;
+	Square end_square;
 	
 	int moving_piece;
 	

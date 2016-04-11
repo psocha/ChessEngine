@@ -1,6 +1,8 @@
 #ifndef POSITION_H__
 #define POSITION_H__
 
+#include "coordinates.h"
+
 #include <map>
 
 const int EMPTY = 0;
@@ -35,16 +37,23 @@ public:
 
     void Print();
 
-    void LoadFromFen();
+    void LoadFromFen(std::string fen);
+	
+	void SetActiveColor(std::string active_color);
+	void SetCastle(std::string castle);
+	void SetEnPassant(std::string en_passant);
 
 private:
     int chessboard[12][12];
+	char active_color;
 	CastlesAllowed castles_allowed;
+	Square en_passant_square;
 	
 	std::map<int, char> pieceRepresentations;
 	
 	void InitializeOutOfBounds();
 	void InitializePieceRepresentations();
+	int PieceFromChar(char piece);
 };
 
 #endif

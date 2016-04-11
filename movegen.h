@@ -1,6 +1,8 @@
 #ifndef MOVEGEN_H__
 #define MOVEGEN_H__
 
+#include "coordinates.h"
+
 #include <vector>
 using namespace std;
 

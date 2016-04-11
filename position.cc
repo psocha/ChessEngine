@@ -1,5 +1,7 @@
 #include "position.h"
 
+#include <cctype>
+#include <cstdlib>
 #include <iostream>
 using namespace std;
 
@@ -8,9 +10,7 @@ Position::Position() {
 	InitializePieceRepresentations();
 }
 
-Position::~Position() {
-
-}
+Position::~Position() {}
 
 void Position::Print() {
 	for (int rank = 11; rank <= 0; rank--) {
@@ -23,8 +23,49 @@ void Position::Print() {
 	}
 }
 
-void Position::LoadFromFen() {
+void Position::LoadFromFen(string fen) {
+	int rank = 9, int file = 2;
+	for (int i = 0; i < fen.length(); i++) {
+		char ch = fen.at(i);
+		
+		if (ch == '/') {
+			continue;
+		}
+		
+		if (isdigit(ch)) {
+			int squares_to_skip = atoi(ch);
+			for (int sq = 0; sq < squares_to_skip; sq++) {
+				file++;
+				if (file > 9) {
+					file = 2;
+					rank--;
+				}
+			}
+		} else {
+			int piece = PieceFromChar(ch);
+			chessboard[rank][file] = piece;
+			file++;
+			if (file > 9) {
+				file = 2;
+				rank--;
+			}
+		}
+	}
+}
 
+void Position::SetActiveColor(std::string active_color) {
+	active_color = active_color.at(0);
+}
+	
+void Position::SetCastle(std::string castle) {
+	castles_allowed.whiteKingside = castle.find('K') != string::npos;
+	castles_allowed.whiteQueenside = castle.find('Q') != string::npos;
+	castles_allowed.blackKingside = castle.find('k') != string::npos;
+	castles_allowed.whiteQueenside = castle.find('q') != string::npos;
+}
+
+void SetEnPassant(std::string en_passant) {
+	en_passant_square = Square(en_passant);
 }
 
 void Position::InitializeOutOfBounds() {
@@ -57,22 +98,13 @@ void Position::InitializePieceRepresentations() {
 	pieceRepresentations[PAWN_W]   = 'P';
 	pieceRepresentations[EMPTY]    = '-';
 	pieceRepresentations[OUT_OF_BOUNDS] = '#';
-	/*
-	pieceRepresentations = { 
-		make_pair('r', ROOK_B),
-		make_pair('n', KNIGHT_B),
-		make_pair('b', BISHOP_B),
-		make_pair('q', QUEEN_B),
-		make_pair('k', KING_B),
-		make_pair('p', PAWN_B),
-		make_pair('R', ROOK_W),
-		make_pair('N', KNIGHT_W),
-		make_pair('B', BISHOP_W),
-		make_pair('Q', QUEEN_W),
-		make_pair('K', KING_W),
-		make_pair('P', PAWN_W),
-		make_pair('-', EMPTY),
-		make_pair('#', OUT_OF_BOUNDS)
-	};
-	*/
+}
+
+int Position::PieceFromChar(char piece) {
+	for (it = pieceRepresentations.begin(); it != pieceRepresentations.end(); ++it ) {
+		if (it->second == piece) {
+			return it->first;
+		}
+	}
+	return EMPTY;
 }

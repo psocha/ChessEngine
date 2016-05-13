@@ -1,11 +1,18 @@
 #include "board.h"
+#include "integration_tests.h"
 
 #include <iostream>
 #include <sstream>
 #include <string>
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
+	
+	if (argc > 1 && argv[1] == "--test") {
+		test::RunIntegrationTests();
+		return 0;
+	}
+	
     string line;
     cout.setf(ios::unitbuf);
 

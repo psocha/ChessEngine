@@ -2,6 +2,7 @@
 #include "position.h"
 #include "movegen.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <ctime>
 using namespace std;
@@ -19,7 +20,7 @@ Board::~Board() {
 }
 
 void Board::LoadStartPos() {
-    LoadFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "w", "KQkq", "-", "0", "1"); 
+    LoadFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "w", "KQkq", "-", "0", "1");
 }
 
 void Board::LoadFromFen(string fen_position, string active_color, string castle,
@@ -34,8 +35,23 @@ void Board::LoadMove(string move) {
 
 }
 
+set<string> Board::GetLegalMoves() {
+	set<Move> legal_moves = move_generator->AllLegalMoves(position);
+	set<string> moves_as_strings;
+	
+	for (Move move : legal_moves) {
+		moves_as_strings.insert(move.ToString());
+	}
+	
+	return moves_as_strings;
+}
+
 string Board::BestMove() {
-    vector<Move> legal_moves = move_generator->AllLegalMoves(position);
+    set<string> legal_moves = GetLegalMoves();
 	int random_index = rand() % legal_moves.size();
-	return legal_moves.at(random_index).ToString();
+	
+	set<string>::const_iterator it(legal_moves.begin());
+	advance(it, random_index);
+	
+	return *it;
 }

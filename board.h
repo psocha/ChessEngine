@@ -4,6 +4,7 @@
 #include "position.h"
 #include "movegen.h"
 
+#include <set>
 #include <string>
 
 class Board {
@@ -18,6 +19,8 @@ public:
 		std::string fullmove_number);
 
     void LoadMove(std::string move);
+	
+	std::set<std::string> GetLegalMoves();
 
     std::string BestMove();
 

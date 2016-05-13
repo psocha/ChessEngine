@@ -3,7 +3,7 @@
 
 #include "coordinates.h"
 
-#include <vector>
+#include <set>
 using namespace std;
 
 class MoveGen {
@@ -11,12 +11,12 @@ public:
     MoveGen();
     ~MoveGen();
 
-    vector<Move> AllLegalMoves(Position *position);
+    set<Move> AllLegalMoves(Position *position);
 
 private:
     Position *position;
 
-    vector<Move> AllPseudolegalMoves();
+    set<Move> AllPseudolegalMoves();
 };
 
 #endif

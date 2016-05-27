@@ -24,8 +24,9 @@ void Position::Print() {
 }
 
 void Position::LoadFromFen(string fen) {
-	int rank = 9, int file = 2;
-	for (int i = 0; i < fen.length(); i++) {
+	int rank = 9;
+	int file = 2;
+	for (unsigned int i = 0; i < fen.length(); i++) {
 		char ch = fen.at(i);
 		
 		if (ch == '/') {
@@ -33,7 +34,7 @@ void Position::LoadFromFen(string fen) {
 		}
 		
 		if (isdigit(ch)) {
-			int squares_to_skip = atoi(ch);
+			int squares_to_skip = ch - '0';
 			for (int sq = 0; sq < squares_to_skip; sq++) {
 				file++;
 				if (file > 9) {
@@ -64,7 +65,7 @@ void Position::SetCastle(std::string castle) {
 	castles_allowed.whiteQueenside = castle.find('q') != string::npos;
 }
 
-void SetEnPassant(std::string en_passant) {
+void Position::SetEnPassant(std::string en_passant) {
 	en_passant_square = Square(en_passant);
 }
 
@@ -101,6 +102,7 @@ void Position::InitializePieceRepresentations() {
 }
 
 int Position::PieceFromChar(char piece) {
+	map<int, char>::iterator it;
 	for (it = pieceRepresentations.begin(); it != pieceRepresentations.end(); ++it ) {
 		if (it->second == piece) {
 			return it->first;

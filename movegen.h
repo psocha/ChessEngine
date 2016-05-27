@@ -2,6 +2,7 @@
 #define MOVEGEN_H__
 
 #include "coordinates.h"
+#include "position.h"
 
 #include <set>
 using namespace std;

@@ -9,6 +9,7 @@ struct Square {
 	int rank;
 	int file;
 	
+	Square();
 	Square(std::string coordinates);
 	std::string ToString();
 };
@@ -23,7 +24,7 @@ struct Move {
 	bool is_en_passant = false;
 	int promoted_piece = 0;
 	
-	Move(std::string coordinates);
+	Move(std::string coordinates, int moving_piece);
 	std::string ToString();
 };
 

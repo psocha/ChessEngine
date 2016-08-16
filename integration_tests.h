@@ -10,10 +10,10 @@
 namespace test {
 
 struct LegalMoveTest {
-	std::string test_name;
-	std::string fen;
-	std::vector<std::string> moves;
-	std::set<std::string> legal_moves;
+  std::string test_name;
+  std::string fen;
+  std::vector<std::string> moves;
+  std::set<std::string> legal_moves;
 };
 
 void RunIntegrationTests();

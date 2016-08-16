@@ -24,36 +24,36 @@ const int KING_B =   -6;
 const int OUT_OF_BOUNDS = 99;
 
 struct CastlesAllowed {
-	bool whiteKingside = true;
-	bool whiteQueenside = true;
-	bool blackKingside = true;
-	bool blackQueenside = true;
+  bool whiteKingside = true;
+  bool whiteQueenside = true;
+  bool blackKingside = true;
+  bool blackQueenside = true;
 };
 
 class Position {
 public:
-    Position();
-    ~Position();
+  Position();
+  ~Position();
 
-    void Print();
+  void Print();
 
-    void LoadFromFen(std::string fen);
-	
-	void SetActiveColor(std::string active_color);
-	void SetCastle(std::string castle);
-	void SetEnPassant(std::string en_passant);
+  void LoadFromFen(std::string fen);
+
+  void SetActiveColor(std::string active_color);
+  void SetCastle(std::string castle);
+  void SetEnPassant(std::string en_passant);
 
 private:
-    int chessboard[12][12];
-	char active_color;
-	CastlesAllowed castles_allowed;
-	Square en_passant_square;
-	
-	std::map<int, char> pieceRepresentations;
-	
-	void InitializeOutOfBounds();
-	void InitializePieceRepresentations();
-	int PieceFromChar(char piece);
+  int chessboard[12][12];
+  char active_color;
+  CastlesAllowed castles_allowed;
+  Square en_passant_square;
+
+  std::map<int, char> pieceRepresentations;
+
+  void InitializeOutOfBounds();
+  void InitializePieceRepresentations();
+  int PieceFromChar(char piece);
 };
 
 #endif

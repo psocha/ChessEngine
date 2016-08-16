@@ -9,15 +9,15 @@ using namespace std;
 
 class MoveGen {
 public:
-    MoveGen();
-    ~MoveGen();
+  MoveGen();
+  ~MoveGen();
 
-    set<Move> AllLegalMoves(Position *position);
+  set<Move> AllLegalMoves(Position *position);
 
 private:
-    Position *position;
+  Position *position;
 
-    set<Move> AllPseudolegalMoves();
+  set<Move> AllPseudolegalMoves();
 };
 
 #endif

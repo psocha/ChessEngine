@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace core {
+
 struct Square {
   bool is_real_square = true;
 
@@ -28,4 +30,7 @@ struct Move {
   std::string ToString();
 };
 
+}
+
 #endif
+

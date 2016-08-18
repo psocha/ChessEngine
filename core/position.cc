@@ -3,7 +3,10 @@
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
-using namespace std;
+using std::map;
+using std::string;
+
+namespace core {
 
 Position::Position() {
   InitializeOutOfBounds();
@@ -17,9 +20,9 @@ void Position::Print() {
     for (int file = 0; file < 12; file++) {
       int piece = chessboard[rank][file];
       char piece_char = pieceRepresentations[piece];
-      cout << piece_char;
+      std::cout << piece_char;
     }
-    cout << endl;
+    std::cout << std::endl;
   }
 }
 
@@ -112,3 +115,6 @@ int Position::PieceFromChar(char piece) {
   }
   return EMPTY;
 }
+
+}
+

@@ -5,6 +5,8 @@
 
 #include <map>
 
+namespace core {
+
 const int EMPTY = 0;
     
 const int PAWN_W =   1;
@@ -56,4 +58,7 @@ private:
   int PieceFromChar(char piece);
 };
 
+}
+
 #endif
+

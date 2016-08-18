@@ -1,5 +1,5 @@
-#include "board.h"
-#include "integration_tests.h"
+#include "core/board.h"
+#include "test/integration_tests.h"
 
 #include <iostream>
 #include <sstream>
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   string line;
   cout.setf(ios::unitbuf);
 
-  Board *board = new Board();
+  core::Board *board = new core::Board();
 
   while (getline(cin, line)) {
     if (line == "uci") {
@@ -64,3 +64,4 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
+

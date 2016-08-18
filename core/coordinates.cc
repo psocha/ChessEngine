@@ -3,7 +3,9 @@
 
 #include <cstdlib>
 #include <string>
-using namespace std;
+using std::string;
+
+namespace core {
 
 Square::Square() {}
 
@@ -24,8 +26,8 @@ string Square::ToString() {
   }
 
   string square_representation;
-  square_representation += to_string(file + (int)'a');
-  square_representation += to_string(rank);
+  square_representation += std::to_string(file + (int)'a');
+  square_representation += std::to_string(rank);
 
   return square_representation;
 }
@@ -80,3 +82,6 @@ string Move::ToString() {
   }
   return move_string;
 }
+
+}
+

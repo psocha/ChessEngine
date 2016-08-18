@@ -1,17 +1,16 @@
 #include "integration_tests.h"
-#include "board.h"
+#include "../core/board.h"
 
 #include <algorithm>
 #include <iostream>
 #include <sstream>
-using namespace std;
-
-const string STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 namespace test {
 
+const std::string STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 void RunIntegrationTests() {
-  vector<LegalMoveTest> tests;
+  std::vector<LegalMoveTest> tests;
 
   LegalMoveTest start_pos_test;
   start_pos_test.test_name = "STARTING POSITION";
@@ -26,12 +25,12 @@ void RunIntegrationTests() {
 }
 
 void PerformTest(LegalMoveTest test) {
-  cout << "Testing " << test.test_name << endl;
+  std::cout << "Testing " << test.test_name << std::endl;
 
-  Board board;
+  core::Board board;
 
-  istringstream fen_parser(test.fen);
-  string position, active_color, castle, en_passant, halfmove_clock, fullmove_number;
+  std::istringstream fen_parser(test.fen);
+  std::string position, active_color, castle, en_passant, halfmove_clock, fullmove_number;
   fen_parser >> position;
   fen_parser >> active_color;
   fen_parser >> castle;
@@ -41,13 +40,13 @@ void PerformTest(LegalMoveTest test) {
 
   board.LoadFromFen(position, active_color, castle, en_passant, halfmove_clock, fullmove_number);
 
-  for (string move : test.moves) {
+  for (std::string move : test.moves) {
     board.LoadMove(move);
   }
 
-  set<string> test_moves = board.GetLegalMoves();
-  set<string> legal_but_omitted;
-  set<string> illegal_but_listed;
+  std::set<std::string> test_moves = board.GetLegalMoves();
+  std::set<std::string> legal_but_omitted;
+  std::set<std::string> illegal_but_listed;
 
   set_difference(test.legal_moves.begin(), test.legal_moves.end(),
     test_moves.begin(), test_moves.end(),
@@ -60,22 +59,22 @@ void PerformTest(LegalMoveTest test) {
   bool excess = illegal_but_listed.size() > 0;
 
   if (insufficient) {
-    cerr << "The following moves are legal but were not listed: ";
-    for (string move : legal_but_omitted) {
-      cerr << move << " ";
+    std::cerr << "The following moves are legal but were not listed: ";
+    for (std::string move : legal_but_omitted) {
+      std::cerr << move << " ";
     }
-    cerr << endl;
+    std::cerr << std::endl;
   }
   if (excess) {
-    cerr << "The following moves are illegal but were listed: ";
-    for (string move : illegal_but_listed) {
-      cerr << move << " ";
+    std::cerr << "The following moves are illegal but were listed: ";
+    for (std::string move : illegal_but_listed) {
+      std::cerr << move << " ";
     }
-    cerr << endl;
+    std::cerr << std::endl;
   }
 
   if (!insufficient && !excess) {
-    cout << "PASS" << endl;
+    std::cout << "PASS" << std::endl;
   }
 }
 

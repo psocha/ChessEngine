@@ -7,6 +7,8 @@
 #include <set>
 #include <string>
 
+namespace core {
+
 class Board {
 public:
   Board();
@@ -29,4 +31,7 @@ private:
   MoveGen *move_generator;
 };
 
+}
+
 #endif
+

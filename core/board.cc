@@ -5,7 +5,10 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-using namespace std;
+using std::set;
+using std::string;
+
+namespace core {
 
 Board::Board() {
   position = new Position();
@@ -35,7 +38,7 @@ void Board::LoadMove(string move) {
 
 }
 
-set<string> Board::GetLegalMoves() {
+std::set<string> Board::GetLegalMoves() {
   set<Move> legal_moves = move_generator->AllLegalMoves(position);
   set<string> moves_as_strings;
 
@@ -55,3 +58,6 @@ string Board::BestMove() {
 
   return *it;
 }
+
+}
+

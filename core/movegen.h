@@ -5,19 +5,23 @@
 #include "position.h"
 
 #include <set>
-using namespace std;
+
+namespace core {
 
 class MoveGen {
 public:
   MoveGen();
   ~MoveGen();
 
-  set<Move> AllLegalMoves(Position *position);
+  std::set<Move> AllLegalMoves(Position *position);
 
 private:
   Position *position;
 
-  set<Move> AllPseudolegalMoves();
+  std::set<Move> AllPseudolegalMoves();
 };
 
+}
+
 #endif
+

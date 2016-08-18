@@ -1,7 +1,7 @@
 #ifndef INTEGRATION_TESTS_H__
 #define INTEGRATION_TESTS_H__
 
-#include "coordinates.h"
+#include "../core/coordinates.h"
 
 #include <string>
 #include <vector>

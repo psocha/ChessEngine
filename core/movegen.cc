@@ -1,5 +1,7 @@
 #include "movegen.h"
-using namespace std;
+using std::set;
+
+namespace core {
 
 MoveGen::MoveGen() {}
 
@@ -16,3 +18,6 @@ set<Move> MoveGen::AllPseudolegalMoves() {
 
   return pseudolegal_moves;
 }
+
+}
+

@@ -1,7 +1,7 @@
 #ifndef POSITION_H__
 #define POSITION_H__
 
-#include "coordinates.h"
+#include "square.h"
 
 #include <map>
 

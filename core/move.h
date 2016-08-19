@@ -1,20 +1,10 @@
-#ifndef COORDINATES_H__
-#define COORDINATES_H__
+#ifndef MOVE_H__
+#define MOVE_H__
 
+#include "square.h"
 #include <string>
 
 namespace core {
-
-struct Square {
-  bool is_real_square = true;
-
-  int rank;
-  int file;
-
-  Square();
-  Square(std::string coordinates);
-  std::string ToString();
-};
 
 struct Move {
   Square start_square;
@@ -33,4 +23,3 @@ struct Move {
 }
 
 #endif
-

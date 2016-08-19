@@ -1,7 +1,7 @@
 #ifndef MOVEGEN_H__
 #define MOVEGEN_H__
 
-#include "coordinates.h"
+#include "move.h"
 #include "position.h"
 
 #include <set>

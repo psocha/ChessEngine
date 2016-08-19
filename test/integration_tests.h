@@ -1,8 +1,6 @@
 #ifndef INTEGRATION_TESTS_H__
 #define INTEGRATION_TESTS_H__
 
-#include "../core/coordinates.h"
-
 #include <string>
 #include <vector>
 #include <set>

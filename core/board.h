@@ -24,8 +24,10 @@ public:
 
   std::set<std::string> GetLegalMoves();
 
-  std::string BestMove();
+  Position GetPosition();
 
+  void Print();
+  
 private:
   Position *position;
   MoveGen *move_generator;

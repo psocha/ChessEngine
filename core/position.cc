@@ -16,11 +16,11 @@ Position::Position() {
 Position::~Position() {}
 
 void Position::Print() {
-  for (int rank = 11; rank <= 0; rank--) {
-    for (int file = 0; file < 12; file++) {
+  for (int rank = 9; rank >= 2; rank--) {
+    for (int file = 2; file < 10; file++) {
       int piece = chessboard[rank][file];
       char piece_char = pieceRepresentations[piece];
-      std::cout << piece_char;
+      std::cout << " " << piece_char << " ";
     }
     std::cout << std::endl;
   }

@@ -1,10 +1,6 @@
 #include "board.h"
 #include "position.h"
 #include "movegen.h"
-
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
 using std::set;
 using std::string;
 
@@ -13,8 +9,6 @@ namespace core {
 Board::Board() {
   position = new Position();
   move_generator = new MoveGen();
-
-  srand(time(NULL));
 }
 
 Board::~Board() {
@@ -49,14 +43,12 @@ std::set<string> Board::GetLegalMoves() {
   return moves_as_strings;
 }
 
-string Board::BestMove() {
-  set<string> legal_moves = GetLegalMoves();
-  int random_index = rand() % legal_moves.size();
+Position Board::GetPosition() {
+  return Position(*(this->position));
+}
 
-  set<string>::const_iterator it(legal_moves.begin());
-  advance(it, random_index);
-
-  return *it;
+void Board::Print() {
+  this->position->Print();
 }
 
 }

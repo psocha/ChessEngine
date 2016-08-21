@@ -1,3 +1,4 @@
+#include "ai/random_ai.h"
 #include "core/board.h"
 #include "test/integration_tests.h"
 
@@ -17,6 +18,7 @@ int main(int argc, char* argv[]) {
   cout.setf(ios::unitbuf);
 
   core::Board *board = new core::Board();
+  ai::RandomAI random_ai(board);
 
   while (getline(cin, line)) {
     if (line == "uci") {
@@ -52,7 +54,7 @@ int main(int argc, char* argv[]) {
       }
     }
     else if (line.substr(0, 3) == "go ") {
-      string best_move = board->BestMove();
+      string best_move = random_ai.BestMove();
       cout << "bestmove " << best_move << endl;
     }
     else if (line == "quit") {

@@ -12,6 +12,9 @@ struct LegalMoveTest {
   std::string fen;
   std::vector<std::string> moves;
   std::set<std::string> legal_moves;
+
+  LegalMoveTest() {}
+  LegalMoveTest(std::string name) : test_name(name) {}
 };
 
 void RunIntegrationTests();

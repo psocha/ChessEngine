@@ -4,6 +4,7 @@
 #include "square.h"
 
 #include <map>
+#include <vector>
 
 namespace core {
 
@@ -46,7 +47,7 @@ public:
   void SetEnPassant(std::string en_passant);
 
 private:
-  int chessboard[12][12];
+  std::vector<std::vector<int>> chessboard;
   char active_color;
   CastlesAllowed castles_allowed;
   Square en_passant_square;

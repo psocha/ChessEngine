@@ -5,6 +5,7 @@
 #include <iostream>
 using std::map;
 using std::string;
+using std::vector;
 
 namespace core {
 
@@ -33,27 +34,18 @@ void Position::LoadFromFen(string fen) {
     char ch = fen.at(i);
 
     if (ch == '/') {
+      rank--;
+	  file = 2;
       continue;
     }
 
     if (isdigit(ch)) {
       int squares_to_skip = ch - '0';
-      for (int sq = 0; sq < squares_to_skip; sq++) {
-        file++;
-        if (file > 9) {
-          file = 2;
-          rank--;
-        }
-      }
-    }
-    else {
+      file += squares_to_skip;
+    } else {
       int piece = PieceFromChar(ch);
       chessboard[rank][file] = piece;
       file++;
-      if (file > 9) {
-        file = 2;
-        rank--;
-      }
     }
   }
 }
@@ -74,6 +66,13 @@ void Position::SetEnPassant(std::string en_passant) {
 }
 
 void Position::InitializeOutOfBounds() {
+  for (int i = 0; i < 12; i++) {
+    chessboard.push_back(vector<int>(12));
+    for (int j = 0; j < 12; j++) {
+      chessboard[i][j] = EMPTY;
+	}
+  }
+
   for (int i = 0; i < 12; i++) {
     if (i < 2 || i > 9) {
       for (int j = 0; j < 12; j++) {

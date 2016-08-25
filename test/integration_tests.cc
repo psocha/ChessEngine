@@ -44,6 +44,48 @@ void RunIntegrationTests() {
   bishop_test.legal_moves = { "a8a7", "a8b7", "a8b8", "e7e6", "e7e5", "f7f6", "f7f5", "c4b5", "c4a6", "c4d5", 
     "c4e6", "c4d3", "c4e2", "c4b3", "c4a2", "h4g5", "h4f6", "h3g3", "h4f2" };
   tests.push_back(bishop_test);
+  
+  LegalMoveTest queen_test("queens");
+  queen_test.fen = "4k3/4p3/8/8/8/8/4P3/4K2Q w - - 0 1";
+  queen_test.moves = { "h1e4", "e8d8" };
+  queen_test.legal_moves = { "e4a8", "e4b7", "e4c6", "e4d5", "e4e5", "e4e6", "e4e7", "e4f5", "e4g6", "e4h7",
+    "e4f4", "e4g4", "e4h4", "e4f3", "e4g2", "e4h1", "e4e3", "e4d3", "e4c2", "e4b1", "e4d4", "e4c4", "e4b4",
+    "e4a4", "e2e3", "e1d2", "e1d1", "e1f2", "e1f1" };
+  tests.push_back(queen_test);
+  
+  LegalMoveTest back_rank_mate_test("back rank mate");
+  back_rank_mate_test.fen = "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1";
+  back_rank_mate_test.moves = { "a1a8" };
+  back_rank_mate_test.legal_moves = { };
+  tests.push_back(back_rank_mate_test);
+  
+  LegalMoveTest stalemate_test("stalemate");
+  stalemate_test.fen = "8/8/8/8/8/2k5/2p5/2K5 w - - 0 1";
+  stalemate_test.legal_moves = { };
+  tests.push_back(stalemate_test);
+  
+  LegalMoveTest pawn_promotion_test("pawn promotion");
+  pawn_promotion_test.fen = "8/8/8/8/8/1k6/1p6/R5K1 b - - 0 1";
+  pawn_promotion_test.legal_moves = { "b3b4", "b3c4", "b3c3", "b3c2", "b2a1q", "b2a1n", "b2a1r", "b2a1b",
+    "b2b1q", "b2b1r", "b2b1b", "b2b1n" };
+  tests.push_back(pawn_promotion_test);
+
+  LegalMoveTest pawn_test("pawns");
+  pawn_test.fen = "4k3/8/8/3ppp2/1p2P3/P1p2Pp1/2PP3P/4K3 w - - 0 1";
+  pawn_test.legal_moves = { "a3a4", "a3b4", "d2c3", "d2d3", "d2d4", "e4d5", "e4f5", "f3f4", "h2g3", "h2h3",
+    "h2h4", "e1d1", "e1e2", "e1f1" };
+  tests.push_back(pawn_test);
+  
+  LegalMoveTest diagonal_pin_test("diagonal pins");
+  diagonal_pin_test.fen = "4k3/3ppp2/8/7Q/B7/8/8/7K b - - 0 1";
+  diagonal_pin_test.legal_moves = { "e8d8", "e8f8", "e7e6", "e7e5" };
+  tests.push_back(diagonal_pin_test);
+  
+  LegalMoveTest early_check_test("early check");
+  early_check_test.fen = STARTPOS;
+  early_check_test.moves = { "e2e4", "d7d5", "g1f3", "f7f6", "b1c3", "a7a6", "f1b5" };
+  early_check_test.legal_moves = { "a6b5", "c7c6", "b8c6", "b8d7", "c8d7", "d8d7", "e8f7" };
+  tests.push_back(early_check_test);
 
   for (LegalMoveTest current_test : tests) {
     PerformTest(current_test);

@@ -81,11 +81,34 @@ void RunIntegrationTests() {
   diagonal_pin_test.legal_moves = { "e8d8", "e8f8", "e7e6", "e7e5" };
   tests.push_back(diagonal_pin_test);
   
+  LegalMoveTest orthogonal_pin_test("orthogonal pin");
+  orthogonal_pin_test.fen = "k7/8/8/8/8/8/8/KQ5r w - - 0 1";
+  orthogonal_pin_test.legal_moves = { "a1a2", "a1b2", "b1c1", "b1d1", "b1e1", "b1f1", "b1g1", "b1h1" };
+  tests.push_back(orthogonal_pin_test);
+  
   LegalMoveTest early_check_test("early check");
   early_check_test.fen = STARTPOS;
   early_check_test.moves = { "e2e4", "d7d5", "g1f3", "f7f6", "b1c3", "a7a6", "f1b5" };
   early_check_test.legal_moves = { "a6b5", "c7c6", "b8c6", "b8d7", "c8d7", "d8d7", "e8f7" };
   tests.push_back(early_check_test);
+  
+  LegalMoveTest no_castle_out_of_check_test("no castle out of check");
+  no_castle_out_of_check_test.fen = "r3k2r/p6p/8/8/8/8/8/4R1K1 b kq - 0 1";
+  no_castle_out_of_check_test.legal_moves = { "e8d8", "e8d7", "e8f8", "e8f7" };
+  tests.push_back(no_castle_out_of_check_test);
+  
+  LegalMoveTest no_castle_through_check_test("no castle through check");
+  no_castle_through_check_test.fen = "4k3/8/8/8/8/2n4b/P6P/R3K2R w KQ - 0 1";
+  no_castle_through_check_test.legal_moves = { "a1b1", "a1c1", "a1d1", "a2a3", "a2a4", "e1d2", "e1f2",
+    "h1g1", "h1f1" };
+  tests.push_back(no_castle_through_check_test);
+  
+  LegalMoveTest no_castle_into_check_test("no castle into check");
+  no_castle_into_check_test.fen = "r3k2r/p6p/1P6/8/8/8/5PPP/R4RK1 w kq - 0 1";
+  no_castle_into_check_test.moves = { "b6b7" };
+  no_castle_into_check_test.legal_moves = { "a7a6", "a7a5", "a8b8", "a8c8", "a8d8", "e8d8", "e8d7",
+    "e8e7", "e8f8", "e8f7", "e8g8", "h8g8", "h8f8", "h7h6", "h7h5" };
+  tests.push_back(no_castle_into_check_test);
 
   for (LegalMoveTest current_test : tests) {
     PerformTest(current_test);

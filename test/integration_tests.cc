@@ -109,6 +109,26 @@ void RunIntegrationTests() {
   no_castle_into_check_test.legal_moves = { "a7a6", "a7a5", "a8b8", "a8c8", "a8d8", "e8d8", "e8d7",
     "e8e7", "e8f8", "e8f7", "e8g8", "h8g8", "h8f8", "h7h6", "h7h5" };
   tests.push_back(no_castle_into_check_test);
+  
+  LegalMoveTest en_passant_test("en passant");
+  en_passant_test.fen = "3nkn2/3ppp2/8/8/8/8/3PPP2/3NKN2 w - - 0 1";
+  en_passant_test.moves = { "e2e4", "d7d5", "e4e5", "f7f5" };
+  en_passant_test.legal_moves = { "d2d3", "d2d4", "e5e6", "e5f6", "f2f3", "f2f4", "d1b2", "d1c3",
+    "d1e3", "f1e3", "f1g3", "f1h2", "e1e2" };
+  tests.push_back(en_passant_test);
+  
+  LegalMoveTest en_passant_fen_test("en passant fen square");
+  en_passant_fen_test.fen = "8/8/5k2/8/2B2pPb/8/8/6K1 b - g3 0 1";
+  en_passant_fen_test.legal_moves = { "f6e5", "f6e7", "f6g7", "f6g6", "f6g5", "h4g5", "h4g3", "h4f2",
+    "h4e1", "f4f3", "f4g3" };
+  tests.push_back(en_passant_fen_test);
+  
+  LegalMoveTest en_passant_expiry_test("en passant expiry");
+  en_passant_expiry_test.fen = "k7/2p5/1p6/pP6/2PP4/8/K7/8 w - a6 0 1";
+  en_passant_expiry_test.moves = { "a2b3", "c7c5" };
+  en_passant_expiry_test.legal_moves = { "b3a4", "b3a3", "b3a2", "b3b2", "b3c3", "b3c2", "d4c5", "d4d5",
+    "b5c6" };
+  tests.push_back(en_passant_expiry_test);
 
   for (LegalMoveTest current_test : tests) {
     PerformTest(current_test);

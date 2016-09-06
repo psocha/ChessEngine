@@ -92,6 +92,17 @@ void RunIntegrationTests() {
   early_check_test.legal_moves = { "a6b5", "c7c6", "b8c6", "b8d7", "c8d7", "d8d7", "e8f7" };
   tests.push_back(early_check_test);
   
+  LegalMoveTest endgame_check_test("endgame check");
+  endgame_check_test.fen = "7b/8/b3k3/8/8/8/4R3/4K3 b - - 0 1";
+  endgame_check_test.legal_moves = { "a6e2", "h8e5", "e6d5", "e6d6", "e6d7", "e6f5", "e6f6", "e6f7" };
+  tests.push_back(endgame_check_test);
+  
+  LegalMoveTest defended_checker_test("defended checker");
+  defended_checker_test.fen = "5q2/8/6k1/8/5PP1/6K1/8/2B5 w - - 0 1";
+  defended_checker_test.moves = { "f4f5" };
+  defended_checker_test.legal_moves = { "g6f6", "g6f7", "g6g7", "g6h7", "f8f5" };
+  tests.push_back(defended_checker_test);
+  
   LegalMoveTest no_castle_out_of_check_test("no castle out of check");
   no_castle_out_of_check_test.fen = "r3k2r/p6p/8/8/8/8/8/4R1K1 b kq - 0 1";
   no_castle_out_of_check_test.legal_moves = { "e8d8", "e8d7", "e8f8", "e8f7" };
@@ -109,6 +120,34 @@ void RunIntegrationTests() {
   no_castle_into_check_test.legal_moves = { "a7a6", "a7a5", "a8b8", "a8c8", "a8d8", "e8d8", "e8d7",
     "e8e7", "e8f8", "e8f7", "e8g8", "h8g8", "h8f8", "h7h6", "h7h5" };
   tests.push_back(no_castle_into_check_test);
+  
+  LegalMoveTest no_castle_without_flag_test("no castle without flag");
+  no_castle_without_flag_test.fen = "5rk1/5ppp/6q1/3pp3/4P3/5P2/P5PP/R3K2R w Q - 0 1";
+  no_castle_without_flag_test.legal_moves = { "a1b1", "a1c1", "a1d1", "a2a3", "a2a4", "e4d5", "f3f4",
+    "g2g3", "g2g4", "h2h3", "h2h4", "e1c1", "e1d1", "e1d2", "e1e2", "e1f2", "e1f1", "h1g1", "h1f1" };
+  tests.push_back(no_castle_without_flag_test);
+  
+  LegalMoveTest no_castle_if_blocked_test("no castle if blocked");
+  no_castle_if_blocked_test.fen = "r3kb1r/1pqbn1p1/pnp1pp1p/3p4/2PP4/1QN1PN2/PP1BBPPP/3RR1K1 b kq - 0 1";
+  no_castle_if_blocked_test.legal_moves = { "a6a5", "a8a7", "a8b8", "a8c8", "a8d8", "b6c4", "b6a4", "b6c8",
+    "c7b8", "c7c8", "c7d8", "c7d6", "c7e5", "c7f4", "c7h3", "c7g2", "d7c8", "d5c4", "e8d8", "e8c8", "e7c8",
+    "e7g8", "e7g6", "e7f5", "e6e5", "f6f5", "g7g6", "g7g5", "h8g8", "h8h7", "h6h5" };
+  tests.push_back(no_castle_if_blocked_test);
+  
+  LegalMoveTest no_castle_if_king_moves_test("no castle if king moves");
+  no_castle_if_king_moves_test.fen = "5rk1/5pbp/5np1/8/8/8/P6P/R3K2R w KQ - 0 1";
+  no_castle_if_king_moves_test.moves = { "e1e2", "g8h8", "e2e1", "h8g8" };
+  no_castle_if_king_moves_test.legal_moves = { "a2a3", "a2a4", "h2h3", "h2h4", "a1b1", "a1c1", "a1d1",
+    "h1g1", "h1f1", "e1d1", "e1d2", "e1e2", "e1f2", "e1f1" };
+  tests.push_back(no_castle_if_king_moves_test);
+  
+  LegalMoveTest no_castle_if_rook_moves_test("no castle if rook moves");
+  no_castle_if_rook_moves_test.fen = "r3k2r/p6p/8/8/8/P7/1PPP4/2KR3R b kq - 0 1";
+  no_castle_if_rook_moves_test.moves = { "a8d8", "h1h7", "d8a8", "h7h1" };
+  no_castle_if_rook_moves_test.legal_moves = { "a8b8", "a8c8", "a8d8", "a7a6", "a7a5", "e8d8", "e8d7",
+    "e8e7", "e8f7", "e8f8", "e8g8", "h8g8", "h8f8", "h8h7", "h8h6", "h8h5", "h8h4", "h8h3", "h8h2",
+	"h8h1" };
+  tests.push_back(no_castle_if_rook_moves_test);
   
   LegalMoveTest en_passant_test("en passant");
   en_passant_test.fen = "3nkn2/3ppp2/8/8/8/8/3PPP2/3NKN2 w - - 0 1";
@@ -129,6 +168,50 @@ void RunIntegrationTests() {
   en_passant_expiry_test.legal_moves = { "b3a4", "b3a3", "b3a2", "b3b2", "b3c3", "b3c2", "d4c5", "d4d5",
     "b5c6" };
   tests.push_back(en_passant_expiry_test);
+  
+  LegalMoveTest perform_castle_kingside_test("perform castle kingside");
+  perform_castle_kingside_test.fen = "4k2r/6pp/8/8/8/8/6PP/R5K1 b k - 0 1";
+  perform_castle_kingside_test.moves = { "e8g8", "a1a7" };
+  perform_castle_kingside_test.legal_moves = { "f8e8", "f8d8", "f8c8", "f8b8", "f8a8", "f8f7", "f8f6",
+    "f8f5", "f8f4", "f8f3", "f8f2", "f8f1", "g7g6", "g7g5", "h7h6", "h7h5", "g8h8" };
+  tests.push_back(perform_castle_kingside_test);
+  
+  LegalMoveTest perform_castle_queenside_test("perform castle queenside");
+  perform_castle_queenside_test.fen = "8/8/8/8/8/2P3k1/3P3p/R3K3 w Q - 0 1";
+  perform_castle_queenside_test.moves = { "e1c1", "g3g2" };
+  perform_castle_queenside_test.legal_moves = { "c1b1", "c1b2", "c1c2", "c3c4", "d2d3", "d2d4", "d1e1",
+    "d1f1", "d1g1", "d1h1" };
+  tests.push_back(perform_castle_queenside_test);
+  
+  LegalMoveTest perform_promotion_test("perform promotion");
+  perform_promotion_test.fen = "8/2PP4/1k1K4/8/8/8/8/8 w - - 0 1";
+  perform_promotion_test.moves = { "c7c8n", "b6b5", "d7d8b", "b5c4" };
+  perform_promotion_test.legal_moves = { "c8a7", "c8b6", "c8e7", "d8c7", "d8b6", "d8a5", "d8e7", "d8f6",
+    "d8g5", "d8h4", "d6c6", "d6c7", "d6d7", "d6e7", "d6e6", "d6e5" };  
+  tests.push_back(perform_promotion_test);
+  
+  LegalMoveTest perform_en_passant_test("perform en passant");
+  perform_en_passant_test.fen = "nk6/8/8/3N4/p7/8/1P6/1K6 w - - 0 1";
+  perform_en_passant_test.moves = { "b2b4", "a4b3" };
+  perform_en_passant_test.legal_moves = { "b1a1", "b1b2", "b1c1", "d5b4", "d5b6", "d5c7", "d5e7", "d5f6",
+    "d5f4", "d5e3", "d5c3" };
+  tests.push_back(perform_en_passant_test);
+  
+  LegalMoveTest deep_blue_test("deep blue");
+  deep_blue_test.fen = "r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1 b - - 0 1";
+  deep_blue_test.legal_moves = { "a7a6", "a7a5", "b5c4", "b5b4", "f5f4", "g7g6", "g7g5", "h6h5", "a8b8",
+    "c8b8", "c8b7", "c8c7", "c8d8", "c6b7", "d7b8", "d7b6", "d7c5", "d7e5", "d7f6", "d7f8", "d5c7", "d5b6",
+    "d5b4", "d5c3", "d5e3", "d5f4", "d5f6", "e7d8", "e7f8", "e7f6", "e7g5", "e7h4", "e7d6", "e7c5", "e7b4",
+    "e7a3" };
+  tests.push_back(deep_blue_test);
+  
+  LegalMoveTest byrne_fischer_test("byrne fischer");
+  byrne_fischer_test.fen = "r2q1rk1/pp2ppbp/1np2np1/2Q3B1/3PP1b1/2N2N2/PP3PPP/3RKB1R b K - 0 1";
+  byrne_fischer_test.legal_moves = { "a7a6", "a7a5", "e7e6", "e7e5", "h7h6", "h7h5", "a8b8", "a8c8", "b6c8",
+    "b6d7", "b6d5", "b6c4", "b6a4", "d8c8", "d8b8", "d8c7", "d8d7", "d8d6", "d8d5", "d8d4", "d8e8", "f8e8",
+    "g8h8", "g7h8", "g7h6", "f6e8", "f6h5", "f6e4", "f6d5", "f6d7", "g4f3", "g4h3", "g4h5", "g4f5", "g4e6",
+    "g4d7", "g4c8" };
+  tests.push_back(byrne_fischer_test);
 
   for (LegalMoveTest current_test : tests) {
     PerformTest(current_test);

@@ -17,9 +17,15 @@ struct LegalMoveTest {
   LegalMoveTest(std::string name) : test_name(name) {}
 };
 
+struct LegalMoveTestResult {
+  int correct = 0;
+  int omissions = 0;
+  int false_positives = 0;
+};
+
 void RunIntegrationTests();
 
-void PerformTest(LegalMoveTest test);
+LegalMoveTestResult PerformTest(LegalMoveTest test);
 
 }
 

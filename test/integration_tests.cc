@@ -213,13 +213,33 @@ void RunIntegrationTests() {
     "g4d7", "g4c8" };
   tests.push_back(byrne_fischer_test);
 
+  LegalMoveTestResult aggregate;
+  int positions_passed = 0, positions_failed = 0;
   for (LegalMoveTest current_test : tests) {
-    PerformTest(current_test);
+    LegalMoveTestResult result = PerformTest(current_test);
+
+    aggregate.correct += result.correct;
+    aggregate.omissions += result.omissions;
+    aggregate.false_positives += result.false_positives;
+
+    if (result.omissions == 0 && result.false_positives == 0) {
+      positions_passed++;
+    } else {
+      positions_failed++;
+    }
   }
+  
+  std::cout << "--------------------------------------------------------------------\n";
+  std::cout << "TEST SUMMARY\n";
+  std::cout << positions_passed << " of " << positions_passed + positions_failed << " positions passed\n";
+  std::cout << aggregate.correct << " moves correct\n";
+  std::cout << aggregate.omissions << " moves omitted\n";
+  std::cout << aggregate.false_positives << " illegal moves\n";
 }
 
-void PerformTest(LegalMoveTest test) {
+LegalMoveTestResult PerformTest(LegalMoveTest test) {
   std::cout << "Testing " << test.test_name << std::endl;
+  LegalMoveTestResult result;
 
   core::Board board;
 
@@ -238,8 +258,6 @@ void PerformTest(LegalMoveTest test) {
     board.LoadMove(move);
   }
 
-  board.Print();
-
   std::set<std::string> test_moves = board.GetLegalMoves();
   std::set<std::string> legal_but_omitted;
   std::set<std::string> illegal_but_listed;
@@ -253,6 +271,14 @@ void PerformTest(LegalMoveTest test) {
 
   bool insufficient = legal_but_omitted.size() > 0;
   bool excess = illegal_but_listed.size() > 0;
+  
+  result.correct = test.legal_moves.size() - legal_but_omitted.size();
+  result.omissions = legal_but_omitted.size();
+  result.false_positives = illegal_but_listed.size();
+  
+  if (insufficient || excess) {
+    board.Print();
+  }
 
   if (insufficient) {
     std::cerr << "The following moves are legal but were not listed: ";
@@ -272,6 +298,8 @@ void PerformTest(LegalMoveTest test) {
   if (!insufficient && !excess) {
     std::cout << "PASS" << std::endl;
   }
+  
+  return result;
 }
 
 }

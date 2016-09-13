@@ -31,4 +31,11 @@ string Square::ToString() {
   return square_representation;
 }
 
+bool operator==(const Square& first, const Square& second) {
+  if (!first.is_real_square || !second.is_real_square) {
+    return false;
+  }
+  return first.rank == second.rank && first.file == second.file;
+}
+
 }

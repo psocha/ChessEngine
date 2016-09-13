@@ -9,6 +9,13 @@
 namespace core {
 
 const int EMPTY = 0;
+
+const int PAWN =   1;
+const int KNIGHT = 2;
+const int BISHOP = 3;
+const int ROOK =   4;
+const int QUEEN =  5;
+const int KING =   6;
     
 const int PAWN_W =   1;
 const int KNIGHT_W = 2;
@@ -41,10 +48,16 @@ public:
   void Print();
 
   void LoadFromFen(std::string fen);
-
+  
+  void PerformMove(std::string move);
+  
   void SetActiveColor(std::string active_color);
   void SetCastle(std::string castle);
+  
   void SetEnPassant(std::string en_passant);
+  Square GetEnPassant() const;
+  
+  int PieceAt(Square square) const;
 
 private:
   std::vector<std::vector<int>> chessboard;
@@ -59,7 +72,8 @@ private:
   int PieceFromChar(char piece);
 };
 
+int PieceType(int piece);
+
 }
 
 #endif
-

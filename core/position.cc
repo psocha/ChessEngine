@@ -1,3 +1,4 @@
+#include "move.h"
 #include "position.h"
 
 #include <cctype>
@@ -50,6 +51,10 @@ void Position::LoadFromFen(string fen) {
   }
 }
 
+void Position::PerformMove(std::string mv) {
+  Move move = Move(mv, *this);
+}
+
 void Position::SetActiveColor(std::string active_color) {
   active_color = active_color.at(0);
 }
@@ -63,6 +68,14 @@ void Position::SetCastle(std::string castle) {
 
 void Position::SetEnPassant(std::string en_passant) {
   en_passant_square = Square(en_passant);
+}
+
+Square Position::GetEnPassant() const {
+  return en_passant_square;
+}
+
+int Position::PieceAt(Square square) const {
+  return chessboard.at(square.rank + 2).at(square.file + 2);
 }
 
 void Position::InitializeOutOfBounds() {
@@ -113,6 +126,10 @@ int Position::PieceFromChar(char piece) {
     }
   }
   return EMPTY;
+}
+
+int PieceType(int piece) {
+  return abs(piece);
 }
 
 }

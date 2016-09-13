@@ -1,33 +1,46 @@
 #include "move.h"
-#include "position.h"
+
+#include <set>
 using std::string;
 
 namespace core {
 
-Move::Move(string coordinates, int moving_piece) {
+Move::Move(string coordinates, const Position& initial_position) {
   start_square = Square(coordinates.substr(0, 2));
   end_square = Square(coordinates.substr(2, 2));
 
-  moving_piece = moving_piece;
+  moving_piece = PieceType(initial_position.PieceAt(start_square));
 
   if (coordinates.length() == 5) {
     char promotion = coordinates.at(4);
     switch (promotion) {
     case 'q':
-      promoted_piece = QUEEN_W;
+      promoted_piece = QUEEN;
       break;
     case 'r':
-      promoted_piece = ROOK_W;
+      promoted_piece = ROOK;
       break;
     case 'b':
-      promoted_piece = BISHOP_W;
+      promoted_piece = BISHOP;
       break;
     case 'n':
-      promoted_piece = KNIGHT_W;
+      promoted_piece = KNIGHT;
       break;
     default:
       promoted_piece = 0;
     }
+  }
+  
+  if (moving_piece == KING &&
+     (start_square.ToString() == "e1" || start_square.ToString() == "e8")) {
+    std::set<string> castle_moves = {"e1g1", "e1c1", "e8g8", "e8f8"};
+	if (castle_moves.count(this->ToString()) > 0) {
+      is_castle = true;
+	}
+  }
+  
+  if (moving_piece == PAWN && end_square == initial_position.GetEnPassant()) {
+    is_en_passant = true;
   }
 
 }
@@ -37,16 +50,16 @@ string Move::ToString() {
   if (promoted_piece) {
     char piece;
     switch (promoted_piece) {
-    case QUEEN_W:
+    case QUEEN:
       piece = 'q';
       break;
-    case ROOK_W:
+    case ROOK:
       piece = 'r';
       break;
-    case BISHOP_W:
+    case BISHOP:
       piece = 'b';
       break;
-    case KNIGHT_W:
+    case KNIGHT:
       piece = 'n';
       break;
     }

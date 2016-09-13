@@ -29,7 +29,7 @@ void Board::LoadFromFen(string fen_position, string active_color, string castle,
 }
 
 void Board::LoadMove(string move) {
-
+  position->PerformMove(move);
 }
 
 std::set<string> Board::GetLegalMoves() {

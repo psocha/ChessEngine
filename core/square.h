@@ -16,6 +16,8 @@ struct Square {
   std::string ToString();
 };
 
+bool operator==(const Square& first, const Square& second);
+
 }
 
 #endif

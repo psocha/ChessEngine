@@ -1,6 +1,7 @@
 #ifndef MOVE_H__
 #define MOVE_H__
 
+#include "position.h"
 #include "square.h"
 #include <string>
 
@@ -16,7 +17,7 @@ struct Move {
   bool is_en_passant = false;
   int promoted_piece = 0;
 
-  Move(std::string coordinates, int moving_piece);
+  Move(std::string coordinates, const Position &initial_position);
   std::string ToString();
 };
 

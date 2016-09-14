@@ -1,37 +1,13 @@
 #ifndef POSITION_H__
 #define POSITION_H__
 
+#include "pieces.h"
 #include "square.h"
 
 #include <map>
 #include <vector>
 
 namespace core {
-
-const int EMPTY = 0;
-
-const int PAWN =   1;
-const int KNIGHT = 2;
-const int BISHOP = 3;
-const int ROOK =   4;
-const int QUEEN =  5;
-const int KING =   6;
-    
-const int PAWN_W =   1;
-const int KNIGHT_W = 2;
-const int BISHOP_W = 3;
-const int ROOK_W =   4;
-const int QUEEN_W =  5;
-const int KING_W =   6;
-
-const int PAWN_B =   -1;
-const int KNIGHT_B = -2;
-const int BISHOP_B = -3;
-const int ROOK_B =   -4;
-const int QUEEN_B =  -5;
-const int KING_B =   -6;
-
-const int OUT_OF_BOUNDS = 99;
 
 struct CastlesAllowed {
   bool whiteKingside = true;
@@ -57,22 +33,16 @@ public:
   void SetEnPassant(std::string en_passant);
   Square GetEnPassant() const;
   
-  int PieceAt(Square square) const;
+  SquareContents PieceAt(Square square) const;
 
 private:
-  std::vector<std::vector<int>> chessboard;
-  char active_color;
+  std::vector<std::vector<SquareContents>> chessboard;
+  Color active_color;
   CastlesAllowed castles_allowed;
   Square en_passant_square;
 
-  std::map<int, char> pieceRepresentations;
-
-  void InitializeOutOfBounds();
-  void InitializePieceRepresentations();
-  int PieceFromChar(char piece);
+  void InitializeEmptyBoard();
 };
-
-int PieceType(int piece);
 
 }
 

@@ -1,8 +1,6 @@
 #include "move.h"
 #include "position.h"
 
-#include <cctype>
-#include <cstdlib>
 #include <iostream>
 using std::map;
 using std::string;
@@ -11,8 +9,7 @@ using std::vector;
 namespace core {
 
 Position::Position() {
-  InitializeOutOfBounds();
-  InitializePieceRepresentations();
+  InitializeEmptyBoard();
 }
 
 Position::~Position() {}
@@ -20,8 +17,8 @@ Position::~Position() {}
 void Position::Print() {
   for (int rank = 9; rank >= 2; rank--) {
     for (int file = 2; file < 10; file++) {
-      int piece = chessboard[rank][file];
-      char piece_char = pieceRepresentations[piece];
+      SquareContents piece = chessboard[rank][file];
+      char piece_char = CharFromSquareContents(piece);
       std::cout << " " << piece_char << " ";
     }
     std::cout << std::endl;
@@ -44,7 +41,7 @@ void Position::LoadFromFen(string fen) {
       int squares_to_skip = ch - '0';
       file += squares_to_skip;
     } else {
-      int piece = PieceFromChar(ch);
+      SquareContents piece = SquareContentsFromChar(ch);
       chessboard[rank][file] = piece;
       file++;
     }
@@ -56,7 +53,7 @@ void Position::PerformMove(std::string mv) {
 }
 
 void Position::SetActiveColor(std::string active_color) {
-  active_color = active_color.at(0);
+  active_color = ColorFromChar(active_color.at(0));
 }
 
 void Position::SetCastle(std::string castle) {
@@ -74,13 +71,13 @@ Square Position::GetEnPassant() const {
   return en_passant_square;
 }
 
-int Position::PieceAt(Square square) const {
+SquareContents Position::PieceAt(Square square) const {
   return chessboard.at(square.rank + 2).at(square.file + 2);
 }
 
-void Position::InitializeOutOfBounds() {
+void Position::InitializeEmptyBoard() {
   for (int i = 0; i < 12; i++) {
-    chessboard.push_back(vector<int>(12));
+    chessboard.push_back(vector<SquareContents>(12));
     for (int j = 0; j < 12; j++) {
       chessboard[i][j] = EMPTY;
 	}
@@ -101,36 +98,4 @@ void Position::InitializeOutOfBounds() {
   }
 }
 
-void Position::InitializePieceRepresentations() {
-  pieceRepresentations[ROOK_B] =   'r';
-  pieceRepresentations[KNIGHT_B] = 'n';
-  pieceRepresentations[BISHOP_B] = 'b';
-  pieceRepresentations[QUEEN_B] =  'q';
-  pieceRepresentations[KING_B] =   'k';
-  pieceRepresentations[PAWN_B] =   'p';
-  pieceRepresentations[ROOK_W] =   'R';
-  pieceRepresentations[KNIGHT_W] = 'N';
-  pieceRepresentations[BISHOP_W] = 'B';
-  pieceRepresentations[QUEEN_W] =  'Q';
-  pieceRepresentations[KING_W] =   'K';
-  pieceRepresentations[PAWN_W] =   'P';
-  pieceRepresentations[EMPTY] =    '-';
-  pieceRepresentations[OUT_OF_BOUNDS] = '#';
 }
-
-int Position::PieceFromChar(char piece) {
-  map<int, char>::iterator it;
-  for (it = pieceRepresentations.begin(); it != pieceRepresentations.end(); ++it) {
-    if (it->second == piece) {
-      return it->first;
-    }
-  }
-  return EMPTY;
-}
-
-int PieceType(int piece) {
-  return abs(piece);
-}
-
-}
-

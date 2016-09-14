@@ -9,7 +9,7 @@ Move::Move(string coordinates, const Position& initial_position) {
   start_square = Square(coordinates.substr(0, 2));
   end_square = Square(coordinates.substr(2, 2));
 
-  moving_piece = PieceType(initial_position.PieceAt(start_square));
+  moving_piece = GetPieceType(initial_position.PieceAt(start_square));
 
   if (coordinates.length() == 5) {
     char promotion = coordinates.at(4);
@@ -27,13 +27,13 @@ Move::Move(string coordinates, const Position& initial_position) {
       promoted_piece = KNIGHT;
       break;
     default:
-      promoted_piece = 0;
+      promoted_piece = NULL_PIECE;
     }
   }
   
   if (moving_piece == KING &&
      (start_square.ToString() == "e1" || start_square.ToString() == "e8")) {
-    std::set<string> castle_moves = {"e1g1", "e1c1", "e8g8", "e8f8"};
+    std::set<string> castle_moves = {"e1g1", "e1c1", "e8g8", "e8c8"};
 	if (castle_moves.count(this->ToString()) > 0) {
       is_castle = true;
 	}
@@ -62,6 +62,8 @@ string Move::ToString() {
     case KNIGHT:
       piece = 'n';
       break;
+	default:
+	  piece = 0;
     }
     move_string += piece;
   }

@@ -56,6 +56,10 @@ void Position::SetActiveColor(std::string active_color) {
   active_color = ColorFromChar(active_color.at(0));
 }
 
+Color Position::GetActiveColor() const {
+  return active_color;
+}
+
 void Position::SetCastle(std::string castle) {
   castles_allowed.whiteKingside = castle.find('K') != string::npos;
   castles_allowed.whiteQueenside = castle.find('Q') != string::npos;
@@ -71,7 +75,7 @@ Square Position::GetEnPassant() const {
   return en_passant_square;
 }
 
-SquareContents Position::PieceAt(Square square) const {
+SquareContents Position::ContentsAt(Square square) const {
   return chessboard.at(square.rank + 2).at(square.file + 2);
 }
 

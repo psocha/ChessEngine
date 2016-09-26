@@ -13,12 +13,17 @@ public:
   MoveGen();
   ~MoveGen();
 
-  std::set<Move> AllLegalMoves(Position *position);
+  std::set<Move> AllLegalMoves(Position position);
 
 private:
-  Position *position;
+  Position position;
 
   std::set<Move> AllPseudolegalMoves();
+  
+  std::set<Move> GetPawnMoves(Square square);
+  std::set<Move> GetKnightMoves(Square square);
+  std::set<Move> GetDiagonalMoves(Square square, bool limit_to_one);
+  std::set<Move> GetOrthogonalMoves(Square square, bool limit_to_one);
 };
 
 }

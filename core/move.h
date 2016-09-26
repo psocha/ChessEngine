@@ -18,8 +18,11 @@ struct Move {
   PieceType promoted_piece = NULL_PIECE;
 
   Move(std::string coordinates, const Position &initial_position);
-  std::string ToString();
+  std::string ToString() const;
 };
+
+bool operator==(const Move& first, const Move& second);
+bool operator<(const Move& first, const Move& second);
 
 }
 

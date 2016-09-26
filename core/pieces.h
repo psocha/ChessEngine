@@ -53,6 +53,8 @@ SquareContents SquareContentsFromChar(char piece);
 
 Color ColorFromChar(char color);
 
+Color ColorOfContents(SquareContents contents);
+
 }
 
 #endif

@@ -9,7 +9,7 @@ Move::Move(string coordinates, const Position& initial_position) {
   start_square = Square(coordinates.substr(0, 2));
   end_square = Square(coordinates.substr(2, 2));
 
-  moving_piece = GetPieceType(initial_position.PieceAt(start_square));
+  moving_piece = GetPieceType(initial_position.ContentsAt(start_square));
 
   if (coordinates.length() == 5) {
     char promotion = coordinates.at(4);
@@ -45,7 +45,7 @@ Move::Move(string coordinates, const Position& initial_position) {
 
 }
 
-string Move::ToString() {
+string Move::ToString() const {
   string move_string = start_square.ToString() + end_square.ToString();
   if (promoted_piece) {
     char piece;
@@ -68,6 +68,14 @@ string Move::ToString() {
     move_string += piece;
   }
   return move_string;
+}
+
+bool operator==(const Move& first, const Move& second) {
+  return first.ToString() == second.ToString();
+}
+
+bool operator<(const Move& first, const Move& second) {
+  return first.ToString() < second.ToString();
 }
 
 }

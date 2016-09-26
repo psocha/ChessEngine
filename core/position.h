@@ -28,12 +28,14 @@ public:
   void PerformMove(std::string move);
   
   void SetActiveColor(std::string active_color);
+  Color GetActiveColor() const;
+  
   void SetCastle(std::string castle);
   
   void SetEnPassant(std::string en_passant);
   Square GetEnPassant() const;
   
-  SquareContents PieceAt(Square square) const;
+  SquareContents ContentsAt(Square square) const;
 
 private:
   std::vector<std::vector<SquareContents>> chessboard;

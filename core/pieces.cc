@@ -28,4 +28,10 @@ Color ColorFromChar(char color) {
   else return NULL_COLOR;
 }
 
+Color ColorOfContents(SquareContents contents) {
+  if (contents >= PAWN_W && contents <= KING_W) return WHITE;
+  if (contents <= PAWN_B && contents >= KING_B) return BLACK;
+  return NULL_COLOR;
+}
+
 }

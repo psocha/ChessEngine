@@ -12,8 +12,9 @@ struct Square {
   int file;
 
   Square();
+  Square(int rank, int file);
   Square(std::string coordinates);
-  std::string ToString();
+  std::string ToString() const;
 };
 
 bool operator==(const Square& first, const Square& second);

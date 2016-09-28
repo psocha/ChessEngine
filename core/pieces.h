@@ -55,6 +55,9 @@ Color ColorFromChar(char color);
 
 Color ColorOfContents(SquareContents contents);
 
+bool SameColors(Color firist, Color second);
+bool OppositeColors(Color first, Color second);
+
 }
 
 #endif

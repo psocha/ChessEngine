@@ -34,4 +34,16 @@ Color ColorOfContents(SquareContents contents) {
   return NULL_COLOR;
 }
 
+bool SameColors(Color first, Color second) {
+  if (first == WHITE && second == WHITE) return true;
+  if (first == BLACK && second == BLACK) return true;
+  return false;
+}
+
+bool OppositeColors(Color first, Color second) {
+  if (first == WHITE && second == BLACK) return true;
+  if (first == BLACK && second == WHITE) return true;
+  return false;
+}
+
 }

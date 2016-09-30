@@ -22,6 +22,11 @@ SquareContents SquareContentsFromChar(char piece) {
   return OUT_OF_BOUNDS;
 }
 
+SquareContents MakePiece(PieceType pieceType, Color color) {
+  int multiplier = color == WHITE ? 1 : -1;
+  return (SquareContents)((int)pieceType * multiplier);
+}
+
 Color ColorFromChar(char color) {
   if (color == 'w') return WHITE;
   else if (color == 'b') return BLACK;

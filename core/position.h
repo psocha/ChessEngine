@@ -10,10 +10,10 @@
 namespace core {
 
 struct CastlesAllowed {
-  bool whiteKingside = true;
-  bool whiteQueenside = true;
-  bool blackKingside = true;
-  bool blackQueenside = true;
+  bool white_kingside = true;
+  bool white_queenside = true;
+  bool black_kingside = true;
+  bool black_queenside = true;
 };
 
 class Position {

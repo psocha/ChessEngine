@@ -1,5 +1,5 @@
-#ifndef INTEGRATION_TESTS_H__
-#define INTEGRATION_TESTS_H__
+#ifndef LEGAL_MOVE_TESTS_H__
+#define LEGAL_MOVE_TESTS_H__
 
 #include <string>
 #include <vector>
@@ -23,7 +23,7 @@ struct LegalMoveTestResult {
   int false_positives = 0;
 };
 
-void RunIntegrationTests();
+bool RunLegalMoveTests();
 
 LegalMoveTestResult PerformTest(LegalMoveTest test);
 

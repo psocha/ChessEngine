@@ -1,4 +1,5 @@
-#include "integration_tests.h"
+#include "legal_move_tests.h"
+#include "test_main.h"
 #include "../core/board.h"
 
 #include <algorithm>
@@ -7,9 +8,7 @@
 
 namespace test {
 
-const std::string STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-void RunIntegrationTests() {
+bool RunLegalMoveTests() {
   std::vector<LegalMoveTest> tests;
 
   LegalMoveTest start_pos_test("starting position");
@@ -17,10 +16,11 @@ void RunIntegrationTests() {
   start_pos_test.legal_moves = { "a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3", "d2d4",
     "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4", "h2h3", "h2h4", "b1a3", "b1c3", "g1f3", "g1h3" };
   tests.push_back(start_pos_test);
-  
+
   LegalMoveTest najdorf_test("Najdorf Sicilian");
   najdorf_test.fen = STARTPOS;
   najdorf_test.moves = { "e2e4", "c7c5", "g1f3", "d7d6", "d2d4", "c5d4", "f3d4", "g8f6", "b1c3", "a7a6" };
+  najdorf_test.moves = { "e2e4" };
   najdorf_test.legal_moves = { "a2a3", "a2a4", "b2b3", "b2b4", "e4e5", "f2f3", "f2f4", "g2g3", "g2g4",
     "h2h3", "h2h4", "a1b1", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "d1d2", "d1d3", "d1e2", "d1f3",
     "d1g4", "d1h5", "e1d2", "e1e2", "f1e2", "f1d3", "f1c4", "f1b5", "f1a6", "h1g1" };
@@ -230,29 +230,20 @@ void RunIntegrationTests() {
   }
   
   std::cout << "--------------------------------------------------------------------\n";
-  std::cout << "TEST SUMMARY\n";
+  std::cout << "LEGAL MOVE TEST SUMMARY\n";
   std::cout << positions_passed << " of " << positions_passed + positions_failed << " positions passed\n";
   std::cout << aggregate.correct << " moves correct\n";
   std::cout << aggregate.omissions << " moves omitted\n";
   std::cout << aggregate.false_positives << " illegal moves\n";
+  
+  return (aggregate.omissions == 0 && aggregate.false_positives == 0);
 }
 
 LegalMoveTestResult PerformTest(LegalMoveTest test) {
   std::cout << "Testing " << test.test_name << std::endl;
   LegalMoveTestResult result;
 
-  core::Board board;
-
-  std::istringstream fen_parser(test.fen);
-  std::string position, active_color, castle, en_passant, halfmove_clock, fullmove_number;
-  fen_parser >> position;
-  fen_parser >> active_color;
-  fen_parser >> castle;
-  fen_parser >> en_passant;
-  fen_parser >> halfmove_clock;
-  fen_parser >> fullmove_number;
-
-  board.LoadFromFen(position, active_color, castle, en_passant, halfmove_clock, fullmove_number);
+  core::Board board = TestHelper::CreateBoardFromFen(test.fen);
 
   for (std::string move : test.moves) {
     board.LoadMove(move);

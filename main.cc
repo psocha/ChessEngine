@@ -1,6 +1,6 @@
 #include "ai/random_ai.h"
 #include "core/board.h"
-#include "test/integration_tests.h"
+#include "test/test_main.h"
 
 #include <iostream>
 #include <sstream>
@@ -9,8 +9,8 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  if (argc > 1 && string(argv[1]) == "--test") {
-    test::RunIntegrationTests();
+  if (argc > 1 && string(argv[1]) == "--runtests") {
+    test::RunAllTests();
     return 0;
   }
 

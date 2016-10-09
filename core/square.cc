@@ -23,7 +23,7 @@ Square::Square(string coordinates) {
   }
 
   is_real_square = true;
-  rank = coordinates[1] - '0';
+  rank = coordinates[1] - '0' - 1;
   file = (int)((char)coordinates[0] - (char)'a');
 }
 
@@ -33,8 +33,8 @@ string Square::ToString() const {
   }
 
   string square_representation;
-  square_representation += std::to_string(file + (int)'a');
-  square_representation += std::to_string(rank);
+  square_representation += (char)(file + (int)'a');
+  square_representation += std::to_string(rank + 1);
 
   return square_representation;
 }

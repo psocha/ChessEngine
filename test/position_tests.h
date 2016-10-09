@@ -6,6 +6,10 @@ namespace test {
 bool RunAllPositionTests();
 
 void TestSimpleSquaresAndMoves();
+void TestCastlingPerformance();
+void TestCastlingCancellation();
+void TestEnPassant();
+void TestPromotion();
 
 }
 

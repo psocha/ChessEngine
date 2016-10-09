@@ -146,6 +146,10 @@ void Position::SetCastle(std::string castle) {
   castles_allowed.black_queenside = castle.find('q') != string::npos;
 }
 
+CastlesAllowed Position::GetCastle() const {
+  return castles_allowed;
+}
+
 void Position::SetEnPassant(std::string en_passant) {
   en_passant_square = Square(en_passant);
 }

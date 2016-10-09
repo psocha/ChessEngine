@@ -20,7 +20,6 @@ bool RunLegalMoveTests() {
   LegalMoveTest najdorf_test("Najdorf Sicilian");
   najdorf_test.fen = STARTPOS;
   najdorf_test.moves = { "e2e4", "c7c5", "g1f3", "d7d6", "d2d4", "c5d4", "f3d4", "g8f6", "b1c3", "a7a6" };
-  najdorf_test.moves = { "e2e4" };
   najdorf_test.legal_moves = { "a2a3", "a2a4", "b2b3", "b2b4", "e4e5", "f2f3", "f2f4", "g2g3", "g2g4",
     "h2h3", "h2h4", "a1b1", "c1d2", "c1e3", "c1f4", "c1g5", "c1h6", "d1d2", "d1d3", "d1e2", "d1f3",
     "d1g4", "d1h5", "e1d2", "e1e2", "f1e2", "f1d3", "f1c4", "f1b5", "f1a6", "h1g1" };

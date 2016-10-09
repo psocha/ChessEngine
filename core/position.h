@@ -31,6 +31,7 @@ public:
   Color GetActiveColor() const;
   
   void SetCastle(std::string castle);
+  CastlesAllowed GetCastle() const;
   
   void SetEnPassant(std::string en_passant);
   Square GetEnPassant() const;

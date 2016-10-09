@@ -2,6 +2,8 @@
 #define TEST_MAIN_H__
 
 #include "../core/Board.h"
+#include "../core/Pieces.h"
+#include "../core/Position.h"
 
 #include <string>
 
@@ -24,6 +26,10 @@ class TestHelper {
  public:
   static core::Board CreateBoardFromFen(std::string fen);
  
+  static void AssertTrue(bool condition, std::string failure_message);
+  static void AssertFalse(bool condition, std::string failure_message);
+  
+  static void AssertContentsAt(core::Position position, std::string square, core::SquareContents expected_contents, std::string failure_message);
   static void AssertEqual(int actual, int expected, std::string failure_message);
   static void AssertEqual(std::string actual, std::string expected, std::string failure_message);
 };

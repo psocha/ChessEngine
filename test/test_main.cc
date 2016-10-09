@@ -48,6 +48,21 @@ core::Board TestHelper::CreateBoardFromFen(string fen) {
   return board;
 }
 
+void TestHelper::AssertTrue(bool condition, string message) {
+  if (!condition) {
+    throw FailingTestException("Failure: " + message + ": assertion failed");
+  }
+}
+
+void TestHelper::AssertFalse(bool condition, string message) {
+  TestHelper::AssertTrue(!condition, message);
+}
+
+void TestHelper::AssertContentsAt(core::Position position, string square,
+    core::SquareContents expected_contents, std::string failure_message) {
+  TestHelper::AssertEqual((int)position.ContentsAt(core::Square(square)), (int)expected_contents, failure_message);
+}
+
 void TestHelper::AssertEqual(int actual, int expected, string message) {
   if (expected != actual) {
     throw FailingTestException("Failure: " + message + ": expected " +

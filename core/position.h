@@ -27,7 +27,7 @@ public:
   
   void PerformMove(std::string move);
   
-  void SetActiveColor(std::string active_color);
+  void SetActiveColor(std::string color_marker);
   Color GetActiveColor() const;
   
   void SetCastle(std::string castle);

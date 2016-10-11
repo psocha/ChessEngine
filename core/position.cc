@@ -55,34 +55,9 @@ void Position::PerformMove(std::string mv) {
   chessboard.at(move.start_square.rank + 2).at(move.start_square.file + 2) = EMPTY;
   chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) = moving_piece;
   
-  if (PieceType(moving_piece) == PAWN && move.promoted_piece != NULL_PIECE) {
+  if (GetPieceType(moving_piece) == PAWN && move.promoted_piece != NULL_PIECE) {
     chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) =
       MakePiece(move.promoted_piece, this->active_color);
-  }
-  
-  if (moving_piece == KING_W && move.ToString() == "e1g1") {
-    chessboard[0 + 2][7 + 2] = EMPTY;
-    chessboard[0 + 2][5 + 2] = ROOK_W;
-    castles_allowed.white_kingside = false;
-    castles_allowed.white_queenside = false;
-  }
-  if (moving_piece == KING_W && move.ToString() == "e1c1") {
-    chessboard[0 + 2][0 + 2] = EMPTY;
-    chessboard[0 + 2][3 + 2] = ROOK_W;
-    castles_allowed.white_kingside = false;
-    castles_allowed.white_queenside = false;
-  }
-  if (moving_piece == KING_B && move.ToString() == "e8g8") {
-    chessboard[7 + 2][7 + 2] = EMPTY;
-    chessboard[7 + 2][5 + 2] = ROOK_B;
-    castles_allowed.black_kingside = false;
-    castles_allowed.black_queenside = false;
-  }
-  if (moving_piece == KING_B && move.ToString() == "e8c8") {
-    chessboard[7 + 2][0 + 2] = EMPTY;
-    chessboard[7 + 2][3 + 2] = ROOK_B;
-    castles_allowed.black_kingside = false;
-    castles_allowed.black_queenside = false;
   }
   
   if (moving_piece == KING_W) {
@@ -94,20 +69,37 @@ void Position::PerformMove(std::string mv) {
     castles_allowed.black_queenside = false;
   }
   
-  if (moving_piece == ROOK_W && move.start_square == Square("h1")) {
+  if (moving_piece == KING_W && move.ToString() == "e1g1") {
+    chessboard[0 + 2][7 + 2] = EMPTY;
+    chessboard[0 + 2][5 + 2] = ROOK_W;
+  }
+  if (moving_piece == KING_W && move.ToString() == "e1c1") {
+    chessboard[0 + 2][0 + 2] = EMPTY;
+    chessboard[0 + 2][3 + 2] = ROOK_W;
+  }
+  if (moving_piece == KING_B && move.ToString() == "e8g8") {
+    chessboard[7 + 2][7 + 2] = EMPTY;
+    chessboard[7 + 2][5 + 2] = ROOK_B;
+  }
+  if (moving_piece == KING_B && move.ToString() == "e8c8") {
+    chessboard[7 + 2][0 + 2] = EMPTY;
+    chessboard[7 + 2][3 + 2] = ROOK_B;
+  }
+  
+  if (move.start_square == Square("h1") || move.end_square == Square("h1")) {
     castles_allowed.white_kingside = false;
   }
-  if (moving_piece == ROOK_W && move.start_square == Square("a1")) {
+  if (move.start_square == Square("a1") || move.end_square == Square("a1")) {
     castles_allowed.white_queenside = false;
   }
-  if (moving_piece == ROOK_B && move.start_square == Square("h8")) {
+  if (move.start_square == Square("h8") || move.end_square == Square("h8")) {
     castles_allowed.black_kingside = false;
   }
-  if (moving_piece == ROOK_B && move.start_square == Square("a8")) {
+  if (move.start_square == Square("a8") || move.end_square == Square("a8")) {
     castles_allowed.black_queenside = false;
   }
   
-  if (PieceType(moving_piece) == PAWN && move.end_square == this->en_passant_square) {
+  if (GetPieceType(moving_piece) == PAWN && move.end_square == this->en_passant_square) {
     if (active_color == WHITE) {
       chessboard[2 + en_passant_square.rank - 1][2 + en_passant_square.file] = EMPTY;
     } else {
@@ -131,8 +123,8 @@ void Position::PerformMove(std::string mv) {
   }
 }
 
-void Position::SetActiveColor(std::string active_color) {
-  active_color = ColorFromChar(active_color.at(0));
+void Position::SetActiveColor(std::string color_marker) {
+  active_color = ColorFromChar(color_marker.at(0));
 }
 
 Color Position::GetActiveColor() const {

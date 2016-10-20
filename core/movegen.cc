@@ -39,27 +39,124 @@ set<Move> MoveGen::AllPseudolegalMoves() {
         } else if (piece_type == QUEEN) {
           set<Move> diagonal_moves = GetDiagonalMoves(square, false);
           set<Move> orthogonal_moves = GetOrthogonalMoves(square, false);
-          //std::merge(diagonal_moves.begin(), diagonal_moves.end(),
-            //orthogonal_moves.begin(), orthogonal_moves.end(), square_moves.begin());
+          for (Move move : diagonal_moves) {
+            square_moves.insert(move);
+          }
+          for (Move move : orthogonal_moves) {
+            square_moves.insert(move);
+          }
         } else if (piece_type == KING) {
           set<Move> diagonal_moves = GetDiagonalMoves(square, true);
           set<Move> orthogonal_moves = GetOrthogonalMoves(square, true);
-          //std::merge(diagonal_moves.begin(), diagonal_moves.end(),
-            //orthogonal_moves.begin(), orthogonal_moves.end(), square_moves.begin());
+          for (Move move : diagonal_moves) {
+            square_moves.insert(move);
+          }
+          for (Move move : orthogonal_moves) {
+            square_moves.insert(move);
+          }
         }
-        
         pseudolegal_moves.insert(square_moves.begin(), square_moves.end());
       }
     }
   }
-
   return pseudolegal_moves;
 }
 
 set<Move> MoveGen::GetPawnMoves(Square square) {
   set<Move> moves;
   Color color = position.GetActiveColor();
+
+  bool is_second_rank = square.rank == 1;
+  bool is_seventh_rank = square.rank == 6;
   
+  bool is_promotion = (color == WHITE && is_seventh_rank) ||
+    (color == BLACK && is_second_rank);
+  
+  Square one_ahead, two_ahead, capture_left, capture_right;
+  bool one_ahead_valid = true, two_ahead_valid = true,
+    capture_left_valid = true, capture_right_valid = true;
+  if (color == WHITE) {
+    one_ahead = Square(square.rank + 1, square.file);
+    two_ahead = Square(square.rank + 2, square.file);
+    capture_left = Square(square.rank + 1, square.file - 1);
+    capture_right = Square(square.rank + 1, square.file + 1);
+  } else {
+    one_ahead = Square(square.rank - 1, square.file);
+    two_ahead = Square(square.rank - 2, square.file);
+    capture_left = Square(square.rank - 1, square.file - 1);
+    capture_right = Square(square.rank - 1, square.file + 1);
+  }
+
+  if (!IsValidDestSquare(one_ahead, color)) {
+    one_ahead_valid = false;
+    two_ahead_valid = false;
+  }
+  if (!IsValidDestSquare(two_ahead, color)) {
+    two_ahead_valid = false;
+  }
+  if (!IsValidDestSquare(capture_left, color)) {
+    capture_left_valid = false;
+  }
+  if (!IsValidDestSquare(capture_right, color)) {
+    capture_right_valid = false;
+  }
+  
+  if (color == WHITE && !is_second_rank) {
+    two_ahead_valid = false;
+  }
+  if (color == BLACK && !is_seventh_rank) {
+    two_ahead_valid = false;
+  }
+  
+  if (IsCaptureSquare(one_ahead, color)) {
+    one_ahead_valid = false;
+    two_ahead_valid = false;
+  }
+  if (IsCaptureSquare(two_ahead, color)) {
+    two_ahead_valid = false;
+  }
+  
+  if (!IsCaptureSquare(capture_left, color)) {
+    capture_left_valid = false;
+  }
+  if (!IsCaptureSquare(capture_right, color)) {
+    capture_right_valid = false;
+  }
+ 
+  if (one_ahead_valid) {
+    if (is_promotion) {
+      set<Move> promotions = GetPromotionMoves(square, one_ahead);
+      for (Move promotion : promotions) {
+        moves.insert(promotion);
+      }
+    } else {
+      moves.insert(Move(square, one_ahead, position));
+    }
+  }
+  if (two_ahead_valid) {
+    moves.insert(Move(square, two_ahead, position));
+  }
+  if (capture_left_valid) {
+    if (is_promotion) {
+      set<Move> promotions = GetPromotionMoves(square, capture_left);
+      for (Move promotion : promotions) {
+        moves.insert(promotion);
+      }
+    } else {
+      moves.insert(Move(square, capture_left, position));
+    }
+  }
+  if (capture_right_valid) {
+    if (is_promotion) {
+      set<Move> promotions = GetPromotionMoves(square, capture_right);
+      for (Move promotion : promotions) {
+        moves.insert(promotion);
+      }
+    } else {
+      moves.insert(Move(square, capture_right, position));
+    }
+  }
+
   return moves;
 }
 
@@ -81,5 +178,32 @@ set<Move> MoveGen::GetOrthogonalMoves(Square square, bool limit_to_one) {
   return moves;
 }
 
+bool MoveGen::IsValidDestSquare(Square square, Color color) {
+  return square.is_real_square &&
+    ColorOfContents(position.ContentsAt(square)) != color;
 }
 
+bool MoveGen::IsCaptureSquare(Square square, Color color) {
+  if (!square.is_real_square) {
+    return false;
+  } else if (OppositeColors(color, ColorOfContents(position.ContentsAt(square)))) {
+    return true;
+  } else if (square == position.GetEnPassant()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+set<Move> MoveGen::GetPromotionMoves(Square start_square, Square end_square) {
+  set<Move> promotions;
+  
+  promotions.insert(Move(start_square, end_square, position, KNIGHT));
+  promotions.insert(Move(start_square, end_square, position, BISHOP));
+  promotions.insert(Move(start_square, end_square, position, ROOK));
+  promotions.insert(Move(start_square, end_square, position, QUEEN));
+  
+  return promotions;
+}
+
+}

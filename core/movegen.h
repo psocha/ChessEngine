@@ -24,6 +24,11 @@ private:
   std::set<Move> GetKnightMoves(Square square);
   std::set<Move> GetDiagonalMoves(Square square, bool limit_to_one);
   std::set<Move> GetOrthogonalMoves(Square square, bool limit_to_one);
+  
+  bool IsValidDestSquare(Square square, Color color);
+  bool IsCaptureSquare(Square square, Color color);
+  
+  std::set<Move> GetPromotionMoves(Square start_square, Square end_square);
 };
 
 }

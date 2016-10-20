@@ -129,8 +129,8 @@ bool RunLegalMoveTests() {
   LegalMoveTest no_castle_if_blocked_test("no castle if blocked");
   no_castle_if_blocked_test.fen = "r3kb1r/1pqbn1p1/pnp1pp1p/3p4/2PP4/1QN1PN2/PP1BBPPP/3RR1K1 b kq - 0 1";
   no_castle_if_blocked_test.legal_moves = { "a6a5", "a8a7", "a8b8", "a8c8", "a8d8", "b6c4", "b6a4", "b6c8",
-    "c7b8", "c7c8", "c7d8", "c7d6", "c7e5", "c7f4", "c7h3", "c7g2", "d7c8", "d5c4", "e8d8", "e8c8", "e7c8",
-    "e7g8", "e7g6", "e7f5", "e6e5", "f6f5", "g7g6", "g7g5", "h8g8", "h8h7", "h6h5" };
+    "c7b8", "c7c8", "c7d8", "c7d6", "c7e5", "c7f4", "c7g3", "c7h2", "d7c8", "c6c5", "d5c4", "e8d8", "e8c8",
+    "e7c8", "e7g8", "e7g6", "e7f5", "e6e5", "f6f5", "g7g6", "g7g5", "h8g8", "h8h7", "h6h5" };
   tests.push_back(no_castle_if_blocked_test);
   
   LegalMoveTest no_castle_if_king_moves_test("no castle if king moves");

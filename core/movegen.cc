@@ -1,7 +1,9 @@
 #include "movegen.h"
 
 #include <algorithm>
+#include <vector>
 using std::set;
+using std::vector;
 
 namespace core {
 
@@ -161,7 +163,24 @@ set<Move> MoveGen::GetPawnMoves(Square square) {
 }
 
 set<Move> MoveGen::GetKnightMoves(Square square) {
+  vector<Square> dest_squares;
+  dest_squares.push_back(Square(square.rank + 2, square.file + 1));
+  dest_squares.push_back(Square(square.rank + 1, square.file + 2));
+  dest_squares.push_back(Square(square.rank - 1, square.file + 2));
+  dest_squares.push_back(Square(square.rank - 2, square.file + 1));
+  dest_squares.push_back(Square(square.rank - 2, square.file - 1));
+  dest_squares.push_back(Square(square.rank - 1, square.file - 2));
+  dest_squares.push_back(Square(square.rank + 1, square.file - 2));
+  dest_squares.push_back(Square(square.rank + 2, square.file - 1));
+  
+  Color color = position.GetActiveColor();
   set<Move> moves;
+  
+  for (Square dest : dest_squares) {
+    if (IsValidDestSquare(dest, color)) {
+      moves.insert(Move(square, dest, position));
+    }
+  }
   
   return moves;
 }

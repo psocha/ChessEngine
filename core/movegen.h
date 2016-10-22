@@ -26,8 +26,11 @@ private:
   std::set<Move> GetOrthogonalMoves(Square square, bool limit_to_one);
   
   bool IsValidDestSquare(Square square, Color color);
+  bool IsPawnCaptureSquare(Square square, Color color);
   bool IsCaptureSquare(Square square, Color color);
   
+  void AddLineMoves(Square square, int rank_increment, int column_increment,
+                    bool limit_to_one, std::set<Move> *moves);
   std::set<Move> GetPromotionMoves(Square start_square, Square end_square);
 };
 

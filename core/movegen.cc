@@ -56,6 +56,34 @@ set<Move> MoveGen::AllPseudolegalMoves() {
           for (Move move : orthogonal_moves) {
             square_moves.insert(move);
           }
+          
+          if (contents == KING_W && square == Square("e1") &&
+            position.ContentsAt(Square("f1")) == EMPTY && position.ContentsAt(Square("g1")) == EMPTY &&
+            position.ContentsAt(Square("h1")) == ROOK_W && position.GetCastle().white_kingside) {
+            
+            square_moves.insert(Move("e1g1", position));
+          }
+          if (contents == KING_W && square == Square("e1") &&
+            position.ContentsAt(Square("d1")) == EMPTY && position.ContentsAt(Square("c1")) == EMPTY &&
+            position.ContentsAt(Square("b1")) == EMPTY && position.ContentsAt(Square("a1")) == ROOK_W &&
+            position.GetCastle().white_queenside) {
+            
+            square_moves.insert(Move("e1c1", position));
+          }
+          if (contents == KING_B && square == Square("e8") &&
+            position.ContentsAt(Square("f8")) == EMPTY && position.ContentsAt(Square("g8")) == EMPTY &&
+            position.ContentsAt(Square("h8")) == ROOK_B && position.GetCastle().black_kingside) {
+            
+            square_moves.insert(Move("e8g8", position));
+          }
+          if (contents == KING_B && square == Square("e8") &&
+            position.ContentsAt(Square("d8")) == EMPTY && position.ContentsAt(Square("c8")) == EMPTY &&
+            position.ContentsAt(Square("b8")) == EMPTY && position.ContentsAt(Square("a8")) == ROOK_B &&
+            position.GetCastle().black_queenside) {
+            
+            square_moves.insert(Move("e8c8", position));
+          }
+          
         }
         pseudolegal_moves.insert(square_moves.begin(), square_moves.end());
       }
@@ -110,18 +138,18 @@ set<Move> MoveGen::GetPawnMoves(Square square) {
     two_ahead_valid = false;
   }
   
-  if (IsCaptureSquare(one_ahead, color)) {
+  if (IsPawnCaptureSquare(one_ahead, color)) {
     one_ahead_valid = false;
     two_ahead_valid = false;
   }
-  if (IsCaptureSquare(two_ahead, color)) {
+  if (IsPawnCaptureSquare(two_ahead, color)) {
     two_ahead_valid = false;
   }
   
-  if (!IsCaptureSquare(capture_left, color)) {
+  if (!IsPawnCaptureSquare(capture_left, color)) {
     capture_left_valid = false;
   }
-  if (!IsCaptureSquare(capture_right, color)) {
+  if (!IsPawnCaptureSquare(capture_right, color)) {
     capture_right_valid = false;
   }
  
@@ -188,13 +216,46 @@ set<Move> MoveGen::GetKnightMoves(Square square) {
 set<Move> MoveGen::GetDiagonalMoves(Square square, bool limit_to_one) {
   set<Move> moves;
   
+  AddLineMoves(square, 1, 1, limit_to_one, &moves);
+  AddLineMoves(square, 1, -1, limit_to_one, &moves);
+  AddLineMoves(square, -1, -1, limit_to_one, &moves);
+  AddLineMoves(square, -1, 1, limit_to_one, &moves);
+  
   return moves;
 }
 
 set<Move> MoveGen::GetOrthogonalMoves(Square square, bool limit_to_one) {
   set<Move> moves;
   
+  AddLineMoves(square, 1, 0, limit_to_one, &moves);
+  AddLineMoves(square, 0, -1, limit_to_one, &moves);
+  AddLineMoves(square, -1, 0, limit_to_one, &moves);
+  AddLineMoves(square, 0, 1, limit_to_one, &moves);
+  
   return moves;
+}
+
+void MoveGen::AddLineMoves(Square square, int rank_increment, int file_increment,
+                           bool limit_to_one, set<Move> *moves) {
+  Color color = position.GetActiveColor();
+  Square dest_square = square;
+  bool search_onward = true;
+  while (search_onward) {
+    dest_square = Square(dest_square.rank + rank_increment,
+                         dest_square.file + file_increment);
+    if (IsValidDestSquare(dest_square, color)) {
+      moves->insert(Move(square, dest_square, position));
+      if (IsCaptureSquare(dest_square, color)) {
+        search_onward = false;
+      }
+    } else {
+      search_onward = false;
+    }
+    
+    if (limit_to_one) {
+      search_onward = false;
+    }
+  }
 }
 
 bool MoveGen::IsValidDestSquare(Square square, Color color) {
@@ -203,6 +264,16 @@ bool MoveGen::IsValidDestSquare(Square square, Color color) {
 }
 
 bool MoveGen::IsCaptureSquare(Square square, Color color) {
+    if (!square.is_real_square) {
+    return false;
+  } else if (OppositeColors(color, ColorOfContents(position.ContentsAt(square)))) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool MoveGen::IsPawnCaptureSquare(Square square, Color color) {
   if (!square.is_real_square) {
     return false;
   } else if (OppositeColors(color, ColorOfContents(position.ContentsAt(square)))) {

@@ -42,7 +42,7 @@ bool RunLegalMoveTests() {
   LegalMoveTest bishop_test("bishops");
   bishop_test.fen = "k7/4pp2/8/8/2b4b/8/PPPPPPPP/K7 b - - 0 1";
   bishop_test.legal_moves = { "a8a7", "a8b7", "a8b8", "e7e6", "e7e5", "f7f6", "f7f5", "c4b5", "c4a6", "c4d5", 
-    "c4e6", "c4d3", "c4e2", "c4b3", "c4a2", "h4g5", "h4f6", "h3g3", "h4f2" };
+    "c4e6", "c4d3", "c4e2", "c4b3", "c4a2", "h4g5", "h4f6", "h4g3", "h4f2" };
   tests.push_back(bishop_test);
   
   LegalMoveTest queen_test("queens");
@@ -131,7 +131,7 @@ bool RunLegalMoveTests() {
   no_castle_if_blocked_test.fen = "r3kb1r/1pqbn1p1/pnp1pp1p/3p4/2PP4/1QN1PN2/PP1BBPPP/3RR1K1 b kq - 0 1";
   no_castle_if_blocked_test.legal_moves = { "a6a5", "a8a7", "a8b8", "a8c8", "a8d8", "b6c4", "b6a4", "b6c8",
     "c7b8", "c7c8", "c7d8", "c7d6", "c7e5", "c7f4", "c7g3", "c7h2", "d7c8", "c6c5", "d5c4", "e8d8", "e8c8",
-    "e7c8", "e7g8", "e7g6", "e7f5", "e6e5", "f6f5", "g7g6", "g7g5", "h8g8", "h8h7", "h6h5" };
+    "e8f7", "e7c8", "e7g8", "e7g6", "e7f5", "e6e5", "f6f5", "g7g6", "g7g5", "h8g8", "h8h7", "h6h5" };
   tests.push_back(no_castle_if_blocked_test);
   
   LegalMoveTest no_castle_if_king_moves_test("no castle if king moves");
@@ -202,7 +202,7 @@ bool RunLegalMoveTests() {
   deep_blue_test.legal_moves = { "a7a6", "a7a5", "b5c4", "b5b4", "f5f4", "g7g6", "g7g5", "h6h5", "a8b8",
     "c8b8", "c8b7", "c8c7", "c8d8", "c6b7", "d7b8", "d7b6", "d7c5", "d7e5", "d7f6", "d7f8", "d5c7", "d5b6",
     "d5b4", "d5c3", "d5e3", "d5f4", "d5f6", "e7d8", "e7f8", "e7f6", "e7g5", "e7h4", "e7d6", "e7c5", "e7b4",
-    "e7a3" };
+    "e7a3", "h8h7", "h8g8", "h8f8", "h8e8", "h8d8" };
   tests.push_back(deep_blue_test);
   
   LegalMoveTest byrne_fischer_test("byrne fischer");

@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
   cout.setf(ios::unitbuf);
 
   core::Board *board = new core::Board();
-  ai::RandomAI random_ai(board);
+  ai::RandomAI random_ai;
 
   while (getline(cin, line)) {
     if (line == "uci") {
@@ -54,7 +54,8 @@ int main(int argc, char* argv[]) {
       }
     }
     else if (line.substr(0, 3) == "go ") {
-      string best_move = random_ai.BestMove();
+      core::Position current_position = board->GetPosition();
+      string best_move = random_ai.BestMove(current_position);
       cout << "bestmove " << best_move << endl;
     }
     else if (line == "quit") {
@@ -66,4 +67,3 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
-

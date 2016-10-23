@@ -8,12 +8,10 @@ namespace core {
 
 Board::Board() {
   position = new Position();
-  move_generator = new MoveGen();
 }
 
 Board::~Board() {
   delete position;
-  delete move_generator;
 }
 
 void Board::LoadStartPos() {
@@ -33,7 +31,7 @@ void Board::LoadMove(string move) {
 }
 
 std::set<string> Board::GetLegalMoves() {
-  set<Move> legal_moves = move_generator->AllLegalMoves(*position);
+  set<Move> legal_moves = MoveGen::AllLegalMoves(*position);
   set<string> moves_as_strings;
 
   for (Move move : legal_moves) {
@@ -52,4 +50,3 @@ void Board::Print() {
 }
 
 }
-

@@ -8,10 +8,9 @@ namespace ai {
 
 class RandomAI : public ChessAI {
  public:
-  RandomAI(core::Board *board);
+  RandomAI();
 
-  std::string BestMove();
-
+  std::string BestMove(core::Position position);
 };
 
 }

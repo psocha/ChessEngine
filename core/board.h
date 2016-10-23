@@ -30,7 +30,6 @@ public:
   
 private:
   Position *position;
-  MoveGen *move_generator;
 };
 
 }

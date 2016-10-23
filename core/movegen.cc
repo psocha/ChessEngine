@@ -6,13 +6,13 @@ using std::set;
 using std::vector;
 
 namespace core {
+  
+Position MoveGen::position = Position();
 
 MoveGen::MoveGen() {}
 
-MoveGen::~MoveGen() {}
-
 set<Move> MoveGen::AllLegalMoves(Position position) {
-  this->position = position;
+  MoveGen::position = position;
   
   set<Move> legal_moves = AllPseudolegalMoves();
   PruneCheckMoves(&legal_moves);

@@ -13,7 +13,9 @@ MoveGen::~MoveGen() {}
 
 set<Move> MoveGen::AllLegalMoves(Position position) {
   this->position = position;
+  
   set<Move> legal_moves = AllPseudolegalMoves();
+  PruneCheckMoves(&legal_moves);
 
   return legal_moves;
 }
@@ -90,6 +92,82 @@ set<Move> MoveGen::AllPseudolegalMoves() {
     }
   }
   return pseudolegal_moves;
+}
+
+void MoveGen::PruneCheckMoves(set<Move> *legal_moves) {
+  Color color = position.GetActiveColor();
+  Position after_move;
+  
+  for (set<Move>::iterator it = legal_moves->begin(); it != legal_moves->end(); ) {
+    Move move = *it;
+    after_move = position;
+    after_move.PerformMove(move.ToString());
+    
+    vector<Square> king_squares;
+    king_squares.push_back(after_move.FindKing(color));
+    
+    if (move.is_castle && move.ToString() == "e1g1") {
+      king_squares.push_back(Square("e1"));
+      king_squares.push_back(Square("f1"));
+    }
+    if (move.is_castle && move.ToString() == "e1c1") {
+      king_squares.push_back(Square("e1"));
+      king_squares.push_back(Square("d1"));
+    }
+    if (move.is_castle && move.ToString() == "e8g8") {
+      king_squares.push_back(Square("e8"));
+      king_squares.push_back(Square("f8"));
+    }
+    if (move.is_castle && move.ToString() == "e8c8") {
+      king_squares.push_back(Square("e8"));
+      king_squares.push_back(Square("d8"));
+    }
+    
+    if (IsInCheck(after_move, king_squares, color)) {
+      it = legal_moves->erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
+bool MoveGen::IsInCheck(Position after_move,vector<Square> king_squares, Color color) {
+  for (Square king_square : king_squares) {
+    
+    SquareContents enemy_knight = MakePiece(KNIGHT, after_move.GetActiveColor());
+    vector<Square> knight_attack_squares = GetKnightSquares(king_square);
+    for (Square knight_square : knight_attack_squares) {
+      if (knight_square.is_real_square && after_move.ContentsAt(knight_square) == enemy_knight) {
+        return true;
+      }
+    }
+    
+    vector<Square> line_endings;
+    line_endings.push_back(LineEndingSquare(after_move, king_square, 1, 0));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, 1, 1));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, 0, 1));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, -1, 1));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, -1, 0));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, -1, -1));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, 0, -1));
+    line_endings.push_back(LineEndingSquare(after_move, king_square, 1, -1));
+    
+    for (Square line_ending : line_endings) {
+      if (!line_ending.is_real_square) {
+        continue;
+      }
+      SquareContents line_ending_contents = after_move.ContentsAt(line_ending);
+      if (ColorOfContents(line_ending_contents) == color) {
+        continue;
+      }
+      
+      if (CanAttack(line_ending_contents, line_ending, king_square)) {
+        return true;
+      }
+    }
+    
+  }
+  return false;
 }
 
 set<Move> MoveGen::GetPawnMoves(Square square) {
@@ -191,15 +269,7 @@ set<Move> MoveGen::GetPawnMoves(Square square) {
 }
 
 set<Move> MoveGen::GetKnightMoves(Square square) {
-  vector<Square> dest_squares;
-  dest_squares.push_back(Square(square.rank + 2, square.file + 1));
-  dest_squares.push_back(Square(square.rank + 1, square.file + 2));
-  dest_squares.push_back(Square(square.rank - 1, square.file + 2));
-  dest_squares.push_back(Square(square.rank - 2, square.file + 1));
-  dest_squares.push_back(Square(square.rank - 2, square.file - 1));
-  dest_squares.push_back(Square(square.rank - 1, square.file - 2));
-  dest_squares.push_back(Square(square.rank + 1, square.file - 2));
-  dest_squares.push_back(Square(square.rank + 2, square.file - 1));
+  vector<Square> dest_squares = GetKnightSquares(square);
   
   Color color = position.GetActiveColor();
   set<Move> moves;
@@ -258,6 +328,43 @@ void MoveGen::AddLineMoves(Square square, int rank_increment, int file_increment
   }
 }
 
+Square MoveGen::LineEndingSquare(Position after_move, Square start_square,
+                                 int rank_increment, int file_increment) {
+  Square next_square = Square(start_square.rank + rank_increment,
+    start_square.file + file_increment);
+  while (next_square.is_real_square && after_move.ContentsAt(next_square) == EMPTY) {
+    next_square = Square(next_square.rank + rank_increment, next_square.file + file_increment);
+  }
+  return next_square;
+}
+
+// Assumes all in-between squares are empty.
+bool MoveGen::CanAttack(SquareContents source_contents, Square source_square, Square dest_square) {
+  if (source_contents == PAWN_W) {
+    Square capture_left = Square(source_square.rank + 1, source_square.file - 1);
+    Square capture_right = Square(source_square.rank + 1, source_square.file + 1);
+    return (dest_square == capture_left || dest_square == capture_right);
+  }
+  if (source_contents == PAWN_B) {
+    Square capture_left = Square(source_square.rank - 1, source_square.file - 1);
+    Square capture_right = Square(source_square.rank - 1, source_square.file + 1);
+    return (dest_square == capture_left || dest_square == capture_right);
+  }
+  
+  PieceType attacking_piece = GetPieceType(source_contents);
+  if (attacking_piece == KING) {
+    return SquareDistance(source_square, dest_square) <= 1;
+  } else if (attacking_piece == BISHOP) {
+    return SquaresAreDiagonal(source_square, dest_square);
+  } else if (attacking_piece == ROOK) {
+    return SquaresAreOrthogonal(source_square, dest_square);
+  } else if (attacking_piece == QUEEN) {
+    return SquaresAreDiagonal(source_square, dest_square) ||
+      SquaresAreOrthogonal(source_square, dest_square);
+  }
+  return false;
+}
+
 bool MoveGen::IsValidDestSquare(Square square, Color color) {
   return square.is_real_square &&
     ColorOfContents(position.ContentsAt(square)) != color;
@@ -283,6 +390,20 @@ bool MoveGen::IsPawnCaptureSquare(Square square, Color color) {
   } else {
     return false;
   }
+}
+
+vector<Square> MoveGen::GetKnightSquares(Square square) {
+  vector<Square> dest_squares;
+  dest_squares.push_back(Square(square.rank + 2, square.file + 1));
+  dest_squares.push_back(Square(square.rank + 1, square.file + 2));
+  dest_squares.push_back(Square(square.rank - 1, square.file + 2));
+  dest_squares.push_back(Square(square.rank - 2, square.file + 1));
+  dest_squares.push_back(Square(square.rank - 2, square.file - 1));
+  dest_squares.push_back(Square(square.rank - 1, square.file - 2));
+  dest_squares.push_back(Square(square.rank + 1, square.file - 2));
+  dest_squares.push_back(Square(square.rank + 2, square.file - 1));
+  
+  return dest_squares;
 }
 
 set<Move> MoveGen::GetPromotionMoves(Square start_square, Square end_square) {

@@ -1,5 +1,6 @@
 #include "square.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <string>
 using std::string;
@@ -44,6 +45,30 @@ bool operator==(const Square& first, const Square& second) {
     return false;
   }
   return first.rank == second.rank && first.file == second.file;
+}
+
+int SquareDistance(Square first, Square second) {
+  int rank_distance = std::abs(second.rank - first.rank);
+  int file_distance = std::abs(second.file - first.file);
+  
+  return std::max(rank_distance, file_distance);
+}
+
+bool SquaresAreOrthogonal(Square first, Square second) {
+  if (!first.is_real_square || !second.is_real_square) {
+    return false;
+  }
+  return (first.rank == second.rank || first.file == second.file);
+}
+
+bool SquaresAreDiagonal(Square first, Square second) {
+  if (!first.is_real_square || !second.is_real_square) {
+    return false;
+  }
+  
+  int rank_distance = std::abs(second.rank - first.rank);
+  int file_distance = std::abs(second.file - first.file);
+  return rank_distance == file_distance;
 }
 
 }

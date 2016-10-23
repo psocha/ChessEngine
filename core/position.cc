@@ -154,12 +154,25 @@ SquareContents Position::ContentsAt(Square square) const {
   return chessboard.at(square.rank + 2).at(square.file + 2);
 }
 
+Square Position::FindKing(Color color) const {
+  SquareContents target = MakePiece(KING, color);
+  for (int rank = 0; rank < 8; rank++) {
+    for (int file = 0; file < 8; file++) {
+      Square square = Square(rank, file);
+      if (this->ContentsAt(square) == target) {
+        return square;
+      }
+    }
+  }
+  return Square("-");
+}
+
 void Position::InitializeEmptyBoard() {
   for (int i = 0; i < 12; i++) {
     chessboard.push_back(vector<SquareContents>(12));
     for (int j = 0; j < 12; j++) {
       chessboard[i][j] = EMPTY;
-	}
+    }
   }
 
   for (int i = 0; i < 12; i++) {

@@ -37,6 +37,8 @@ public:
   Square GetEnPassant() const;
   
   SquareContents ContentsAt(Square square) const;
+  
+  Square FindKing(Color color) const;
 
 private:
   std::vector<std::vector<SquareContents>> chessboard;

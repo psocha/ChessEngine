@@ -200,8 +200,8 @@ bool RunLegalMoveTests() {
   LegalMoveTest deep_blue_test("deep blue");
   deep_blue_test.fen = "r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1 b - - 0 1";
   deep_blue_test.legal_moves = { "a7a6", "a7a5", "b5c4", "b5b4", "f5f4", "g7g6", "g7g5", "h6h5", "a8b8",
-    "c8b8", "c8b7", "c8c7", "c8d8", "c6b7", "d7b8", "d7b6", "d7c5", "d7e5", "d7f6", "d7f8", "d5c7", "d5b6",
-    "d5b4", "d5c3", "d5e3", "d5f4", "d5f6", "e7d8", "e7f8", "e7f6", "e7g5", "e7h4", "e7d6", "e7c5", "e7b4",
+    "c8b7", "c8d8", "c6b7", "d7b8", "d7b6", "d7c5", "d7e5", "d7f6", "d7f8", "d5c7", "d5b6", "d5b4",
+    "d5c3", "d5e3", "d5f4", "d5f6", "e7d8", "e7f8", "e7f6", "e7g5", "e7h4", "e7d6", "e7c5", "e7b4",
     "e7a3", "h8h7", "h8g8", "h8f8", "h8e8", "h8d8" };
   tests.push_back(deep_blue_test);
   

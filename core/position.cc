@@ -26,6 +26,8 @@ void Position::Print() {
 }
 
 void Position::LoadFromFen(string fen) {
+  InitializeEmptyBoard();
+  
   int rank = 9;
   int file = 2;
   for (unsigned int i = 0; i < fen.length(); i++) {

@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -g -std=c++11 -Wall -MMD
 
-OBJECTS = main.o test/test_main.o test/position_tests.o test/legal_move_tests.o core/pieces.o core/board.o core/square.o core/move.o core/position.o core/movegen.o ai/random_ai.o
+OBJECTS = main.o test/test_main.o test/position_tests.o test/legal_move_tests.o core/pieces.o core/board.o core/square.o core/move.o core/position.o core/movegen.o ai/random_ai.o ai/ai_util.o
 EXEC = random.exe
 DEPENDS = ${OBJECTS:.o=.d}
 EXECS = ${EXEC}
@@ -22,4 +22,4 @@ ${OBJECTS} : ${MAKEFILE_NAME}						# OPTIONAL : changes to this file => recompil
 -include ${DEPENDS}							# include *.d files containing program dependences
 
 clean :									# remove files that can be regenerated
-	rm -f *.d *.o core/*.d core/*.o test/*.d test/*.o ${EXECS}
+	rm -f *.d *.o core/*.d core/*.o test/*.d test/*.o ai/*.d ai/*.o ${EXECS}

@@ -4,8 +4,8 @@
 #include "position.h"
 #include "movegen.h"
 
-#include <set>
 #include <string>
+#include <vector>
 
 namespace core {
 
@@ -22,7 +22,7 @@ public:
 
   void LoadMove(std::string move);
 
-  std::set<std::string> GetLegalMoves();
+  std::vector<std::string> GetLegalMoves();
 
   Position GetPosition();
 

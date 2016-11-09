@@ -6,6 +6,9 @@
 #include <iostream>
 #include <sstream>
 
+using std::string;
+using std::vector;
+
 namespace test {
 
 bool RunLegalMoveTests() {
@@ -249,16 +252,21 @@ LegalMoveTestResult PerformTest(LegalMoveTest test) {
     board.LoadMove(move);
   }
 
-  std::set<std::string> test_moves = board.GetLegalMoves();
-  std::set<std::string> legal_but_omitted;
-  std::set<std::string> illegal_but_listed;
-
-  set_difference(test.legal_moves.begin(), test.legal_moves.end(),
-    test_moves.begin(), test_moves.end(),
-    inserter(legal_but_omitted, legal_but_omitted.end()));
-  set_difference(test_moves.begin(), test_moves.end(),
-    test.legal_moves.begin(), test.legal_moves.end(),
-    inserter(illegal_but_listed, illegal_but_listed.end()));
+  vector<std::string> test_moves = board.GetLegalMoves();
+  vector<std::string> legal_but_omitted;
+  vector<std::string> illegal_but_listed;
+    
+  for (string test_move : test_moves) {
+    if (std::find(test.legal_moves.begin(), test.legal_moves.end(), test_move) == test.legal_moves.end()) {
+      illegal_but_listed.push_back(test_move);
+    }
+  }
+  
+  for (string legal_move : test.legal_moves) {
+    if (std::find(test_moves.begin(), test_moves.end(), legal_move) == test_moves.end()) {
+      legal_but_omitted.push_back(legal_move);
+    }
+  }
 
   bool insufficient = legal_but_omitted.size() > 0;
   bool excess = illegal_but_listed.size() > 0;

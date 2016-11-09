@@ -4,10 +4,10 @@
 
 #include <cstdlib>
 #include <ctime>
-#include <set>
+#include <vector>
 using core::Move;
 using core::MoveGen;
-using std::set;
+using std::vector;
 using std::string;
 
 namespace ai {
@@ -17,13 +17,10 @@ RandomAI::RandomAI() : ChessAI() {
 }
 
 std::string RandomAI::BestMove(core::Position position) {
-  set<Move> legal_moves = core::MoveGen::AllLegalMoves(position);
+  vector<Move> legal_moves = core::MoveGen::AllLegalMoves(position);
   int random_index = rand() % legal_moves.size();
 
-  set<Move>::const_iterator it(legal_moves.begin());
-  advance(it, random_index);
-
-  return (*it).ToString();
+  return legal_moves.at(random_index).ToString();
 }
 
 }

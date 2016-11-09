@@ -1,8 +1,8 @@
 #include "board.h"
 #include "position.h"
 #include "movegen.h"
-using std::set;
 using std::string;
+using std::vector;
 
 namespace core {
 
@@ -30,12 +30,12 @@ void Board::LoadMove(string move) {
   position->PerformMove(move);
 }
 
-std::set<string> Board::GetLegalMoves() {
-  set<Move> legal_moves = MoveGen::AllLegalMoves(*position);
-  set<string> moves_as_strings;
+std::vector<string> Board::GetLegalMoves() {
+  vector<Move> legal_moves = MoveGen::AllLegalMoves(*position);
+  vector<string> moves_as_strings;
 
   for (Move move : legal_moves) {
-    moves_as_strings.insert(move.ToString());
+    moves_as_strings.push_back(move.ToString());
   }
 
   return moves_as_strings;

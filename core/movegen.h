@@ -4,28 +4,27 @@
 #include "move.h"
 #include "position.h"
 
-#include <set>
 #include <vector>
 
 namespace core {
 
 class MoveGen {
 public:
-  static std::set<Move> AllLegalMoves(Position position);
+  static std::vector<Move> AllLegalMoves(Position position);
 
 private:
   static Position position;
   
   MoveGen();
 
-  static std::set<Move> AllPseudolegalMoves();
-  static void PruneCheckMoves(std::set<Move> *legal_moves);
+  static std::vector<Move> AllPseudolegalMoves();
+  static void PruneCheckMoves(std::vector<Move> *legal_moves);
   static bool IsInCheck(Position after_move, std::vector<Square> king_squares, Color color);
   
-  static std::set<Move> GetPawnMoves(Square square);
-  static std::set<Move> GetKnightMoves(Square square);
-  static std::set<Move> GetDiagonalMoves(Square square, bool limit_to_one);
-  static std::set<Move> GetOrthogonalMoves(Square square, bool limit_to_one);
+  static std::vector<Move> GetPawnMoves(Square square);
+  static std::vector<Move> GetKnightMoves(Square square);
+  static std::vector<Move> GetDiagonalMoves(Square square, bool limit_to_one);
+  static std::vector<Move> GetOrthogonalMoves(Square square, bool limit_to_one);
   
   static bool IsValidDestSquare(Square square, Color color);
   static bool IsPawnCaptureSquare(Square square, Color color);
@@ -37,8 +36,8 @@ private:
   static bool CanAttack(SquareContents source_contents, Square source_square, Square dest_square);
   
   static void AddLineMoves(Square square, int rank_increment, int column_increment,
-                           bool limit_to_one, std::set<Move> *moves);
-  static std::set<Move> GetPromotionMoves(Square start_square, Square end_square);
+                           bool limit_to_one, std::vector<Move> *moves);
+  static std::vector<Move> GetPromotionMoves(Square start_square, Square end_square);
 };
 
 }

@@ -48,4 +48,8 @@ double MaterialDifference(const Position& position, double pawn_value,
   return difference;
 }
 
+double RandomDouble(double min, double max) {
+  return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
+}
+
 }

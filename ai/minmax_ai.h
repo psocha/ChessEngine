@@ -23,6 +23,7 @@ struct MoveScore {
 class MinMaxAI : public ChessAI {
  public:
   MinMaxAI();
+  virtual ~MinMaxAI();
 
   virtual std::string BestMove(core::Position position);
   

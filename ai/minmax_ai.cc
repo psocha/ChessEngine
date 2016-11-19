@@ -15,6 +15,8 @@ namespace ai {
 
 MinMaxAI::MinMaxAI() : ChessAI() {}
 
+MinMaxAI::~MinMaxAI() {}
+
 string MinMaxAI::BestMove(core::Position position) {
   vector<Move> moves = MoveGen::AllLegalMoves(position);
   

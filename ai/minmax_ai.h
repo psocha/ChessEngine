@@ -32,6 +32,8 @@ class MinMaxAI : public ChessAI {
   MoveScore MinMax(core::Position position, int depth, double alpha, double beta, int move_index);
  
   core::Color player_color;
+  
+  int positions_evaluated;
 };
 
 }

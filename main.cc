@@ -8,38 +8,20 @@
 #include <string>
 using namespace std;
 
-void PrintHelp() {
-  std::cout << std::endl;
-  std::cout << "ChessEngine Paramters           | Output" << std::endl;
-  std::cout << "-------------------------------------------------------------------------------------------------------" << std::endl;
-  std::cout << "./ChessEngine.exe RandomAI      | An AI that plays random legal moves" << std::endl;
-  std::cout << "./ChessEngine.exe MaterialAI    | An AI that prioritizes material" << std::endl;
-  std::cout << "./ChessEngine.exe --runtests    | Run the engine's set of unit tests and exit (not a real chess engine)" << std::endl;
-  std::cout << "./ChessEngine.exe --help        | Display this help dialog" << std::endl;
-  std::cout << "-------------------------------------------------------------------------------------------------------" << std::endl;
-}
-
 int main(int argc, char* argv[]) {
   string line;
   cout.setf(ios::unitbuf);
-
+  
+  if (argc > 1 && string(argv[1]) == "--runtests") {
+    test::RunAllTests();
+    return 0;
+  }
+  
   core::Board *board = new core::Board();
   ai::ChessAI *chess_ai = NULL;
   
-  if (argc > 1 && string(argv[1]) == "RandomAI") {
-    chess_ai = new ai::RandomAI();
-  } else if (argc > 1 && string(argv[1]) == "MaterialAI") {
-    chess_ai = new ai::MaterialAI();
-  } else if (argc > 1 && string(argv[1]) == "--runtests") {
-    test::RunAllTests();
-    return 0;
-  } else if (argc > 1 && string(argv[1]) == "--help") {
-    PrintHelp();
-    return 0;
-  } else {
-    std::cout << "Missing command-line flags. See --help for options." << std::endl;
-    return 0;
-  }
+  // Can swap for another AI by replacing this line.
+  chess_ai = new ai::MaterialAI();
 
   while (getline(cin, line)) {
     if (line == "uci") {

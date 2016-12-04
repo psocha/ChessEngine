@@ -2,6 +2,8 @@
 #include "../core/move.h"
 #include "../core/movegen.h"
 
+#include <cmath>
+#include <iostream>
 #include <limits>
 #include <vector>
 
@@ -26,8 +28,11 @@ string MinMaxAI::BestMove(core::Position position) {
     throw NoMovesException();
   }
   
-  MoveScore result = MinMax(position, 4, std::numeric_limits<double>::min(),
+  this->positions_evaluated = 0;
+  
+  MoveScore result = MinMax(position, 3, -std::numeric_limits<double>::max(),
                             std::numeric_limits<double>::max(), -1);
+  std::cout << "info nodes " << this->positions_evaluated << " score cp " << round(result.score*100) << std::endl;
   return moves.at(result.move_index).ToString();
 }
 
@@ -38,6 +43,7 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
   
   if (next_moves.size() == 0 || depth == 0) {
     double score = Evaluate(position);
+    this->positions_evaluated++;
     return MoveScore(move_index == -1 ? 0 : move_index, score);
   } else {
     for (unsigned int i = 0; i < next_moves.size(); i++) {
@@ -47,7 +53,7 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
       next_position.PerformMove(move.ToString());
       MoveScore next_score = MinMax(next_position, depth - 1, alpha, beta, i);
       
-      if (position.GetActiveColor() == this->player_color) {
+      if (position.GetActiveColor() == core::WHITE) {
         if (next_score.score > alpha) {
           alpha = next_score.score;
           best_index = i;
@@ -66,7 +72,7 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
     }
   }
   
-  return MoveScore(best_index, position.GetActiveColor() == this->player_color ? alpha : beta);
+  return MoveScore(best_index, position.GetActiveColor() == core::WHITE ? alpha : beta);
 }
 
 }

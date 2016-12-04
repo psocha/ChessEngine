@@ -5,10 +5,10 @@ This chess engine follows the standard UCI protocol. The program does not have a
 
 To build the code, your computer must have GNU Make and the g++ compiler. After downloading, simply run `Make` and use the created executables.
 
-The only executable that the `Makefile` currently creates is `random.exe`, which plays random legal moves.
+The most recent version of the code uses a min-max tree search with alpha-beta pruning. Position evaluation is done primarily by counting material. Other AIs for the engine (such as one that plays random moves) can be found in the `ai` folder.
 
 ## How to Run
 
-Running `random.exe` with no flags will open a command-line session in which UCI messages can be entered through STDIN and UCI responses are sent from STDOUT. A UCI-compliant chess GUI will run this executable and handle the I/O for you.
+Running `Engine` with no flags will open a command-line session in which UCI messages can be entered through STDIN and UCI responses are sent from STDOUT. A UCI-compliant chess GUI will run this executable and handle the I/O for you.
 
-Running `random.exe --runtests` will run the engine's unit tests.
+Running `Engine --runtests` will run the engine's unit tests.

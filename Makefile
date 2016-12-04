@@ -5,7 +5,7 @@ OBJECTS_CORE = main.o core/pieces.o core/board.o core/square.o core/move.o core/
 OBJECTS_TEST = test/test_main.o test/position_tests.o test/legal_move_tests.o
 OBJECTS_AI = ai/ai_util.o ai/random_ai.o ai/minmax_ai.o ai/material_ai.o
 
-EXEC = ChessEngine.exe
+EXEC = Engine
 
 DEPENDS_CORE = ${OBJECTS_CORE:.o=.d}
 DEPENDS_TEST = ${OBJECTS_TEST:.o=.d}

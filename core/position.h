@@ -21,9 +21,10 @@ public:
   Position();
   ~Position();
 
-  void Print();
+  void Print() const;
 
   void LoadFromFen(std::string fen);
+  std::string Serialize() const;
   
   void PerformMove(std::string move);
   
@@ -32,6 +33,7 @@ public:
   
   void SetCastle(std::string castle);
   CastlesAllowed GetCastle() const;
+  std::string MakeCastleString() const;
   
   void SetEnPassant(std::string en_passant);
   Square GetEnPassant() const;

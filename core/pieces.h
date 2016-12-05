@@ -54,6 +54,7 @@ SquareContents SquareContentsFromChar(char piece);
 SquareContents MakePiece(PieceType pieceType, Color color);
 
 Color ColorFromChar(char color);
+char CharFromColor(Color color);
 
 Color ColorOfContents(SquareContents contents);
 

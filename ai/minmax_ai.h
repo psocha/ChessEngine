@@ -2,6 +2,7 @@
 #define MIN_MAX_AI_H__
 
 #include "chess_ai.h"
+#include "../core/Move.h"
 #include "../core/position.h"
 
 #include <string>
@@ -30,10 +31,11 @@ class MinMaxAI : public ChessAI {
   virtual double Evaluate(core::Position position) = 0;
  private:
   MoveScore MinMax(core::Position position, int depth, double alpha, double beta, int move_index);
- 
-  core::Color player_color;
   
   int positions_evaluated;
+  
+  std::vector<core::Move> DeserializeMovegenList(std::string list, const core::Position& position) const;
+  std::string SerializeMovegenList(std::vector<core::Move> list) const;
 };
 
 }

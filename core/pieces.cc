@@ -33,6 +33,12 @@ Color ColorFromChar(char color) {
   else return NULL_COLOR;
 }
 
+char CharFromColor(Color color) {
+  if (color == WHITE) return 'w';
+  else if (color == BLACK) return 'b';
+  else return '-';
+}
+
 Color ColorOfContents(SquareContents contents) {
   if (contents >= PAWN_W && contents <= KING_W) return WHITE;
   if (contents <= PAWN_B && contents >= KING_B) return BLACK;

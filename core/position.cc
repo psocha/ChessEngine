@@ -14,7 +14,7 @@ Position::Position() {
 
 Position::~Position() {}
 
-void Position::Print() {
+void Position::Print() const {
   for (int rank = 9; rank >= 2; rank--) {
     for (int file = 2; file < 10; file++) {
       SquareContents piece = chessboard[rank][file];
@@ -48,6 +48,45 @@ void Position::LoadFromFen(string fen) {
       file++;
     }
   }
+}
+
+string Position::Serialize() const {
+  string str = "";
+  int empties = 0;
+  
+  for (int rank = 7; rank >= 0; rank--) {
+    for (int file = 0; file <= 7; file++) {
+      SquareContents contents = chessboard.at(rank + 2).at(file + 2);
+      if (contents == EMPTY) {
+        empties++;
+      } else {
+        if (empties > 0) {
+          str += std::to_string(empties);
+          empties = 0;
+        }
+        str += CharFromSquareContents(contents);
+      }
+      
+      if (file == 7) {
+        if (empties > 0) {
+          str += std::to_string(empties);
+          empties = 0;
+        }
+        if (rank > 0) {
+          str += "/";
+        }
+      }
+    }
+  }
+  
+  str += " ";
+  str += CharFromColor(GetActiveColor());
+  str += " ";
+  str += MakeCastleString();
+  str += " ";
+  str += GetEnPassant().ToString();
+  
+  return str;
 }
 
 void Position::PerformMove(std::string mv) {
@@ -138,6 +177,19 @@ void Position::SetCastle(std::string castle) {
   castles_allowed.white_queenside = castle.find('Q') != string::npos;
   castles_allowed.black_kingside = castle.find('k') != string::npos;
   castles_allowed.black_queenside = castle.find('q') != string::npos;
+}
+
+string Position::MakeCastleString() const {
+  string castles = "";
+  if (castles_allowed.white_kingside) castles += "K";
+  if (castles_allowed.white_queenside) castles += "Q";
+  if (castles_allowed.black_kingside) castles += "k";
+  if (castles_allowed.black_queenside) castles += "q";
+  if (castles.length() > 0) {
+    return castles;
+  } else {
+    return "-";
+  }
 }
 
 CastlesAllowed Position::GetCastle() const {

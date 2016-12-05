@@ -15,8 +15,22 @@ vector<Move> MoveGen::AllLegalMoves(Position position) {
   
   vector<Move> legal_moves = AllPseudolegalMoves();
   PruneCheckMoves(&legal_moves);
+  
+  vector<Move> ordered_legal_moves;
+  for (unsigned int i = 0; i < legal_moves.size(); i++) {
+    Move move = legal_moves.at(i);
+    if (move.is_capture) {
+      ordered_legal_moves.push_back(move);
+    }
+  }
+  for (unsigned int i = 0; i < legal_moves.size(); i++) {
+    Move move = legal_moves.at(i);
+    if (!move.is_capture) {
+      ordered_legal_moves.push_back(move);
+    }
+  }
 
-  return legal_moves;
+  return ordered_legal_moves;
 }
 
 vector<Move> MoveGen::AllPseudolegalMoves() {

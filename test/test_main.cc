@@ -1,6 +1,7 @@
 #include "test_main.h"
 #include "position_tests.h"
 #include "legal_move_tests.h"
+#include "ai_tests.h"
 
 #include <iostream>
 #include <sstream>
@@ -19,6 +20,12 @@ void RunAllTests() {
   bool legal_tests_passed = RunLegalMoveTests();
   if (!legal_tests_passed) {
     std::cout << "Legal move tests failed. Terminating." << std::endl;
+    return;
+  }
+  
+  bool ai_tests_passed = RunAITests();
+  if (!ai_tests_passed) {
+    std::cout << "AI tests failed. Terminating." << std::endl;
     return;
   }
   

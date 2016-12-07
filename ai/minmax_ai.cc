@@ -16,7 +16,9 @@ using std::vector;
 
 namespace ai {
 
-MinMaxAI::MinMaxAI() : ChessAI() {}
+MinMaxAI::MinMaxAI() : ChessAI() {
+  max_depth = 3;
+}
 
 MinMaxAI::~MinMaxAI() {}
 
@@ -29,7 +31,7 @@ string MinMaxAI::BestMove(core::Position position) {
   
   this->positions_evaluated = 0;
   
-  MoveScore result = MinMax(position, 3, -std::numeric_limits<double>::max(),
+  MoveScore result = MinMax(position, max_depth, -std::numeric_limits<double>::max(),
                             std::numeric_limits<double>::max(), -1);
                             
   int centipawn_evaluation = round(result.score * 100);
@@ -83,6 +85,10 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
   }
   
   return MoveScore(best_index, position.GetActiveColor() == core::WHITE ? alpha : beta);
+}
+
+void MinMaxAI::SetDepth(int depth) {
+  max_depth = depth;
 }
 
 vector<Move> MinMaxAI::DeserializeMovegenList(string list, const Position& position) const {

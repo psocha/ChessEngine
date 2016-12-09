@@ -41,6 +41,17 @@ std::vector<string> Board::GetLegalMoves() {
   return moves_as_strings;
 }
 
+std::vector<string> Board::GetPseudolegalMoves() {
+  vector<Move> legal_moves = MoveGen::AllPseudolegalMoves(*position);
+  vector<string> moves_as_strings;
+
+  for (Move move : legal_moves) {
+    moves_as_strings.push_back(move.ToString());
+  }
+
+  return moves_as_strings;
+}
+
 Position Board::GetPosition() {
   return Position(*(this->position));
 }

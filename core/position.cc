@@ -1,5 +1,6 @@
-#include "move.h"
 #include "position.h"
+#include "move.h"
+#include "movegen.h"
 
 #include <iostream>
 using std::map;
@@ -219,6 +220,13 @@ Square Position::FindKing(Color color) const {
     }
   }
   return Square("-");
+}
+
+bool Position::IsCheck(Color color) const {
+  vector<Square> king_squares;
+  Square king_square = FindKing(color);
+  king_squares.push_back(king_square);
+  return MoveGen::IsInCheck(*this, king_squares, color);
 }
 
 void Position::InitializeEmptyBoard() {

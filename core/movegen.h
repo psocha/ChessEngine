@@ -10,16 +10,16 @@ namespace core {
 
 class MoveGen {
 public:
+  static std::vector<Move> AllPseudolegalMoves(Position position);
   static std::vector<Move> AllLegalMoves(Position position);
+  
+  static bool IsPseudolegalMoveLegal(Position position, Move move);
+  static bool IsInCheck(Position position, std::vector<Square> king_squares, Color color);
 
 private:
   static Position position;
   
   MoveGen();
-
-  static std::vector<Move> AllPseudolegalMoves();
-  static void PruneCheckMoves(std::vector<Move> *legal_moves);
-  static bool IsInCheck(Position after_move, std::vector<Square> king_squares, Color color);
   
   static std::vector<Move> GetPawnMoves(Square square);
   static std::vector<Move> GetKnightMoves(Square square);

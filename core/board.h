@@ -23,6 +23,7 @@ public:
   void LoadMove(std::string move);
 
   std::vector<std::string> GetLegalMoves();
+  std::vector<std::string> GetPseudolegalMoves();
 
   Position GetPosition();
 

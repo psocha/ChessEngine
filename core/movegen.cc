@@ -13,27 +13,22 @@ MoveGen::MoveGen() {}
 vector<Move> MoveGen::AllLegalMoves(Position position) {
   MoveGen::position = position;
   
-  vector<Move> legal_moves = AllPseudolegalMoves();
-  PruneCheckMoves(&legal_moves);
+  vector<Move> legal_moves = AllPseudolegalMoves(position);
   
-  vector<Move> ordered_legal_moves;
-  for (unsigned int i = 0; i < legal_moves.size(); i++) {
-    Move move = legal_moves.at(i);
-    if (move.is_capture) {
-      ordered_legal_moves.push_back(move);
+  for (vector<Move>::iterator it = legal_moves.begin(); it != legal_moves.end(); ) {
+    Move move = *it;
+    if (!IsPseudolegalMoveLegal(position, move)) {
+      it = legal_moves.erase(it);
+    } else {
+      ++it;
     }
   }
-  for (unsigned int i = 0; i < legal_moves.size(); i++) {
-    Move move = legal_moves.at(i);
-    if (!move.is_capture) {
-      ordered_legal_moves.push_back(move);
-    }
-  }
-
-  return ordered_legal_moves;
+  
+  return legal_moves;
 }
 
-vector<Move> MoveGen::AllPseudolegalMoves() {
+vector<Move> MoveGen::AllPseudolegalMoves(Position position) {
+  MoveGen::position = position;
   vector<Move> pseudolegal_moves;
   Color color = position.GetActiveColor();
   
@@ -106,44 +101,53 @@ vector<Move> MoveGen::AllPseudolegalMoves() {
       }
     }
   }
-  return pseudolegal_moves;
-}
-
-void MoveGen::PruneCheckMoves(vector<Move> *legal_moves) {
-  Color color = position.GetActiveColor();
-  Position after_move;
   
-  for (vector<Move>::iterator it = legal_moves->begin(); it != legal_moves->end(); ) {
-    Move move = *it;
-    after_move = position;
-    after_move.PerformMove(move.ToString());
-    
-    vector<Square> king_squares;
-    king_squares.push_back(after_move.FindKing(color));
-    
-    if (move.is_castle && move.ToString() == "e1g1") {
-      king_squares.push_back(Square("e1"));
-      king_squares.push_back(Square("f1"));
-    }
-    if (move.is_castle && move.ToString() == "e1c1") {
-      king_squares.push_back(Square("e1"));
-      king_squares.push_back(Square("d1"));
-    }
-    if (move.is_castle && move.ToString() == "e8g8") {
-      king_squares.push_back(Square("e8"));
-      king_squares.push_back(Square("f8"));
-    }
-    if (move.is_castle && move.ToString() == "e8c8") {
-      king_squares.push_back(Square("e8"));
-      king_squares.push_back(Square("d8"));
-    }
-    
-    if (IsInCheck(after_move, king_squares, color)) {
-      it = legal_moves->erase(it);
-    } else {
-      ++it;
+  vector<Move> ordered_pseudolegal_moves;
+  for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
+    Move move = pseudolegal_moves.at(i);
+    if (move.is_capture) {
+      ordered_pseudolegal_moves.push_back(move);
     }
   }
+  for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
+    Move move = pseudolegal_moves.at(i);
+    if (!move.is_capture) {
+      ordered_pseudolegal_moves.push_back(move);
+    }
+  }
+  
+  return ordered_pseudolegal_moves;
+}
+
+bool MoveGen::IsPseudolegalMoveLegal(Position position, Move move) {
+  Color color = position.GetActiveColor();
+  Position after_move = position;
+  after_move.PerformMove(move.ToString());
+  
+  vector<Square> king_squares;
+  king_squares.push_back(after_move.FindKing(color));
+  
+  if (move.is_castle && move.ToString() == "e1g1") {
+    king_squares.push_back(Square("e1"));
+    king_squares.push_back(Square("f1"));
+  }
+  if (move.is_castle && move.ToString() == "e1c1") {
+    king_squares.push_back(Square("e1"));
+    king_squares.push_back(Square("d1"));
+  }
+  if (move.is_castle && move.ToString() == "e8g8") {
+    king_squares.push_back(Square("e8"));
+    king_squares.push_back(Square("f8"));
+  }
+  if (move.is_castle && move.ToString() == "e8c8") {
+    king_squares.push_back(Square("e8"));
+    king_squares.push_back(Square("d8"));
+  }
+  
+  if (IsInCheck(after_move, king_squares, color)) {
+    return false;
+  }
+  return true;
 }
 
 bool MoveGen::IsInCheck(Position after_move,vector<Square> king_squares, Color color) {

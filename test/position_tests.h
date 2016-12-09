@@ -10,6 +10,7 @@ void TestCastlingPerformance();
 void TestCastlingCancellation();
 void TestEnPassant();
 void TestPromotion();
+void TestChecks();
 
 }
 

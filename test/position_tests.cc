@@ -4,11 +4,16 @@
 #include "../core/move.h"
 #include "../core/square.h"
 
+#include <algorithm>
 #include <iostream>
+#include <vector>
+#include <string>
 using core::Board;
 using core::Move;
 using core::Position;
 using core::Square;
+using std::string;
+using std::vector;
 
 namespace test {
 
@@ -19,6 +24,7 @@ bool RunAllPositionTests() {
     TestCastlingCancellation();
     TestEnPassant();
     TestPromotion();
+    TestChecks();
   } catch (FailingTestException fail) {
     std::cout << fail.GetMessage() << std::endl;
     return false;
@@ -269,6 +275,44 @@ void TestPromotion() {
   TestHelper::AssertContentsAt(position, "d2", core::EMPTY, "d2d1b leaves d2 empty");
   TestHelper::AssertContentsAt(position, "d1", core::BISHOP_B, "d2d1b leaves Black bishop on d1");
   TestHelper::AssertFalse(position.GetCastle().black_queenside, "Queenside castling rights don't return");
+}
+
+void TestChecks() {
+  Board board = TestHelper::CreateBoardFromFen("r3k2r/p6p/8/4b3/8/8/P6P/R3K2R b KQkq - 0 1");
+  
+  Position position = board.GetPosition();
+  TestHelper::AssertTrue(position.IsCheck(core::WHITE) == false, "White king not in check");
+  TestHelper::AssertTrue(position.IsCheck(core::BLACK) == false, "Black king not in check");
+  
+  board.LoadMove("e5c3");
+  position = board.GetPosition();
+  TestHelper::AssertEqual(position.FindKing(core::WHITE).ToString(), "e1", "Checked king is on original square");
+  TestHelper::AssertEqual(position.FindKing(core::BLACK).ToString(), "e8", "Checking side's king is on original square");
+  TestHelper::AssertTrue(position.IsCheck(core::WHITE) == true, "White is now in check");
+  TestHelper::AssertTrue(position.IsCheck(core::BLACK) == false, "Black is still not in check");
+  
+  vector<string> pseudolegal_moves = board.GetPseudolegalMoves();
+  vector<string> legal_moves = board.GetLegalMoves();
+  
+  TestHelper::AssertTrue(std::find(pseudolegal_moves.begin(), pseudolegal_moves.end(), "e1d2") !=
+    pseudolegal_moves.end(), "Move into check is pseudolegal");
+  TestHelper::AssertTrue(std::find(pseudolegal_moves.begin(), pseudolegal_moves.end(), "e1c1") !=
+    pseudolegal_moves.end(), "Castling out of check is pseudolegal");
+  TestHelper::AssertTrue(std::find(pseudolegal_moves.begin(), pseudolegal_moves.end(), "e1f2") !=
+    pseudolegal_moves.end(), "Running king out of check is pseudolegal");
+  TestHelper::AssertTrue(std::find(pseudolegal_moves.begin(), pseudolegal_moves.end(), "a1c1") !=
+    pseudolegal_moves.end(), "Ignoring check is pseudolegal");
+  TestHelper::AssertTrue(std::find(pseudolegal_moves.begin(), pseudolegal_moves.end(), "e1c3") ==
+    pseudolegal_moves.end(), "King hop is not pseudolegal");
+  
+  TestHelper::AssertTrue(std::find(legal_moves.begin(), legal_moves.end(), "e1d2") ==
+    legal_moves.end(), "Move into check is not legal");
+  TestHelper::AssertTrue(std::find(legal_moves.begin(), legal_moves.end(), "e1c1") ==
+    legal_moves.end(), "Castling out of check is not legal");
+  TestHelper::AssertTrue(std::find(legal_moves.begin(), legal_moves.end(), "e1f2") !=
+    legal_moves.end(), "Running king out of check is legal");
+  TestHelper::AssertTrue(std::find(legal_moves.begin(), legal_moves.end(), "a1c1") ==
+    legal_moves.end(), "Ignoring check is not legal");
 }
 
 }

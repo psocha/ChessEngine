@@ -21,6 +21,7 @@ public:
     std::string fullmove_number);
 
   void LoadMove(std::string move);
+  void UndoLastMove();
 
   std::vector<std::string> GetLegalMoves();
   std::vector<std::string> GetPseudolegalMoves();

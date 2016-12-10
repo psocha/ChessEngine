@@ -18,6 +18,7 @@ struct Square {
 };
 
 bool operator==(const Square& first, const Square& second);
+bool operator!=(const Square& first, const Square& second);
 
 int SquareDistance(Square first, Square second);
 bool SquaresAreOrthogonal(Square first, Square second);

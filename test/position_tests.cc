@@ -25,6 +25,7 @@ bool RunAllPositionTests() {
     TestEnPassant();
     TestPromotion();
     TestChecks();
+    TestUndoMove();
   } catch (FailingTestException fail) {
     std::cout << fail.GetMessage() << std::endl;
     return false;
@@ -313,6 +314,33 @@ void TestChecks() {
     legal_moves.end(), "Running king out of check is legal");
   TestHelper::AssertTrue(std::find(legal_moves.begin(), legal_moves.end(), "a1c1") ==
     legal_moves.end(), "Ignoring check is not legal");
+}
+
+void TestUndoMove() {
+  Board board = TestHelper::CreateBoardFromFen(STARTPOS);
+  Position expectedPosition0 = board.GetPosition();
+  board.LoadMove("e2e4");
+  Position expectedPosition1 = board.GetPosition();
+  board.LoadMove("d7d5");
+  Position expectedPosition2 = board.GetPosition();
+  board.LoadMove("e4d5");
+  Position expectedPosition3 = board.GetPosition();
+  board.LoadMove("d8d5");
+  Position expectedPosition4 = board.GetPosition();
+  
+  board.UndoLastMove();
+  Position actualPosition3 = board.GetPosition();
+  TestHelper::AssertTrue(actualPosition3 == expectedPosition3, "Qxd5 revert works");
+  board.UndoLastMove();
+  Position actualPosition2 = board.GetPosition();
+  TestHelper::AssertTrue(actualPosition2 == expectedPosition2, "exd5 revert works");
+  board.UndoLastMove();
+  Position actualPosition1 = board.GetPosition();
+  TestHelper::AssertTrue(actualPosition1 == expectedPosition1, "d5 revert works");
+  board.UndoLastMove();
+  Position actualPosition0 = board.GetPosition();
+  TestHelper::AssertTrue(actualPosition0 == expectedPosition0, "e4 revert works");
+  
 }
 
 }

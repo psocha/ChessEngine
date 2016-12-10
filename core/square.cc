@@ -47,6 +47,10 @@ bool operator==(const Square& first, const Square& second) {
   return first.rank == second.rank && first.file == second.file;
 }
 
+bool operator!=(const Square& first, const Square& second) {
+  return !(first == second);
+}
+
 int SquareDistance(Square first, Square second) {
   int rank_distance = std::abs(second.rank - first.rank);
   int file_distance = std::abs(second.file - first.file);

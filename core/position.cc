@@ -8,6 +8,30 @@ using std::string;
 using std::vector;
 
 namespace core {
+  
+bool operator==(const CastlesAllowed& left, const CastlesAllowed& right) {
+  return left.white_kingside == right.white_kingside &&
+         left.white_queenside == right.white_queenside &&
+         left.black_kingside == right.black_kingside &&
+         left.black_queenside == right.black_queenside;
+}
+
+bool operator!=(const CastlesAllowed& left, const CastlesAllowed& right) {
+  return !(left == right);
+}
+
+bool operator==(const HistoryData& left, const HistoryData& right) {
+  return left.last_starting_square == right.last_starting_square &&
+         left.last_ending_square == right.last_ending_square &&
+         left.last_dest_square_contents == right.last_dest_square_contents &&
+         left.last_castles_allowed == right.last_castles_allowed &&
+         left.last_en_passant_square == right.last_en_passant_square &&
+         left.is_demotion == right.is_demotion;
+}
+
+bool operator!=(const HistoryData& left, const HistoryData& right) {
+  return !(left == right);
+}
 
 Position::Position() {
   InitializeEmptyBoard();
@@ -165,6 +189,10 @@ void Position::PerformMove(std::string mv) {
   }
 }
 
+void Position::UndoLastMove() {
+  
+}
+
 void Position::SetActiveColor(std::string color_marker) {
   active_color = ColorFromChar(color_marker.at(0));
 }
@@ -229,6 +257,29 @@ bool Position::IsCheck(Color color) const {
   return MoveGen::IsInCheck(*this, king_squares, color);
 }
 
+bool Position::operator==(const Position& other) const {
+  if (GetActiveColor() != other.GetActiveColor()) return false;
+  if (GetCastle() != other.GetCastle()) return false;
+  if (GetEnPassant() != other.GetEnPassant()) return false;
+  
+  for (int i = 0; i < 12; i++) {
+    for (int j = 0; j < 12; j++) {
+      if (chessboard[i][j] != other.chessboard[i][j]) return false;
+    }
+  }
+  
+  if (move_stack.size() != other.move_stack.size()) return false;
+  for (unsigned int i = 0; i < move_stack.size(); i++) {
+    if (move_stack[i] != other.move_stack[i]) return false;
+  }
+  
+  return true;
+}
+
+bool Position::operator!=(const Position& other) const {
+  return !(*this == other);
+}
+
 void Position::InitializeEmptyBoard() {
   for (int i = 0; i < 12; i++) {
     chessboard.push_back(vector<SquareContents>(12));
@@ -250,6 +301,8 @@ void Position::InitializeEmptyBoard() {
       chessboard[i][11] = OUT_OF_BOUNDS;
     }
   }
+  
+  move_stack.clear();
 }
 
 }

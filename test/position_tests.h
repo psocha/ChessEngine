@@ -11,6 +11,7 @@ void TestCastlingCancellation();
 void TestEnPassant();
 void TestPromotion();
 void TestChecks();
+void TestUndoMove();
 
 }
 

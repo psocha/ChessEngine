@@ -16,6 +16,22 @@ struct CastlesAllowed {
   bool black_queenside = true;
 };
 
+bool operator==(const CastlesAllowed& left, const CastlesAllowed& right);
+bool operator!=(const CastlesAllowed& left, const CastlesAllowed& right);
+
+struct HistoryData {
+  Square last_starting_square;
+  Square last_ending_square;
+  SquareContents last_dest_square_contents;
+  
+  CastlesAllowed last_castles_allowed;
+  Square last_en_passant_square;
+  bool is_demotion;
+};
+
+bool operator==(const HistoryData& left, const HistoryData& right);
+bool operator!=(const HistoryData& left, const HistoryData& right);
+
 class Position {
 public:
   Position();
@@ -27,6 +43,7 @@ public:
   std::string Serialize() const;
   
   void PerformMove(std::string move);
+  void UndoLastMove();
   
   void SetActiveColor(std::string color_marker);
   Color GetActiveColor() const;
@@ -43,12 +60,17 @@ public:
   Square FindKing(Color color) const;
   
   bool IsCheck(Color color) const;
+  
+  bool operator==(const Position& other) const;
+  bool operator!=(const Position& other) const;
 
 private:
   std::vector<std::vector<SquareContents>> chessboard;
   Color active_color;
   CastlesAllowed castles_allowed;
   Square en_passant_square;
+  
+  std::vector<HistoryData> move_stack;
 
   void InitializeEmptyBoard();
 };

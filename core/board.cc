@@ -30,6 +30,10 @@ void Board::LoadMove(string move) {
   position->PerformMove(move);
 }
 
+void Board::UndoLastMove() {
+  position->UndoLastMove();
+}
+
 std::vector<string> Board::GetLegalMoves() {
   vector<Move> legal_moves = MoveGen::AllLegalMoves(*position);
   vector<string> moves_as_strings;

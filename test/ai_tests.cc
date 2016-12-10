@@ -16,6 +16,7 @@ bool RunAITests() {
     TestRollingRook();
     TestSacrificeMateCombo();
     TestRescueStalemate();
+    TestWinPieceWithCheck();
   } catch (FailingTestException fail) {
     std::cout << fail.GetMessage() << std::endl;
     return false;
@@ -45,6 +46,15 @@ void TestRollingRook() {
   
   string suggested_move = material_ai.BestMove(board.GetPosition());
   TestHelper::AssertEqual(suggested_move, "a4a2", "Black sets up rolling rook mate");
+  
+  board.LoadMove("a4a2");
+  board.LoadMove("e2e1");
+  suggested_move = material_ai.BestMove(board.GetPosition());
+  TestHelper::AssertEqual(suggested_move, "h3h1", "Black completes rolling rook mate");
+  
+  material_ai.SetDepth(1);
+  suggested_move = material_ai.BestMove(board.GetPosition());
+  TestHelper::AssertEqual(suggested_move, "h3h1", "Black completes rolling rook mate even at depth 1");
 }
 
 void TestSacrificeMateCombo() {
@@ -58,7 +68,7 @@ void TestSacrificeMateCombo() {
   
   board.LoadMove("f3f6");
   suggested_move = material_ai.BestMove(board.GetPosition());
-  TestHelper::AssertEqual(suggested_move, "g8f6", "Black escapes from check");
+  TestHelper::AssertTrue(suggested_move == "g8f6" || suggested_move == "g8e7", "Black escapes from check");
   
   board.LoadMove("g8f6");
   suggested_move = material_ai.BestMove(board.GetPosition());
@@ -77,6 +87,21 @@ void TestRescueStalemate() {
   material_ai.SetDepth(4);
   suggested_move = material_ai.BestMove(board.GetPosition());
   TestHelper::AssertEqual(suggested_move, "h3h7", "White not confused by stalemate in chain");
+}
+
+void TestWinPieceWithCheck() {
+  Board board = TestHelper::CreateBoardFromFen("2kr4/8/7b/2K5/8/8/8/6R1 b - - 0 1");
+  
+  ai::MaterialAI material_ai;
+  material_ai.SetDepth(3);
+  
+  string suggested_move = material_ai.BestMove(board.GetPosition());
+  TestHelper::AssertEqual(suggested_move, "h6e3", "Black forks king and rook");
+  
+  board.LoadMove("h6e3");
+  board.LoadMove("c5c4");
+  suggested_move = material_ai.BestMove(board.GetPosition());
+  TestHelper::AssertEqual(suggested_move, "e3g1", "Black wins rook");
 }
 
 }

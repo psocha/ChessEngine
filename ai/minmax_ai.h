@@ -6,10 +6,9 @@
 #include "../core/position.h"
 
 #include <string>
+#include <vector>
 
 namespace ai {
-  
-class NoMovesException {};
 
 const double WHITE_MAX = 1000;
 const double BLACK_MAX = -1000;
@@ -39,6 +38,8 @@ class MinMaxAI : public ChessAI {
   
   int positions_evaluated;
   int max_depth;
+  
+  bool LegalMovesExist(core::Position position, std::vector<core::Move> pseudolegal_moves);
   
   std::vector<core::Move> DeserializeMovegenList(std::string list, const core::Position& position) const;
   std::string SerializeMovegenList(std::vector<core::Move> list) const;

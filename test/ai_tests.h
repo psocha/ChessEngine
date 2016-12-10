@@ -9,6 +9,7 @@ void TestObviousMateInOne();
 void TestRollingRook();
 void TestSacrificeMateCombo();
 void TestRescueStalemate();
+void TestWinPieceWithCheck();
 
 }
 

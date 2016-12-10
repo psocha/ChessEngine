@@ -24,11 +24,6 @@ MinMaxAI::~MinMaxAI() {}
 
 string MinMaxAI::BestMove(core::Position position) {
   vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(position);
-  vector<Move> moves = MoveGen::AllLegalMoves(position);
-  
-  if (moves.size() == 0) {
-    throw NoMovesException();
-  }
   
   this->positions_evaluated = 0;
   
@@ -48,9 +43,9 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
   
   if (depth == 0) {
     if (position.IsCheck(position.GetActiveColor())) {
-      vector<Move> legal_moves = MoveGen::AllLegalMoves(position);
-      if (legal_moves.size() == 0) {
-        double score = position.GetActiveColor() == core::WHITE ? BLACK_MAX : WHITE_MAX;
+      vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(position);
+      if (!LegalMovesExist(position, pseudolegal_moves)) {
+        double score = position.GetActiveColor() == core::WHITE ? BLACK_MAX - depth : WHITE_MAX + depth;
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       }
     }
@@ -93,11 +88,15 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
     }
   }
   
-  if (!legal_move_found && position.IsCheck(position.GetActiveColor())) {
-    double score = position.GetActiveColor() == core::WHITE ? BLACK_MAX : WHITE_MAX;
-    return MoveScore(move_index == -1 ? 0 : move_index, score);
-  } else if (!legal_move_found && !position.IsCheck(position.GetActiveColor())) {
-    return MoveScore(move_index == -1 ? 0 : move_index, 0.0);
+  if (!legal_move_found) {
+    if (!LegalMovesExist(position, next_moves)) {
+      if (position.IsCheck(position.GetActiveColor())) {
+        double score = position.GetActiveColor() == core::WHITE ? BLACK_MAX - depth: WHITE_MAX + depth;
+        return MoveScore(move_index == -1 ? 0 : move_index, score);
+      } else {
+        return MoveScore(move_index == -1 ? 0 : move_index, 0.0);
+      }
+    }
   }
 
   return MoveScore(best_index, position.GetActiveColor() == core::WHITE ? alpha : beta);
@@ -105,6 +104,15 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
 
 void MinMaxAI::SetDepth(int depth) {
   max_depth = depth;
+}
+
+bool MinMaxAI::LegalMovesExist(Position position, vector<Move> pseudolegal_moves) {
+  for (Move move : pseudolegal_moves) {
+    if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 vector<Move> MinMaxAI::DeserializeMovegenList(string list, const Position& position) const {

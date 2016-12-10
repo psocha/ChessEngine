@@ -215,6 +215,12 @@ bool RunLegalMoveTests() {
     "g8h8", "g7h8", "g7h6", "f6e8", "f6h5", "f6e4", "f6d5", "f6d7", "g4f3", "g4h3", "g4h5", "g4f5", "g4e6",
     "g4d7", "g4c8" };
   tests.push_back(byrne_fischer_test);
+  
+  LegalMoveTest immortal_game_test("immortal game");
+  immortal_game_test.fen = "r1bk2nr/p2p1pNp/n2B4/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1 w - - 0 1";
+  immortal_game_test.moves = { "f3f6" };
+  immortal_game_test.legal_moves = { "g8e7", "g8f6" };
+  tests.push_back(immortal_game_test);
 
   LegalMoveTestResult aggregate;
   int positions_passed = 0, positions_failed = 0;

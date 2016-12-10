@@ -4,13 +4,13 @@
 
 #include <cmath>
 #include <iostream>
-#include <limits>
 #include <sstream>
 #include <vector>
 
 using core::Move;
 using core::MoveGen;
 using core::Position;
+using std::cout;
 using std::string;
 using std::vector;
 
@@ -23,6 +23,7 @@ MinMaxAI::MinMaxAI() : ChessAI() {
 MinMaxAI::~MinMaxAI() {}
 
 string MinMaxAI::BestMove(core::Position position) {
+  vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(position);
   vector<Move> moves = MoveGen::AllLegalMoves(position);
   
   if (moves.size() == 0) {
@@ -31,8 +32,7 @@ string MinMaxAI::BestMove(core::Position position) {
   
   this->positions_evaluated = 0;
   
-  MoveScore result = MinMax(position, max_depth, -std::numeric_limits<double>::max(),
-                            std::numeric_limits<double>::max(), -1);
+  MoveScore result = MinMax(position, max_depth, 2 * BLACK_MAX, 2 * WHITE_MAX, -1);
                             
   int centipawn_evaluation = round(result.score * 100);
   if (position.GetActiveColor() == core::BLACK) {
@@ -40,25 +40,28 @@ string MinMaxAI::BestMove(core::Position position) {
   }
   
   std::cout << "info nodes " << this->positions_evaluated << " score cp " << centipawn_evaluation << std::endl;
-  return moves.at(result.move_index).ToString();
+  return pseudolegal_moves.at(result.move_index).ToString();
 }
 
 MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, double beta, int move_index) {  
   int best_index = 0;
   
   if (depth == 0) {
+    if (position.IsCheck(position.GetActiveColor())) {
+      vector<Move> legal_moves = MoveGen::AllLegalMoves(position);
+      if (legal_moves.size() == 0) {
+        double score = position.GetActiveColor() == core::WHITE ? BLACK_MAX : WHITE_MAX;
+        return MoveScore(move_index == -1 ? 0 : move_index, score);
+      }
+    }
+    
     double score = Evaluate(position);
     this->positions_evaluated++;
     return MoveScore(move_index == -1 ? 0 : move_index, score);
   }
   
-  vector<Move> next_moves = MoveGen::AllLegalMoves(position);
-  
-  if (next_moves.size() == 0) {
-    double score = Evaluate(position);
-    this->positions_evaluated++;
-    return MoveScore(move_index == -1 ? 0 : move_index, score);
-  }
+  vector<Move> next_moves = MoveGen::AllPseudolegalMoves(position);
+  bool legal_move_found = false;
   
   for (unsigned int i = 0; i < next_moves.size(); i++) {
     Move move = next_moves.at(i);
@@ -69,13 +72,19 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
     
     if (position.GetActiveColor() == core::WHITE) {
       if (next_score.score > alpha) {
-        alpha = next_score.score;
-        best_index = i;
+        if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
+          alpha = next_score.score;
+          best_index = i;
+          legal_move_found = true;
+        }
       }
     } else {
       if (next_score.score < beta) {
-        beta = next_score.score;
-        best_index = i;
+        if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
+          beta = next_score.score;
+          best_index = i;
+          legal_move_found = true;
+        }
       }
     }
     
@@ -84,6 +93,13 @@ MoveScore MinMaxAI::MinMax(core::Position position, int depth, double alpha, dou
     }
   }
   
+  if (!legal_move_found && position.IsCheck(position.GetActiveColor())) {
+    double score = position.GetActiveColor() == core::WHITE ? BLACK_MAX : WHITE_MAX;
+    return MoveScore(move_index == -1 ? 0 : move_index, score);
+  } else if (!legal_move_found && !position.IsCheck(position.GetActiveColor())) {
+    return MoveScore(move_index == -1 ? 0 : move_index, 0.0);
+  }
+
   return MoveScore(best_index, position.GetActiveColor() == core::WHITE ? alpha : beta);
 }
 

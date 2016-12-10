@@ -11,6 +11,9 @@ namespace ai {
   
 class NoMovesException {};
 
+const double WHITE_MAX = 1000;
+const double BLACK_MAX = -1000;
+
 struct MoveScore {
   int move_index;
   double score;

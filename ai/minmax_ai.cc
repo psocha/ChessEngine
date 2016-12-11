@@ -29,7 +29,7 @@ string MinMaxAI::BestMove(core::Position* position) {
   
   MoveScore result = MinMax(position, max_depth, 2 * BLACK_MAX, 2 * WHITE_MAX, -1);
                             
-  int centipawn_evaluation = round(result.score * 100);
+  int centipawn_evaluation = result.score;
   if (position->GetActiveColor() == core::BLACK) {
     centipawn_evaluation *= -1;
   }
@@ -38,19 +38,20 @@ string MinMaxAI::BestMove(core::Position* position) {
   return pseudolegal_moves.at(result.move_index).ToString();
 }
 
-MoveScore MinMaxAI::MinMax(core::Position* position, int depth, double alpha, double beta, int move_index) {  
+MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int beta, int move_index) {  
   int best_index = 0;
   
   if (depth == 0) {
     if (position->IsCheck(position->GetActiveColor())) {
       vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(*position);
       if (!LegalMovesExist(position, pseudolegal_moves)) {
-        double score = position->GetActiveColor() == core::WHITE ? BLACK_MAX - depth : WHITE_MAX + depth;
+        int score = position->GetActiveColor() == core::WHITE ?
+          BLACK_MAX - (100 * depth) : WHITE_MAX + (100 * depth);
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       }
     }
     
-    double score = Evaluate(position);
+    int score = Evaluate(position);
     this->positions_evaluated++;
     return MoveScore(move_index == -1 ? 0 : move_index, score);
   }
@@ -91,7 +92,8 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, double alpha, do
   if (!legal_move_found) {
     if (!LegalMovesExist(position, next_moves)) {
       if (position->IsCheck(position->GetActiveColor())) {
-        double score = position->GetActiveColor() == core::WHITE ? BLACK_MAX - depth: WHITE_MAX + depth;
+        int score = position->GetActiveColor() == core::WHITE ?
+          BLACK_MAX - (100 * depth) : WHITE_MAX + (100 * depth);
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       } else {
         return MoveScore(move_index == -1 ? 0 : move_index, 0.0);

@@ -11,7 +11,7 @@ class MaterialAI : public MinMaxAI {
   MaterialAI();
   virtual ~MaterialAI();
   
-  virtual double Evaluate(core::Position* position);
+  virtual int Evaluate(core::Position* position);
 };
 
 

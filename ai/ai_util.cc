@@ -6,18 +6,18 @@ using core::SquareContents;
 
 namespace ai {
 
-double MaterialDifference(const Position& position, double pawn_value,
-                          double knight_value, double bishop_value,
-                          double rook_value, double queen_value) {
+int MaterialDifference(const Position& position, int pawn_value,
+                       int knight_value, int bishop_value,
+                       int rook_value, int queen_value) {
                             
-  double difference = 0.0;
+  int difference = 0;
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
       Square square(rank, file);
       SquareContents contents = position.ContentsAt(square);
       if (contents == core::EMPTY) continue;
       
-      double piece_value = 0.0;
+      int piece_value = 0;
       switch (GetPieceType(contents)) {
         case core::PAWN:
           piece_value = pawn_value;
@@ -35,7 +35,7 @@ double MaterialDifference(const Position& position, double pawn_value,
           piece_value = queen_value;
           break;
         default:
-          piece_value = 0.0;
+          piece_value = 0;
       }
       
       if (ColorOfContents(contents) == core::BLACK) {
@@ -48,8 +48,8 @@ double MaterialDifference(const Position& position, double pawn_value,
   return difference;
 }
 
-double RandomDouble(double min, double max) {
-  return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
+int RandomInt(int min, int max) {
+  return (max - min) * (rand() / RAND_MAX) + min;
 }
 
 }

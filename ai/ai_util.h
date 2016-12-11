@@ -5,11 +5,11 @@
 
 namespace ai {
   
-double MaterialDifference(const core::Position& position, double pawn_value,
-                          double knight_value, double bishop_value,
-                          double rook_value, double queen_value);
+int MaterialDifference(const core::Position& position, int pawn_value,
+                       int knight_value, int bishop_value,
+                       int rook_value, int queen_value);
 
-double RandomDouble(double min, double max);
+int RandomInt(int min, int max);
 
 }
 

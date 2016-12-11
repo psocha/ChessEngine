@@ -25,8 +25,7 @@ std::string RandomAI::BestMove(core::Position* position) {
   vector<Move> legal_moves = core::MoveGen::AllLegalMoves(position);
   int random_index = rand() % legal_moves.size();
   
-  double material_difference = MaterialDifference(*position, 1.0, 3.0, 3.0, 5.0, 9.0);
-  int centipawn_evaluation = round(material_difference * 100);
+  int centipawn_evaluation = MaterialDifference(*position, 100, 300, 300, 500, 900);
   if (position->GetActiveColor() == core::BLACK) {
     centipawn_evaluation *= -1;
   }

@@ -12,9 +12,9 @@ MaterialAI::MaterialAI() : MinMaxAI() {
 
 MaterialAI::~MaterialAI() {}
 
-double MaterialAI::Evaluate(core::Position* position) {
-  double material_difference = MaterialDifference(*position, 1.0, 3.0, 3.0, 5.0, 9.0);
-  double random_component = RandomDouble(-0.1, 0.1);
+int MaterialAI::Evaluate(core::Position* position) {
+  int material_difference = MaterialDifference(*position, 100, 300, 300, 500, 900);
+  int random_component = RandomInt(-10, 10);
   return material_difference + random_component;
 }
 

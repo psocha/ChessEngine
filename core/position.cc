@@ -21,12 +21,12 @@ bool operator!=(const CastlesAllowed& left, const CastlesAllowed& right) {
 }
 
 bool operator==(const HistoryData& left, const HistoryData& right) {
-  return left.last_starting_square == right.last_starting_square &&
-         left.last_ending_square == right.last_ending_square &&
+  return left.last_start_square == right.last_start_square &&
+         left.last_end_square == right.last_end_square &&
          left.last_dest_square_contents == right.last_dest_square_contents &&
          left.last_castles_allowed == right.last_castles_allowed &&
-         left.last_en_passant_square == right.last_en_passant_square &&
-         left.is_demotion == right.is_demotion;
+         left.last_en_passant_square.ToString() == right.last_en_passant_square.ToString() &&
+         left.was_promotion == right.was_promotion;
 }
 
 bool operator!=(const HistoryData& left, const HistoryData& right) {
@@ -120,6 +120,15 @@ string Position::Serialize() const {
 void Position::PerformMove(std::string mv) {
   Move move = Move(mv, *this);
   
+  HistoryData history_data;
+  history_data.last_start_square = move.start_square;
+  history_data.last_end_square = move.end_square;
+  history_data.last_dest_square_contents =
+    chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2);
+  history_data.last_castles_allowed = GetCastle();
+  history_data.last_en_passant_square = GetEnPassant();
+  history_data.was_promotion = false;
+  
   SquareContents moving_piece = ContentsAt(move.start_square);
   chessboard.at(move.start_square.rank + 2).at(move.start_square.file + 2) = EMPTY;
   chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) = moving_piece;
@@ -127,6 +136,7 @@ void Position::PerformMove(std::string mv) {
   if (GetPieceType(moving_piece) == PAWN && move.promoted_piece != NULL_PIECE) {
     chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) =
       MakePiece(move.promoted_piece, this->active_color);
+    history_data.was_promotion = true;
   }
   
   if (moving_piece == KING_W) {
@@ -190,10 +200,73 @@ void Position::PerformMove(std::string mv) {
   } else {
     active_color = WHITE;
   }
+  
+  move_stack.push_back(history_data);
 }
 
 void Position::UndoLastMove() {
+  HistoryData history_data = move_stack.back();
+  move_stack.pop_back();
   
+  if (active_color == BLACK && ContentsAt(history_data.last_end_square) == PAWN_W &&
+      history_data.last_end_square == history_data.last_en_passant_square) {
+    chessboard[2 + history_data.last_end_square.rank - 1]
+              [2 + history_data.last_end_square.file] = PAWN_B;
+  }
+  if (active_color == WHITE && ContentsAt(history_data.last_end_square) == PAWN_B &&
+      history_data.last_end_square == history_data.last_en_passant_square) {
+    chessboard[2 + history_data.last_end_square.rank + 1]
+              [2 + history_data.last_end_square.file] = PAWN_W;
+  }
+  en_passant_square = history_data.last_en_passant_square;
+  
+  chessboard[history_data.last_start_square.rank + 2][history_data.last_start_square.file + 2] =
+    chessboard[history_data.last_end_square.rank + 2][history_data.last_end_square.file + 2];
+
+  chessboard[history_data.last_end_square.rank + 2][history_data.last_end_square.file + 2] =
+    history_data.last_dest_square_contents;
+
+  if (history_data.last_start_square.ToString() == "e1" &&
+      history_data.last_end_square.ToString() == "g1" &&
+      history_data.last_dest_square_contents == EMPTY &&
+      ContentsAt(Square("f1")) == ROOK_W) {
+    chessboard[0 + 2][5 + 2] = EMPTY;
+    chessboard[0 + 2][7 + 2] = ROOK_W;
+  }
+  if (history_data.last_start_square.ToString() == "e1" &&
+      history_data.last_end_square.ToString() == "c1" &&
+      history_data.last_dest_square_contents == EMPTY &&
+      ContentsAt(Square("d1")) == ROOK_W) {
+    chessboard[0 + 2][3 + 2] = EMPTY;
+    chessboard[0 + 2][0 + 2] = ROOK_W;
+  }
+  if (history_data.last_start_square.ToString() == "e8" &&
+      history_data.last_end_square.ToString() == "g8" &&
+      history_data.last_dest_square_contents == EMPTY &&
+      ContentsAt(Square("f8")) == ROOK_B) {
+    chessboard[7 + 2][5 + 2] = EMPTY;
+    chessboard[7 + 2][7 + 2] = ROOK_B;
+  }
+  if (history_data.last_start_square.ToString() == "e8" &&
+      history_data.last_end_square.ToString() == "c8" &&
+      history_data.last_dest_square_contents == EMPTY &&
+      ContentsAt(Square("f1")) == ROOK_W) {
+    chessboard[7 + 2][3 + 2] = EMPTY;
+    chessboard[7 + 2][0 + 2] = ROOK_B;
+  }
+  castles_allowed = history_data.last_castles_allowed;
+  
+  if (history_data.was_promotion) {
+    if (history_data.last_end_square.rank == 7) {
+      chessboard[history_data.last_start_square.rank + 2]
+                [history_data.last_start_square.file + 2] = PAWN_W;
+    } else if (history_data.last_end_square.rank == 0) {
+      chessboard[history_data.last_start_square.rank + 2]
+                [history_data.last_start_square.file + 2] = PAWN_B;
+    }
+  }
+  
+  active_color = active_color == WHITE ? BLACK : WHITE;
 }
 
 void Position::SetActiveColor(std::string color_marker) {
@@ -277,7 +350,7 @@ bool Position::Equals(const Position& other, bool compare_stacks) const {
   for (int i = 0; i < 12; i++) {
     for (int j = 0; j < 12; j++) {
       if (chessboard[i][j] != other.chessboard[i][j]) {
-        std::cout << "Position mismatch at " << Square(i+2, j+2).ToString() << std::endl;
+        std::cout << "Position mismatch on board" << std::endl;
         return false;
       }
     }

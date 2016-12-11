@@ -20,13 +20,13 @@ bool operator==(const CastlesAllowed& left, const CastlesAllowed& right);
 bool operator!=(const CastlesAllowed& left, const CastlesAllowed& right);
 
 struct HistoryData {
-  Square last_starting_square;
-  Square last_ending_square;
+  Square last_start_square;
+  Square last_end_square;
   SquareContents last_dest_square_contents;
   
   CastlesAllowed last_castles_allowed;
   Square last_en_passant_square;
-  bool is_demotion;
+  bool was_promotion;
 };
 
 bool operator==(const HistoryData& left, const HistoryData& right);

@@ -1,5 +1,6 @@
 #include "test_main.h"
 #include "position_tests.h"
+#include "move_stack_tests.h"
 #include "legal_move_tests.h"
 #include "ai_tests.h"
 
@@ -14,6 +15,12 @@ void RunAllTests() {
   bool position_tests_passed = RunAllPositionTests();
   if (!position_tests_passed) {
     std::cout << "Basic position tests failed. Terminating." << std::endl;
+    return;
+  }
+  
+  bool move_stack_tests_passed = RunAllMoveStackTests();
+  if (!move_stack_tests_passed) {
+    std::cout << "Move stack tests failed. Terminating." << std::endl;
     return;
   }
   

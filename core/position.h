@@ -61,8 +61,7 @@ public:
   
   bool IsCheck(Color color) const;
   
-  bool operator==(const Position& other) const;
-  bool operator!=(const Position& other) const;
+  bool Equals(const Position& other, bool compare_stacks) const;
 
 private:
   std::vector<std::vector<SquareContents>> chessboard;

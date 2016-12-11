@@ -48,6 +48,9 @@ void Position::Print() const {
     }
     std::cout << std::endl;
   }
+  std::cout << CharFromColor(GetActiveColor()) << " ";
+  std::cout << MakeCastleString() << " ";
+  std::cout << GetEnPassant().ToString() << std::endl;
 }
 
 void Position::LoadFromFen(string fen) {
@@ -257,27 +260,43 @@ bool Position::IsCheck(Color color) const {
   return MoveGen::IsInCheck(*this, king_squares, color);
 }
 
-bool Position::operator==(const Position& other) const {
-  if (GetActiveColor() != other.GetActiveColor()) return false;
-  if (GetCastle() != other.GetCastle()) return false;
-  if (GetEnPassant() != other.GetEnPassant()) return false;
+bool Position::Equals(const Position& other, bool compare_stacks) const {
+  if (GetActiveColor() != other.GetActiveColor()) {
+    std::cout << "Position mismatch at active color" << std::endl;
+    return false;
+  }
+  if (GetCastle() != other.GetCastle()) {
+    std::cout << "Position mismatch at castle status" << std::endl;
+    return false;
+  }
+  if (GetEnPassant().ToString() != other.GetEnPassant().ToString()) {
+    std::cout << "Position mismatch at en passant square" << std::endl;
+    return false;
+  }
   
   for (int i = 0; i < 12; i++) {
     for (int j = 0; j < 12; j++) {
-      if (chessboard[i][j] != other.chessboard[i][j]) return false;
+      if (chessboard[i][j] != other.chessboard[i][j]) {
+        std::cout << "Position mismatch at " << Square(i+2, j+2).ToString() << std::endl;
+        return false;
+      }
     }
   }
   
-  if (move_stack.size() != other.move_stack.size()) return false;
-  for (unsigned int i = 0; i < move_stack.size(); i++) {
-    if (move_stack[i] != other.move_stack[i]) return false;
+  if (compare_stacks) {
+    if (move_stack.size() != other.move_stack.size()) {
+      std::cout << "Position mismatch on stack size";
+      return false;
+    }
+    for (unsigned int i = 0; i < move_stack.size(); i++) {
+      if (move_stack[i] != other.move_stack[i]) {
+        std::cout << "Position mismatch on stack contents at index " << i << std::endl;
+        return false;
+      }
+    }
   }
   
   return true;
-}
-
-bool Position::operator!=(const Position& other) const {
-  return !(*this == other);
 }
 
 void Position::InitializeEmptyBoard() {

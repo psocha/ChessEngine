@@ -30,11 +30,11 @@ void TestObviousMateInOne() {
   ai::MaterialAI material_ai;
   material_ai.SetDepth(3);
   
-  string suggested_move = material_ai.BestMove(board.GetPosition());
+  string suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "f2c2", "Black plays mate in 1");
   
   material_ai.SetDepth(1);
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "f2c2", "Black plays mate in 1 even at depth 1");
 }
 
@@ -44,16 +44,16 @@ void TestRollingRook() {
   ai::MaterialAI material_ai;
   material_ai.SetDepth(3);
   
-  string suggested_move = material_ai.BestMove(board.GetPosition());
+  string suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "a4a2", "Black sets up rolling rook mate");
   
   board.LoadMove("a4a2");
   board.LoadMove("e2e1");
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "h3h1", "Black completes rolling rook mate");
   
   material_ai.SetDepth(1);
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "h3h1", "Black completes rolling rook mate even at depth 1");
 }
 
@@ -63,15 +63,15 @@ void TestSacrificeMateCombo() {
   ai::MaterialAI material_ai;
   material_ai.SetDepth(3);
   
-  string suggested_move = material_ai.BestMove(board.GetPosition());
+  string suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "f3f6", "White sacrifices queen to set up mate");
   
   board.LoadMove("f3f6");
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertTrue(suggested_move == "g8f6" || suggested_move == "g8e7", "Black escapes from check");
   
   board.LoadMove("g8f6");
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "d6e7", "White completes the mate");
 }
 
@@ -81,11 +81,11 @@ void TestRescueStalemate() {
   ai::MaterialAI material_ai;
   material_ai.SetDepth(2);
   
-  string suggested_move = material_ai.BestMove(board.GetPosition());
+  string suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "h3h7", "White sacrifices to get stalemate in lost position");
   
   material_ai.SetDepth(4);
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "h3h7", "White not confused by stalemate in chain");
 }
 
@@ -95,12 +95,12 @@ void TestWinPieceWithCheck() {
   ai::MaterialAI material_ai;
   material_ai.SetDepth(3);
   
-  string suggested_move = material_ai.BestMove(board.GetPosition());
+  string suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "h6e3", "Black forks king and rook");
   
   board.LoadMove("h6e3");
   board.LoadMove("c5c4");
-  suggested_move = material_ai.BestMove(board.GetPosition());
+  suggested_move = material_ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "e3g1", "Black wins rook");
 }
 

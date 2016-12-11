@@ -11,7 +11,7 @@ class ChessAI {
   ChessAI() {}
   virtual ~ChessAI() {}
   
-  virtual std::string BestMove(core::Position position) = 0;
+  virtual std::string BestMove(core::Position* position) = 0;
 };
 
 }

@@ -11,7 +11,7 @@ class RandomAI : public ChessAI {
   RandomAI();
   virtual ~RandomAI();
 
-  std::string BestMove(core::Position position);
+  std::string BestMove(core::Position* position);
 };
 
 }

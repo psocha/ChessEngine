@@ -1,7 +1,7 @@
 #include "random_ai.h"
 #include "ai_util.h"
-#include "../core/Move.h"
-#include "../core/MoveGen.h"
+#include "../core/move.h"
+#include "../core/movegen.h"
 
 #include <cmath>
 #include <cstdlib>
@@ -21,13 +21,13 @@ RandomAI::RandomAI() : ChessAI() {
 
 RandomAI::~RandomAI() {}
 
-std::string RandomAI::BestMove(core::Position position) {
+std::string RandomAI::BestMove(core::Position* position) {
   vector<Move> legal_moves = core::MoveGen::AllLegalMoves(position);
   int random_index = rand() % legal_moves.size();
   
-  double material_difference = MaterialDifference(position, 1.0, 3.0, 3.0, 5.0, 9.0);
+  double material_difference = MaterialDifference(*position, 1.0, 3.0, 3.0, 5.0, 9.0);
   int centipawn_evaluation = round(material_difference * 100);
-  if (position.GetActiveColor() == core::BLACK) {
+  if (position->GetActiveColor() == core::BLACK) {
     centipawn_evaluation *= -1;
   }
   

@@ -35,7 +35,7 @@ void Board::UndoLastMove() {
 }
 
 std::vector<string> Board::GetLegalMoves() {
-  vector<Move> legal_moves = MoveGen::AllLegalMoves(*position);
+  vector<Move> legal_moves = MoveGen::AllLegalMoves(position);
   vector<string> moves_as_strings;
 
   for (Move move : legal_moves) {
@@ -58,6 +58,10 @@ std::vector<string> Board::GetPseudolegalMoves() {
 
 Position Board::GetPosition() {
   return Position(*(this->position));
+}
+
+Position* Board::GetPositionRef() {
+  return this->position;
 }
 
 void Board::Print() {

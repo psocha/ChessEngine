@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     }
     else if (line.substr(0, 3) == "go ") {
       core::Position current_position = board->GetPosition();
-      string best_move = chess_ai->BestMove(current_position);
+      string best_move = chess_ai->BestMove(&current_position);
       cout << "bestmove " << best_move << endl;
     }
     else if (line == "quit") {

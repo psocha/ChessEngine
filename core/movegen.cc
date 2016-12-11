@@ -5,15 +5,11 @@
 using std::vector;
 
 namespace core {
-  
-Position MoveGen::position = Position();
 
 MoveGen::MoveGen() {}
 
-vector<Move> MoveGen::AllLegalMoves(Position position) {
-  MoveGen::position = position;
-  
-  vector<Move> legal_moves = AllPseudolegalMoves(position);
+vector<Move> MoveGen::AllLegalMoves(Position *position) {
+  vector<Move> legal_moves = AllPseudolegalMoves(*position);
   
   for (vector<Move>::iterator it = legal_moves.begin(); it != legal_moves.end(); ) {
     Move move = *it;
@@ -27,8 +23,7 @@ vector<Move> MoveGen::AllLegalMoves(Position position) {
   return legal_moves;
 }
 
-vector<Move> MoveGen::AllPseudolegalMoves(Position position) {
-  MoveGen::position = position;
+vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
   vector<Move> pseudolegal_moves;
   Color color = position.GetActiveColor();
   
@@ -41,16 +36,16 @@ vector<Move> MoveGen::AllPseudolegalMoves(Position position) {
         
         PieceType piece_type = GetPieceType(contents);
         if (piece_type == PAWN) {
-          square_moves = GetPawnMoves(square);
+          square_moves = GetPawnMoves(position, square);
         } else if (piece_type == KNIGHT) {
-          square_moves = GetKnightMoves(square);
+          square_moves = GetKnightMoves(position, square);
         } else if (piece_type == BISHOP) {
-          square_moves = GetDiagonalMoves(square, false);
+          square_moves = GetDiagonalMoves(position, square, false);
         } else if (piece_type == ROOK) {
-          square_moves = GetOrthogonalMoves(square, false);
+          square_moves = GetOrthogonalMoves(position, square, false);
         } else if (piece_type == QUEEN) {
-          vector<Move> diagonal_moves = GetDiagonalMoves(square, false);
-          vector<Move> orthogonal_moves = GetOrthogonalMoves(square, false);
+          vector<Move> diagonal_moves = GetDiagonalMoves(position, square, false);
+          vector<Move> orthogonal_moves = GetOrthogonalMoves(position, square, false);
           for (Move move : diagonal_moves) {
             square_moves.push_back(move);
           }
@@ -58,8 +53,8 @@ vector<Move> MoveGen::AllPseudolegalMoves(Position position) {
             square_moves.push_back(move);
           }
         } else if (piece_type == KING) {
-          vector<Move> diagonal_moves = GetDiagonalMoves(square, true);
-          vector<Move> orthogonal_moves = GetOrthogonalMoves(square, true);
+          vector<Move> diagonal_moves = GetDiagonalMoves(position, square, true);
+          vector<Move> orthogonal_moves = GetOrthogonalMoves(position, square, true);
           for (Move move : diagonal_moves) {
             square_moves.push_back(move);
           }
@@ -119,13 +114,12 @@ vector<Move> MoveGen::AllPseudolegalMoves(Position position) {
   return ordered_pseudolegal_moves;
 }
 
-bool MoveGen::IsPseudolegalMoveLegal(Position position, Move move) {
-  Color color = position.GetActiveColor();
-  Position after_move = position;
-  after_move.PerformMove(move.ToString());
+bool MoveGen::IsPseudolegalMoveLegal(Position *position, Move move) {
+  Color color = position->GetActiveColor();
+  position->PerformMove(move.ToString());
   
   vector<Square> king_squares;
-  king_squares.push_back(after_move.FindKing(color));
+  king_squares.push_back(position->FindKing(color));
   
   if (move.is_castle && move.ToString() == "e1g1") {
     king_squares.push_back(Square("e1"));
@@ -144,38 +138,38 @@ bool MoveGen::IsPseudolegalMoveLegal(Position position, Move move) {
     king_squares.push_back(Square("d8"));
   }
   
-  if (IsInCheck(after_move, king_squares, color)) {
-    return false;
-  }
-  return true;
+  bool is_in_check = IsInCheck(*position, king_squares, color);
+  position->UndoLastMove();
+  
+  return !is_in_check;
 }
 
-bool MoveGen::IsInCheck(Position after_move,vector<Square> king_squares, Color color) {
+bool MoveGen::IsInCheck(const Position& position, vector<Square> king_squares, Color color) {
   for (Square king_square : king_squares) {
     
-    SquareContents enemy_knight = MakePiece(KNIGHT, after_move.GetActiveColor());
+    SquareContents enemy_knight = MakePiece(KNIGHT, position.GetActiveColor());
     vector<Square> knight_attack_squares = GetKnightSquares(king_square);
     for (Square knight_square : knight_attack_squares) {
-      if (knight_square.is_real_square && after_move.ContentsAt(knight_square) == enemy_knight) {
+      if (knight_square.is_real_square && position.ContentsAt(knight_square) == enemy_knight) {
         return true;
       }
     }
     
     vector<Square> line_endings;
-    line_endings.push_back(LineEndingSquare(after_move, king_square, 1, 0));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, 1, 1));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, 0, 1));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, -1, 1));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, -1, 0));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, -1, -1));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, 0, -1));
-    line_endings.push_back(LineEndingSquare(after_move, king_square, 1, -1));
+    line_endings.push_back(LineEndingSquare(position, king_square, 1, 0));
+    line_endings.push_back(LineEndingSquare(position, king_square, 1, 1));
+    line_endings.push_back(LineEndingSquare(position, king_square, 0, 1));
+    line_endings.push_back(LineEndingSquare(position, king_square, -1, 1));
+    line_endings.push_back(LineEndingSquare(position, king_square, -1, 0));
+    line_endings.push_back(LineEndingSquare(position, king_square, -1, -1));
+    line_endings.push_back(LineEndingSquare(position, king_square, 0, -1));
+    line_endings.push_back(LineEndingSquare(position, king_square, 1, -1));
     
     for (Square line_ending : line_endings) {
       if (!line_ending.is_real_square) {
         continue;
       }
-      SquareContents line_ending_contents = after_move.ContentsAt(line_ending);
+      SquareContents line_ending_contents = position.ContentsAt(line_ending);
       if (ColorOfContents(line_ending_contents) == color) {
         continue;
       }
@@ -189,7 +183,7 @@ bool MoveGen::IsInCheck(Position after_move,vector<Square> king_squares, Color c
   return false;
 }
 
-vector<Move> MoveGen::GetPawnMoves(Square square) {
+vector<Move> MoveGen::GetPawnMoves(const Position& position, Square square) {
   vector<Move> moves;
   Color color = position.GetActiveColor();
 
@@ -214,17 +208,17 @@ vector<Move> MoveGen::GetPawnMoves(Square square) {
     capture_right = Square(square.rank - 1, square.file + 1);
   }
 
-  if (!IsValidDestSquare(one_ahead, color)) {
+  if (!IsValidDestSquare(position, one_ahead, color)) {
     one_ahead_valid = false;
     two_ahead_valid = false;
   }
-  if (!IsValidDestSquare(two_ahead, color)) {
+  if (!IsValidDestSquare(position, two_ahead, color)) {
     two_ahead_valid = false;
   }
-  if (!IsValidDestSquare(capture_left, color)) {
+  if (!IsValidDestSquare(position, capture_left, color)) {
     capture_left_valid = false;
   }
-  if (!IsValidDestSquare(capture_right, color)) {
+  if (!IsValidDestSquare(position, capture_right, color)) {
     capture_right_valid = false;
   }
   
@@ -235,24 +229,24 @@ vector<Move> MoveGen::GetPawnMoves(Square square) {
     two_ahead_valid = false;
   }
   
-  if (IsPawnCaptureSquare(one_ahead, color)) {
+  if (IsPawnCaptureSquare(position, one_ahead, color)) {
     one_ahead_valid = false;
     two_ahead_valid = false;
   }
-  if (IsPawnCaptureSquare(two_ahead, color)) {
+  if (IsPawnCaptureSquare(position, two_ahead, color)) {
     two_ahead_valid = false;
   }
   
-  if (!IsPawnCaptureSquare(capture_left, color)) {
+  if (!IsPawnCaptureSquare(position, capture_left, color)) {
     capture_left_valid = false;
   }
-  if (!IsPawnCaptureSquare(capture_right, color)) {
+  if (!IsPawnCaptureSquare(position, capture_right, color)) {
     capture_right_valid = false;
   }
  
   if (one_ahead_valid) {
     if (is_promotion) {
-      vector<Move> promotions = GetPromotionMoves(square, one_ahead);
+      vector<Move> promotions = GetPromotionMoves(position, square, one_ahead);
       for (Move promotion : promotions) {
         moves.push_back(promotion);
       }
@@ -265,7 +259,7 @@ vector<Move> MoveGen::GetPawnMoves(Square square) {
   }
   if (capture_left_valid) {
     if (is_promotion) {
-      vector<Move> promotions = GetPromotionMoves(square, capture_left);
+      vector<Move> promotions = GetPromotionMoves(position, square, capture_left);
       for (Move promotion : promotions) {
         moves.push_back(promotion);
       }
@@ -275,7 +269,7 @@ vector<Move> MoveGen::GetPawnMoves(Square square) {
   }
   if (capture_right_valid) {
     if (is_promotion) {
-      vector<Move> promotions = GetPromotionMoves(square, capture_right);
+      vector<Move> promotions = GetPromotionMoves(position, square, capture_right);
       for (Move promotion : promotions) {
         moves.push_back(promotion);
       }
@@ -287,14 +281,14 @@ vector<Move> MoveGen::GetPawnMoves(Square square) {
   return moves;
 }
 
-vector<Move> MoveGen::GetKnightMoves(Square square) {
+vector<Move> MoveGen::GetKnightMoves(const Position& position, Square square) {
   vector<Square> dest_squares = GetKnightSquares(square);
   
   Color color = position.GetActiveColor();
   vector<Move> moves;
   
   for (Square dest : dest_squares) {
-    if (IsValidDestSquare(dest, color)) {
+    if (IsValidDestSquare(position, dest, color)) {
       moves.push_back(Move(square, dest, position));
     }
   }
@@ -302,39 +296,41 @@ vector<Move> MoveGen::GetKnightMoves(Square square) {
   return moves;
 }
 
-vector<Move> MoveGen::GetDiagonalMoves(Square square, bool limit_to_one) {
+vector<Move> MoveGen::GetDiagonalMoves(const Position& position, Square square,
+                                       bool limit_to_one) {
   vector<Move> moves;
   
-  AddLineMoves(square, 1, 1, limit_to_one, &moves);
-  AddLineMoves(square, 1, -1, limit_to_one, &moves);
-  AddLineMoves(square, -1, -1, limit_to_one, &moves);
-  AddLineMoves(square, -1, 1, limit_to_one, &moves);
+  AddLineMoves(position, square, 1, 1, limit_to_one, &moves);
+  AddLineMoves(position, square, 1, -1, limit_to_one, &moves);
+  AddLineMoves(position, square, -1, -1, limit_to_one, &moves);
+  AddLineMoves(position, square, -1, 1, limit_to_one, &moves);
   
   return moves;
 }
 
-vector<Move> MoveGen::GetOrthogonalMoves(Square square, bool limit_to_one) {
+vector<Move> MoveGen::GetOrthogonalMoves(const Position& position, Square square,
+                                         bool limit_to_one) {
   vector<Move> moves;
   
-  AddLineMoves(square, 1, 0, limit_to_one, &moves);
-  AddLineMoves(square, 0, -1, limit_to_one, &moves);
-  AddLineMoves(square, -1, 0, limit_to_one, &moves);
-  AddLineMoves(square, 0, 1, limit_to_one, &moves);
+  AddLineMoves(position, square, 1, 0, limit_to_one, &moves);
+  AddLineMoves(position, square, 0, -1, limit_to_one, &moves);
+  AddLineMoves(position, square, -1, 0, limit_to_one, &moves);
+  AddLineMoves(position, square, 0, 1, limit_to_one, &moves);
   
   return moves;
 }
 
-void MoveGen::AddLineMoves(Square square, int rank_increment, int file_increment,
-                           bool limit_to_one, vector<Move> *moves) {
+void MoveGen::AddLineMoves(const Position& position, Square square, int rank_increment,
+                           int file_increment, bool limit_to_one, vector<Move> *moves) {
   Color color = position.GetActiveColor();
   Square dest_square = square;
   bool search_onward = true;
   while (search_onward) {
     dest_square = Square(dest_square.rank + rank_increment,
                          dest_square.file + file_increment);
-    if (IsValidDestSquare(dest_square, color)) {
+    if (IsValidDestSquare(position, dest_square, color)) {
       moves->push_back(Move(square, dest_square, position));
-      if (IsCaptureSquare(dest_square, color)) {
+      if (IsCaptureSquare(position, dest_square, color)) {
         search_onward = false;
       }
     } else {
@@ -347,11 +343,11 @@ void MoveGen::AddLineMoves(Square square, int rank_increment, int file_increment
   }
 }
 
-Square MoveGen::LineEndingSquare(Position after_move, Square start_square,
+Square MoveGen::LineEndingSquare(const Position& position, Square start_square,
                                  int rank_increment, int file_increment) {
   Square next_square = Square(start_square.rank + rank_increment,
     start_square.file + file_increment);
-  while (next_square.is_real_square && after_move.ContentsAt(next_square) == EMPTY) {
+  while (next_square.is_real_square && position.ContentsAt(next_square) == EMPTY) {
     next_square = Square(next_square.rank + rank_increment, next_square.file + file_increment);
   }
   return next_square;
@@ -384,12 +380,12 @@ bool MoveGen::CanAttack(SquareContents source_contents, Square source_square, Sq
   return false;
 }
 
-bool MoveGen::IsValidDestSquare(Square square, Color color) {
+bool MoveGen::IsValidDestSquare(const Position& position, Square square, Color color) {
   return square.is_real_square &&
     ColorOfContents(position.ContentsAt(square)) != color;
 }
 
-bool MoveGen::IsCaptureSquare(Square square, Color color) {
+bool MoveGen::IsCaptureSquare(const Position& position, Square square, Color color) {
     if (!square.is_real_square) {
     return false;
   } else if (OppositeColors(color, ColorOfContents(position.ContentsAt(square)))) {
@@ -399,7 +395,7 @@ bool MoveGen::IsCaptureSquare(Square square, Color color) {
   }
 }
 
-bool MoveGen::IsPawnCaptureSquare(Square square, Color color) {
+bool MoveGen::IsPawnCaptureSquare(const Position& position, Square square, Color color) {
   if (!square.is_real_square) {
     return false;
   } else if (OppositeColors(color, ColorOfContents(position.ContentsAt(square)))) {
@@ -425,7 +421,8 @@ vector<Square> MoveGen::GetKnightSquares(Square square) {
   return dest_squares;
 }
 
-vector<Move> MoveGen::GetPromotionMoves(Square start_square, Square end_square) {
+vector<Move> MoveGen::GetPromotionMoves(const Position& position,
+    Square start_square, Square end_square) {
   vector<Move> promotions;
   
   promotions.push_back(Move(start_square, end_square, position, KNIGHT));

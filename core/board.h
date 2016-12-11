@@ -27,10 +27,11 @@ public:
   std::vector<std::string> GetPseudolegalMoves();
 
   Position GetPosition();
+  Position* GetPositionRef();
 
   void Print();
   
-private:
+ private:
   Position *position;
 };
 

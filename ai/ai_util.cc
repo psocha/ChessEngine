@@ -49,7 +49,7 @@ int MaterialDifference(const Position& position, int pawn_value,
 }
 
 int RandomInt(int min, int max) {
-  return (max - min) * (rand() / RAND_MAX) + min;
+  return min + (rand() % (int)(max - min + 1));
 }
 
 }

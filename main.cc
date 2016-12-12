@@ -1,5 +1,6 @@
 #include "ai/random_ai.h"
 #include "ai/material_ai.h"
+#include "ai/material_positional_ai.h"
 #include "core/board.h"
 #include "test/test_main.h"
 
@@ -18,10 +19,7 @@ int main(int argc, char* argv[]) {
   }
   
   core::Board *board = new core::Board();
-  ai::ChessAI *chess_ai = NULL;
-  
-  // Can swap for another AI by replacing this line.
-  chess_ai = new ai::MaterialAI();
+  ai::ChessAI *chess_ai = new ai::MaterialPositionalAI();
 
   while (getline(cin, line)) {
     if (line == "uci") {

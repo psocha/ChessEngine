@@ -6,12 +6,15 @@
 #include "../core/position.h"
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace ai {
 
 const int WHITE_MAX =  100000;
 const int BLACK_MAX = -100000;
+
+const int EVAL_CACHE_MAX_SIZE    = 1000000;
 
 struct MoveScore {
   int move_index;
@@ -39,10 +42,9 @@ class MinMaxAI : public ChessAI {
   int positions_evaluated;
   int max_depth;
   
-  bool LegalMovesExist(core::Position* position, std::vector<core::Move> pseudolegal_moves);
+  std::unordered_map<std::string, int> *evaluation_cache;
   
-  std::vector<core::Move> DeserializeMovegenList(std::string list, const core::Position& position) const;
-  std::string SerializeMovegenList(std::vector<core::Move> list) const;
+  bool LegalMovesExist(core::Position* position, std::vector<core::Move> pseudolegal_moves);
 };
 
 }

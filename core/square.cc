@@ -51,10 +51,16 @@ bool operator!=(const Square& first, const Square& second) {
   return !(first == second);
 }
 
+bool operator<(const Square& first, const Square& second) {
+  if (first.file < second.file) return true;
+  if (first.file > second.file) return false;
+  return first.rank < second.rank;
+}
+
 int SquareDistance(Square first, Square second) {
   int rank_distance = std::abs(second.rank - first.rank);
   int file_distance = std::abs(second.file - first.file);
-  
+
   return std::max(rank_distance, file_distance);
 }
 
@@ -69,7 +75,7 @@ bool SquaresAreDiagonal(Square first, Square second) {
   if (!first.is_real_square || !second.is_real_square) {
     return false;
   }
-  
+
   int rank_distance = std::abs(second.rank - first.rank);
   int file_distance = std::abs(second.file - first.file);
   return rank_distance == file_distance;

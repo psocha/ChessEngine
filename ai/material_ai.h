@@ -10,7 +10,7 @@ class MaterialAI : public MinMaxAI {
  public:
   MaterialAI();
   virtual ~MaterialAI();
-  
+
   virtual int Evaluate(core::Position* position);
 };
 

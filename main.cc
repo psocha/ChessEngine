@@ -12,12 +12,12 @@ using namespace std;
 int main(int argc, char* argv[]) {
   string line;
   cout.setf(ios::unitbuf);
-  
+
   if (argc > 1 && string(argv[1]) == "--runtests") {
     test::RunAllTests();
     return 0;
   }
-  
+
   core::Board *board = new core::Board();
   ai::ChessAI *chess_ai = new ai::MaterialPositionalAI();
 

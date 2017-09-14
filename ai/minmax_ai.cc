@@ -29,15 +29,15 @@ MinMaxAI::~MinMaxAI() {
 
 string MinMaxAI::BestMove(core::Position* position) {
   vector<Move> legal_moves = MoveGen::AllLegalMoves(position);
-  
+
   this->positions_evaluated = 0;
-  
+
   if (evaluation_cache->size() > EVAL_CACHE_MAX_SIZE) {
     evaluation_cache->clear();
   }
-  
+
   MoveScore result = MinMax(position, max_depth, 2 * BLACK_MAX, 2 * WHITE_MAX, -1);
-                            
+
   int centipawn_evaluation = result.score;
   if (position->GetActiveColor() == core::BLACK) {
     centipawn_evaluation *= -1;
@@ -47,11 +47,11 @@ string MinMaxAI::BestMove(core::Position* position) {
   return legal_moves.at(result.move_index).ToString();
 }
 
-MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int beta, int move_index) {  
+MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int beta, int move_index) {
   int best_index = 0;
-  
+
   string serialized_position = position->Serialize();
-  
+
   if (depth == 0) {
     if (position->IsCheck(position->GetActiveColor())) {
       vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(*position);
@@ -62,7 +62,7 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int b
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       }
     }
-    
+
     int score;
     if (evaluation_cache->count(serialized_position) > 0) {
       score = evaluation_cache->at(serialized_position);
@@ -71,26 +71,26 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int b
       (*evaluation_cache)[serialized_position] = score;
     }
     this->positions_evaluated++;
-    
+
     return MoveScore(move_index == -1 ? 0 : move_index, score);
   }
-  
+
   vector<Move> next_moves;
   if (depth == this->max_depth) {
     next_moves = MoveGen::AllLegalMoves(position);
   } else {
     next_moves = MoveGen::AllPseudolegalMoves(*position);
   }
-  
+
   bool legal_move_found = false;
-  
+
   for (unsigned int i = 0; i < next_moves.size(); i++) {
     Move move = next_moves.at(i);
-    
+
     position->PerformMove(move.ToString());
     MoveScore next_score = MinMax(position, depth - 1, alpha, beta, i);
     position->UndoLastMove();
-    
+
     if (position->GetActiveColor() == core::WHITE) {
       if (next_score.score > alpha) {
         if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
@@ -108,12 +108,12 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int b
         }
       }
     }
-    
+
     if (alpha >= beta) {
       break;
     }
   }
-  
+
   if (!legal_move_found) {
     if (!LegalMovesExist(position, next_moves)) {
       if (position->IsCheck(position->GetActiveColor())) {

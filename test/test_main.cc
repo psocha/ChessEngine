@@ -11,31 +11,31 @@ using std::string;
 namespace test {
 
 void RunAllTests() {
-  
+
   bool position_tests_passed = RunAllPositionTests();
   if (!position_tests_passed) {
     std::cout << "Basic position tests failed. Terminating." << std::endl;
     return;
   }
-  
+
   bool move_stack_tests_passed = RunAllMoveStackTests();
   if (!move_stack_tests_passed) {
     std::cout << "Move stack tests failed. Terminating." << std::endl;
     return;
   }
-  
+
   bool legal_tests_passed = RunLegalMoveTests();
   if (!legal_tests_passed) {
     std::cout << "Legal move tests failed. Terminating." << std::endl;
     return;
   }
-  
+
   bool ai_tests_passed = RunAITests();
   if (!ai_tests_passed) {
     std::cout << "AI tests failed. Terminating." << std::endl;
     return;
   }
-  
+
   std::cout << "ALL TESTS PASSING." << std::endl;
 }
 
@@ -58,7 +58,7 @@ core::Board TestHelper::CreateBoardFromFen(string fen) {
   fen_parser >> fullmove_number;
 
   board.LoadFromFen(position, active_color, castle, en_passant, halfmove_clock, fullmove_number);
-  
+
   return board;
 }
 

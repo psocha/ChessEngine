@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -g -O2 -std=c++11 -Wall -MMD -static -static-libgcc -static-libstdc++ 
+CXXFLAGS = -g -O2 -std=c++11 -Wall -MMD -static -static-libgcc -static-libstdc++
 
-OBJECTS_CORE = main.o core/pieces.o core/board.o core/square.o core/move.o core/position.o core/movegen.o 
+OBJECTS_CORE = main.o core/pieces.o core/board.o core/square.o core/move.o core/position.o core/movegen.o
 OBJECTS_TEST = test/test_main.o test/position_tests.o test/move_stack_tests.o test/legal_move_tests.o test/ai_tests.o
 OBJECTS_AI = ai/ai_util.o ai/random_ai.o ai/minmax_ai.o ai/material_ai.o ai/material_positional_ai.o
 

@@ -23,7 +23,7 @@ struct HistoryData {
   Square last_start_square;
   Square last_end_square;
   SquareContents last_dest_square_contents;
-  
+
   CastlesAllowed last_castles_allowed;
   Square last_en_passant_square;
   bool was_promotion;
@@ -41,26 +41,26 @@ public:
 
   void LoadFromFen(std::string fen);
   std::string Serialize() const;
-  
+
   void PerformMove(std::string move);
   void UndoLastMove();
-  
+
   void SetActiveColor(std::string color_marker);
   Color GetActiveColor() const;
-  
+
   void SetCastle(std::string castle);
   CastlesAllowed GetCastle() const;
   std::string MakeCastleString() const;
-  
+
   void SetEnPassant(std::string en_passant);
   Square GetEnPassant() const;
-  
+
   SquareContents ContentsAt(Square square) const;
-  
+
   Square FindKing(Color color) const;
-  
+
   bool IsCheck(Color color) const;
-  
+
   bool Equals(const Position& other, bool compare_stacks) const;
 
 private:
@@ -68,7 +68,7 @@ private:
   Color active_color;
   CastlesAllowed castles_allowed;
   Square en_passant_square;
-  
+
   std::vector<HistoryData> move_stack;
 
   void InitializeEmptyBoard();

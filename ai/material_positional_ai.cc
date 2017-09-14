@@ -22,10 +22,10 @@ MaterialPositionalAI::~MaterialPositionalAI() {}
 
 int MaterialPositionalAI::Evaluate(core::Position* position) {
   TotalMaterial total_material = GetTotalMaterial(*position);
-  
+
   int white_king_adjustment = 0;
   int black_king_adjustment = 0;
-  
+
   if (total_material.black_king_square.is_real_square) {
     if (total_material.total_white_material < ENDGAME_MATERIAL_THRESHOLD) {
       black_king_adjustment = KING_ENDGAME_TABLE
@@ -35,7 +35,7 @@ int MaterialPositionalAI::Evaluate(core::Position* position) {
         [total_material.black_king_square.rank][total_material.black_king_square.file];
     }
   }
-  
+
   if (total_material.white_king_square.is_real_square) {
     if (total_material.total_black_material < ENDGAME_MATERIAL_THRESHOLD) {
       white_king_adjustment = KING_ENDGAME_TABLE
@@ -45,27 +45,27 @@ int MaterialPositionalAI::Evaluate(core::Position* position) {
         [7 - total_material.white_king_square.rank][total_material.white_king_square.file];
     }
   }
-  
+
   total_material.total_white_material += white_king_adjustment;
   total_material.total_black_material += black_king_adjustment;
-  
+
   return total_material.total_white_material - total_material.total_black_material
          + RandomInt(-2, 2);
 }
 
 TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {
   TotalMaterial material;
-  
+
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
       Square square(rank, file);
       SquareContents contents = position.ContentsAt(square);
       if (contents == core::EMPTY) continue;
       Color color = ColorOfContents(contents);
-      
+
       int table_rank = color == WHITE ? 7 - rank : rank;
       int table_file = file;
-      
+
       int piece_value = 0;
       switch (GetPieceType(contents)) {
         case core::PAWN:
@@ -93,7 +93,7 @@ TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {
         default:
           break;
       }
-      
+
       if (color == WHITE) {
         material.total_white_material += piece_value;
       } else {
@@ -101,7 +101,7 @@ TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {
       }
     }
   }
-  
+
   return material;
 }
 

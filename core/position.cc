@@ -8,7 +8,7 @@ using std::string;
 using std::vector;
 
 namespace core {
-  
+
 bool operator==(const CastlesAllowed& left, const CastlesAllowed& right) {
   return left.white_kingside == right.white_kingside &&
          left.white_queenside == right.white_queenside &&
@@ -55,7 +55,7 @@ void Position::Print() const {
 
 void Position::LoadFromFen(string fen) {
   InitializeEmptyBoard();
-  
+
   int rank = 9;
   int file = 2;
   for (unsigned int i = 0; i < fen.length(); i++) {
@@ -81,7 +81,7 @@ void Position::LoadFromFen(string fen) {
 string Position::Serialize() const {
   string str = "";
   int empties = 0;
-  
+
   for (int rank = 7; rank >= 0; rank--) {
     for (int file = 0; file <= 7; file++) {
       SquareContents contents = chessboard.at(rank + 2).at(file + 2);
@@ -94,7 +94,7 @@ string Position::Serialize() const {
         }
         str += CharFromSquareContents(contents);
       }
-      
+
       if (file == 7) {
         if (empties > 0) {
           str += std::to_string(empties);
@@ -106,20 +106,20 @@ string Position::Serialize() const {
       }
     }
   }
-  
+
   str += " ";
   str += CharFromColor(GetActiveColor());
   str += " ";
   str += MakeCastleString();
   str += " ";
   str += GetEnPassant().ToString();
-  
+
   return str;
 }
 
 void Position::PerformMove(std::string mv) {
   Move move = Move(mv, *this);
-  
+
   HistoryData history_data;
   history_data.last_start_square = move.start_square;
   history_data.last_end_square = move.end_square;
@@ -128,17 +128,17 @@ void Position::PerformMove(std::string mv) {
   history_data.last_castles_allowed = GetCastle();
   history_data.last_en_passant_square = GetEnPassant();
   history_data.was_promotion = false;
-  
+
   SquareContents moving_piece = ContentsAt(move.start_square);
   chessboard.at(move.start_square.rank + 2).at(move.start_square.file + 2) = EMPTY;
   chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) = moving_piece;
-  
+
   if (GetPieceType(moving_piece) == PAWN && move.promoted_piece != NULL_PIECE) {
     chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) =
       MakePiece(move.promoted_piece, this->active_color);
     history_data.was_promotion = true;
   }
-  
+
   if (moving_piece == KING_W) {
     castles_allowed.white_kingside = false;
     castles_allowed.white_queenside = false;
@@ -147,7 +147,7 @@ void Position::PerformMove(std::string mv) {
     castles_allowed.black_kingside = false;
     castles_allowed.black_queenside = false;
   }
-  
+
   if (moving_piece == KING_W && move.ToString() == "e1g1") {
     chessboard[0 + 2][7 + 2] = EMPTY;
     chessboard[0 + 2][5 + 2] = ROOK_W;
@@ -164,7 +164,7 @@ void Position::PerformMove(std::string mv) {
     chessboard[7 + 2][0 + 2] = EMPTY;
     chessboard[7 + 2][3 + 2] = ROOK_B;
   }
-  
+
   if (move.start_square == Square("h1") || move.end_square == Square("h1")) {
     castles_allowed.white_kingside = false;
   }
@@ -177,7 +177,7 @@ void Position::PerformMove(std::string mv) {
   if (move.start_square == Square("a8") || move.end_square == Square("a8")) {
     castles_allowed.black_queenside = false;
   }
-  
+
   if (GetPieceType(moving_piece) == PAWN && move.end_square == this->en_passant_square) {
     if (active_color == WHITE) {
       chessboard[2 + en_passant_square.rank - 1][2 + en_passant_square.file] = EMPTY;
@@ -185,29 +185,29 @@ void Position::PerformMove(std::string mv) {
       chessboard[2 + en_passant_square.rank + 1][2 + en_passant_square.file] = EMPTY;
     }
   }
-  
+
   SetEnPassant("-");
-  
+
   if (moving_piece == PAWN_W && move.start_square.rank == 1 && move.end_square.rank == 3) {
     en_passant_square = Square(move.start_square.rank + 1, move.start_square.file);
   }
   if (moving_piece == PAWN_B && move.start_square.rank == 6 && move.end_square.rank == 4) {
     en_passant_square = Square(move.start_square.rank - 1, move.start_square.file);
   }
-  
+
   if (ColorOfContents(moving_piece) == WHITE) {
     active_color = BLACK;
   } else {
     active_color = WHITE;
   }
-  
+
   move_stack.push_back(history_data);
 }
 
 void Position::UndoLastMove() {
   HistoryData history_data = move_stack.back();
   move_stack.pop_back();
-  
+
   if (active_color == BLACK && ContentsAt(history_data.last_end_square) == PAWN_W &&
       history_data.last_end_square == history_data.last_en_passant_square) {
     chessboard[2 + history_data.last_end_square.rank - 1]
@@ -219,7 +219,7 @@ void Position::UndoLastMove() {
               [2 + history_data.last_end_square.file] = PAWN_W;
   }
   en_passant_square = history_data.last_en_passant_square;
-  
+
   chessboard[history_data.last_start_square.rank + 2][history_data.last_start_square.file + 2] =
     chessboard[history_data.last_end_square.rank + 2][history_data.last_end_square.file + 2];
 
@@ -255,7 +255,7 @@ void Position::UndoLastMove() {
     chessboard[7 + 2][0 + 2] = ROOK_B;
   }
   castles_allowed = history_data.last_castles_allowed;
-  
+
   if (history_data.was_promotion) {
     if (history_data.last_end_square.rank == 7) {
       chessboard[history_data.last_start_square.rank + 2]
@@ -265,7 +265,7 @@ void Position::UndoLastMove() {
                 [history_data.last_start_square.file + 2] = PAWN_B;
     }
   }
-  
+
   active_color = active_color == WHITE ? BLACK : WHITE;
 }
 
@@ -346,7 +346,7 @@ bool Position::Equals(const Position& other, bool compare_stacks) const {
     std::cout << "Position mismatch at en passant square" << std::endl;
     return false;
   }
-  
+
   for (int i = 0; i < 12; i++) {
     for (int j = 0; j < 12; j++) {
       if (chessboard[i][j] != other.chessboard[i][j]) {
@@ -355,7 +355,7 @@ bool Position::Equals(const Position& other, bool compare_stacks) const {
       }
     }
   }
-  
+
   if (compare_stacks) {
     if (move_stack.size() != other.move_stack.size()) {
       std::cout << "Position mismatch on stack size";
@@ -368,7 +368,7 @@ bool Position::Equals(const Position& other, bool compare_stacks) const {
       }
     }
   }
-  
+
   return true;
 }
 
@@ -393,7 +393,7 @@ void Position::InitializeEmptyBoard() {
       chessboard[i][11] = OUT_OF_BOUNDS;
     }
   }
-  
+
   move_stack.clear();
 }
 

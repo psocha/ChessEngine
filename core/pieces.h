@@ -43,7 +43,7 @@ enum Color {
 
 const std::map<SquareContents, char> PIECE_REPRESENTATIONS =
   {{EMPTY, '-'}, {PAWN_W, 'P'}, {KNIGHT_W, 'N'}, {BISHOP_W, 'B'}, {ROOK_W, 'R'},
-  {QUEEN_W, 'Q'}, {KING_W, 'K'}, {PAWN_B, 'p'}, {KNIGHT_B, 'n'}, {BISHOP_B, 'b'}, 
+  {QUEEN_W, 'Q'}, {KING_W, 'K'}, {PAWN_B, 'p'}, {KNIGHT_B, 'n'}, {BISHOP_B, 'b'},
   {ROOK_B, 'r'}, {QUEEN_B, 'q'}, {KING_B, 'k'}, {OUT_OF_BOUNDS, '#'}};
 
 PieceType GetPieceType(SquareContents piece);

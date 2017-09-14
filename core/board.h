@@ -30,7 +30,7 @@ public:
   Position* GetPositionRef();
 
   void Print();
-  
+
  private:
   Position *position;
 };
@@ -38,4 +38,3 @@ public:
 }
 
 #endif
-

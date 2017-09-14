@@ -24,12 +24,12 @@ RandomAI::~RandomAI() {}
 std::string RandomAI::BestMove(core::Position* position) {
   vector<Move> legal_moves = core::MoveGen::AllLegalMoves(position);
   int random_index = rand() % legal_moves.size();
-  
+
   int centipawn_evaluation = MaterialDifference(*position, 100, 300, 300, 500, 900);
   if (position->GetActiveColor() == core::BLACK) {
     centipawn_evaluation *= -1;
   }
-  
+
   std::cout << "info nodes 1 score cp " << centipawn_evaluation << std::endl;
 
   return legal_moves.at(random_index).ToString();

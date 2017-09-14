@@ -1,9 +1,9 @@
 *.o
 *.d
+*.bc
 *.exe
 
 *.sln
 *.suo
 *.VC.*
 *.vcxproj*
-

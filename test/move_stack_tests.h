@@ -5,13 +5,13 @@
 #include <vector>
 
 namespace test {
-  
+
 struct MoveStackTest {
   std::string test_name;
   std::string starting_fen;
   std::string expected_ending_fen;
   std::vector<std::string> moves;
-  
+
   MoveStackTest(std::string name) : test_name(name) {}
 };
 

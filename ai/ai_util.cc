@@ -9,14 +9,14 @@ namespace ai {
 int MaterialDifference(const Position& position, int pawn_value,
                        int knight_value, int bishop_value,
                        int rook_value, int queen_value) {
-                            
+
   int difference = 0;
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
       Square square(rank, file);
       SquareContents contents = position.ContentsAt(square);
       if (contents == core::EMPTY) continue;
-      
+
       int piece_value = 0;
       switch (GetPieceType(contents)) {
         case core::PAWN:
@@ -37,7 +37,7 @@ int MaterialDifference(const Position& position, int pawn_value,
         default:
           piece_value = 0;
       }
-      
+
       if (ColorOfContents(contents) == core::BLACK) {
         piece_value *= -1;
       }

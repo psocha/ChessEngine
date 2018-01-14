@@ -1,34 +1,15 @@
-CXX = g++
-CXXFLAGS = -g -O2 -std=c++11 -Wall -MMD -static -static-libgcc -static-libstdc++
+CXX=g++
+RM=rm -rf
+CXXFLAGS=-g -O2 -std=c++11 -Wall -MMD -static -static-libgcc -static-libstdc++
+LDFLAGS=$(CXXFLAGS)
 
-OBJECTS_CORE = main.o core/pieces.o core/board.o core/square.o core/move.o core/position.o core/movegen.o
-OBJECTS_TEST = test/test_main.o test/position_tests.o test/move_stack_tests.o test/legal_move_tests.o test/ai_tests.o
-OBJECTS_AI = ai/ai_util.o ai/random_ai.o ai/minmax_ai.o ai/material_ai.o ai/material_positional_ai.o
+SRCS=main.cc ai/ai_util.cc ai/material_ai.cc ai/material_positional_ai.cc ai/minmax_ai.cc ai/random_ai.cc core/board.cc core/move.cc core/movegen.cc core/pieces.cc core/position.cc core/square.cc test/ai_tests.cc test/legal_move_tests.cc test/move_stack_tests.cc test/position_tests.cc test/test_main.cc
+OBJS=$(subst .cc,.o,$(SRCS))
 
-EXEC = Engine
+all: Engine
 
-DEPENDS_CORE = ${OBJECTS_CORE:.o=.d}
-DEPENDS_TEST = ${OBJECTS_TEST:.o=.d}
-DEPENDS_AI = ${OBJECTS_AI:.o=.d}
+Engine: $(OBJS)
+	$(CXX) $(LDFLAGS) -o Engine $(OBJS) $(LDLIBS)
 
-EXECS = ${EXEC}
-
-#############################################################
-
-.PHONY : all clean
-
-all : ${EXECS}
-
-${EXEC} : ${OBJECTS_CORE} ${OBJECTS_TEST} ${OBJECTS_AI}
-	${CXX} ${CXXFLAGS} $^ -o $@
-
-#############################################################
-
-${OBJECTS_CORE} : ${MAKEFILE_NAME}
-
--include ${DEPENDS_CORE}
--include ${DEPENDS_TEST}
--include ${DEPENDS_AI}
-
-clean :
-	rm -f *.d *.o core/*.d core/*.o test/*.d test/*.o ai/*.d ai/*.o ${EXECS}
+clean:
+	$(RM) $(OBJS) *.d ai/*.d core/*.d test/*.d

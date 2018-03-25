@@ -89,7 +89,7 @@ string Position::Serialize() const {
         empties++;
       } else {
         if (empties > 0) {
-          str += std::to_string(empties);
+          str += (char)(empties + (int)'0');
           empties = 0;
         }
         str += CharFromSquareContents(contents);
@@ -97,7 +97,7 @@ string Position::Serialize() const {
 
       if (file == 7) {
         if (empties > 0) {
-          str += std::to_string(empties);
+          str += (char)(empties + (int)'0');
           empties = 0;
         }
         if (rank > 0) {
@@ -307,10 +307,6 @@ void Position::SetEnPassant(std::string en_passant) {
 
 Square Position::GetEnPassant() const {
   return en_passant_square;
-}
-
-SquareContents Position::ContentsAt(Square square) const {
-  return chessboard.at(square.rank + 2).at(square.file + 2);
 }
 
 Square Position::FindKing(Color color) const {

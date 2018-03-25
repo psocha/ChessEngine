@@ -12,9 +12,27 @@ struct Square {
   int file;
 
   Square();
-  Square(int rank, int file);
+
+  inline Square(int rank, int file) {
+    is_real_square = rank >= 0 && rank <= 7 && file >= 0 && file <= 7;
+    this->rank = rank;
+    this->file = file;
+  }
+
   Square(std::string coordinates);
-  std::string ToString() const;
+
+  inline std::string ToString() const {
+    if (!is_real_square) {
+      return "-";
+    }
+
+    std::string square_representation;
+    square_representation += (char)(file + (int)'a');
+    square_representation += (char)(rank + 1 + (int)'0');
+
+    return square_representation;
+  }
+
 };
 
 bool operator==(const Square& first, const Square& second);

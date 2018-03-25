@@ -55,7 +55,9 @@ public:
   void SetEnPassant(std::string en_passant);
   Square GetEnPassant() const;
 
-  SquareContents ContentsAt(Square square) const;
+  inline SquareContents ContentsAt(Square square) const {
+    return chessboard.at(square.rank + 2).at(square.file + 2);
+  }
 
   Square FindKing(Color color) const;
 

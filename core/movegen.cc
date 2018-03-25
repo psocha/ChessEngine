@@ -155,15 +155,16 @@ bool MoveGen::IsInCheck(const Position& position, vector<Square> king_squares, C
       }
     }
 
-    vector<Square> line_endings;
-    line_endings.push_back(LineEndingSquare(position, king_square, 1, 0));
-    line_endings.push_back(LineEndingSquare(position, king_square, 1, 1));
-    line_endings.push_back(LineEndingSquare(position, king_square, 0, 1));
-    line_endings.push_back(LineEndingSquare(position, king_square, -1, 1));
-    line_endings.push_back(LineEndingSquare(position, king_square, -1, 0));
-    line_endings.push_back(LineEndingSquare(position, king_square, -1, -1));
-    line_endings.push_back(LineEndingSquare(position, king_square, 0, -1));
-    line_endings.push_back(LineEndingSquare(position, king_square, 1, -1));
+    vector<Square> line_endings = {
+      LineEndingSquare(position, king_square, 1, 0),
+      LineEndingSquare(position, king_square, 1, 1),
+      LineEndingSquare(position, king_square, 0, 1),
+      LineEndingSquare(position, king_square, -1, 1),
+      LineEndingSquare(position, king_square, -1, 0),
+      LineEndingSquare(position, king_square, -1, -1),
+      LineEndingSquare(position, king_square, 0, -1),
+      LineEndingSquare(position, king_square, 1, -1)
+    };
 
     for (Square line_ending : line_endings) {
       if (!line_ending.is_real_square) {
@@ -408,27 +409,28 @@ bool MoveGen::IsPawnCaptureSquare(const Position& position, Square square, Color
 }
 
 vector<Square> MoveGen::GetKnightSquares(Square square) {
-  vector<Square> dest_squares;
-  dest_squares.push_back(Square(square.rank + 2, square.file + 1));
-  dest_squares.push_back(Square(square.rank + 1, square.file + 2));
-  dest_squares.push_back(Square(square.rank - 1, square.file + 2));
-  dest_squares.push_back(Square(square.rank - 2, square.file + 1));
-  dest_squares.push_back(Square(square.rank - 2, square.file - 1));
-  dest_squares.push_back(Square(square.rank - 1, square.file - 2));
-  dest_squares.push_back(Square(square.rank + 1, square.file - 2));
-  dest_squares.push_back(Square(square.rank + 2, square.file - 1));
+  vector<Square> dest_squares = {
+    Square(square.rank + 2, square.file + 1),
+    Square(square.rank + 1, square.file + 2),
+    Square(square.rank - 1, square.file + 2),
+    Square(square.rank - 2, square.file + 1),
+    Square(square.rank - 2, square.file - 1),
+    Square(square.rank - 1, square.file - 2),
+    Square(square.rank + 1, square.file - 2),
+    Square(square.rank + 2, square.file - 1)
+  };
 
   return dest_squares;
 }
 
 vector<Move> MoveGen::GetPromotionMoves(const Position& position,
     Square start_square, Square end_square) {
-  vector<Move> promotions;
-
-  promotions.push_back(Move(start_square, end_square, position, KNIGHT));
-  promotions.push_back(Move(start_square, end_square, position, BISHOP));
-  promotions.push_back(Move(start_square, end_square, position, ROOK));
-  promotions.push_back(Move(start_square, end_square, position, QUEEN));
+  vector<Move> promotions = {
+    Move(start_square, end_square, position, QUEEN),
+    Move(start_square, end_square, position, ROOK),
+    Move(start_square, end_square, position, KNIGHT),
+    Move(start_square, end_square, position, BISHOP),
+  };
 
   return promotions;
 }

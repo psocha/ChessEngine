@@ -77,20 +77,20 @@ string Move::ToString() const {
   if (promoted_piece) {
     char piece;
     switch (promoted_piece) {
-    case QUEEN:
-      piece = 'q';
-      break;
-    case ROOK:
-      piece = 'r';
-      break;
-    case BISHOP:
-      piece = 'b';
-      break;
-    case KNIGHT:
-      piece = 'n';
-      break;
-	default:
-	  piece = 0;
+      case QUEEN:
+        piece = 'q';
+        break;
+      case ROOK:
+        piece = 'r';
+        break;
+      case BISHOP:
+        piece = 'b';
+        break;
+      case KNIGHT:
+        piece = 'n';
+        break;
+      default:
+        piece = 0;
     }
     move_string += piece;
   }

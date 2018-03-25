@@ -48,7 +48,10 @@ const std::map<SquareContents, char> PIECE_REPRESENTATIONS =
 
 PieceType GetPieceType(SquareContents piece);
 
-char CharFromSquareContents(SquareContents contents);
+inline char CharFromSquareContents(SquareContents contents) {
+  return PIECE_REPRESENTATIONS.at(contents);
+}
+
 SquareContents SquareContentsFromChar(char piece);
 
 SquareContents MakePiece(PieceType pieceType, Color color);

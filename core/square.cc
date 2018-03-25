@@ -9,14 +9,6 @@ namespace core {
 
 Square::Square() {}
 
-Square::Square(int rank, int file) {
-  is_real_square = rank >= 0 && rank <= 7 && file >= 0 && file <= 7;
-  if (is_real_square) {
-    this->rank = rank;
-    this->file = file;
-  }
-}
-
 Square::Square(string coordinates) {
   if (coordinates == "-") {
     is_real_square = false;
@@ -26,18 +18,6 @@ Square::Square(string coordinates) {
   is_real_square = true;
   rank = coordinates[1] - '0' - 1;
   file = (int)((char)coordinates[0] - (char)'a');
-}
-
-string Square::ToString() const {
-  if (!is_real_square) {
-    return "-";
-  }
-
-  string square_representation;
-  square_representation += (char)(file + (int)'a');
-  square_representation += std::to_string(rank + 1);
-
-  return square_representation;
 }
 
 bool operator==(const Square& first, const Square& second) {

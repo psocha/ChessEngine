@@ -36,11 +36,13 @@ class MinMaxAI : public ChessAI {
   virtual int Evaluate(core::Position* position) = 0;
 
   void SetDepth(int depth);
+  void SetSuppressLogs(bool suppress);
  private:
   MoveScore MinMax(core::Position* position, int depth, int alpha, int beta, int move_index);
 
   int positions_evaluated;
   int max_depth;
+  bool suppress_logs;
 
   std::unordered_map<std::string, int> *evaluation_cache;
 

@@ -12,3 +12,5 @@ The most recent version of the engine uses a min-max tree search with alpha-beta
 Running `Engine` with no flags will open a command-line session in which UCI messages can be entered through STDIN and UCI responses are sent from STDOUT. A UCI-compliant chess GUI can run this executable and handle the I/O for you.
 
 Running `Engine --runtests` will run the engine's unit tests.
+
+Running `Engine --runperftests` will run timing tests for specific board positions.

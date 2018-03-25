@@ -3,6 +3,7 @@
 #include "move_stack_tests.h"
 #include "legal_move_tests.h"
 #include "ai_tests.h"
+#include "performance_tests.h"
 
 #include <iostream>
 #include <sstream>
@@ -10,7 +11,7 @@ using std::string;
 
 namespace test {
 
-void RunAllTests() {
+void RunCorrectnessTests() {
 
   bool position_tests_passed = RunAllPositionTests();
   if (!position_tests_passed) {
@@ -37,6 +38,16 @@ void RunAllTests() {
   }
 
   std::cout << "ALL TESTS PASSING." << std::endl;
+}
+
+void RunPerformanceTests() {
+  bool performance_tests_passed = RunAllPerformanceTests();
+  if (!performance_tests_passed) {
+    std::cout << "Performance tests failed. Terminating." << std::endl;
+    return;
+  }
+
+  std::cout << "PERFORMANCE TESTS COMPLETED" << std::endl;
 }
 
 FailingTestException::FailingTestException(string message) : message(message) {}

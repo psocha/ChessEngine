@@ -21,6 +21,7 @@ namespace ai {
 MinMaxAI::MinMaxAI() : ChessAI() {
   max_depth = 5;
   evaluation_cache = new unordered_map<string, int>();
+  suppress_logs = false;
 }
 
 MinMaxAI::~MinMaxAI() {
@@ -43,7 +44,10 @@ string MinMaxAI::BestMove(core::Position* position) {
     centipawn_evaluation *= -1;
   }
 
-  std::cout << "info nodes " << this->positions_evaluated << " score cp " << centipawn_evaluation << std::endl;
+  if (!suppress_logs) {
+    std::cout << "info nodes " << this->positions_evaluated << " score cp " << centipawn_evaluation << std::endl;
+  }
+
   return legal_moves.at(result.move_index).ToString();
 }
 
@@ -133,6 +137,10 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int b
 
 void MinMaxAI::SetDepth(int depth) {
   max_depth = depth;
+}
+
+void MinMaxAI::SetSuppressLogs(bool suppress) {
+  suppress_logs = suppress;
 }
 
 bool MinMaxAI::LegalMovesExist(Position* position, vector<Move> pseudolegal_moves) {

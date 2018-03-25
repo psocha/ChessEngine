@@ -11,7 +11,9 @@ namespace test {
 
 const std::string STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-void RunAllTests();
+void RunCorrectnessTests();
+
+void RunPerformanceTests();
 
 class FailingTestException {
  public:

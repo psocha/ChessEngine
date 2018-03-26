@@ -106,7 +106,13 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
   }
   for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
     Move move = pseudolegal_moves.at(i);
-    if (!move.is_capture) {
+    if (!move.is_capture && IsCentralSquare(move.end_square)) {
+      ordered_pseudolegal_moves.push_back(move);
+    }
+  }
+  for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
+    Move move = pseudolegal_moves.at(i);
+    if (!move.is_capture && !IsCentralSquare(move.end_square)) {
       ordered_pseudolegal_moves.push_back(move);
     }
   }
@@ -387,7 +393,7 @@ bool MoveGen::IsValidDestSquare(const Position& position, Square square, Color c
 }
 
 bool MoveGen::IsCaptureSquare(const Position& position, Square square, Color color) {
-    if (!square.is_real_square) {
+  if (!square.is_real_square) {
     return false;
   } else if (OppositeColors(color, ColorOfContents(position.ContentsAt(square)))) {
     return true;

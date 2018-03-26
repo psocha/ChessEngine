@@ -61,4 +61,12 @@ bool SquaresAreDiagonal(Square first, Square second) {
   return rank_distance == file_distance;
 }
 
+bool IsCentralSquare(Square square) {
+  if (!square.is_real_square) {
+    return false;
+  }
+  return square.file >= 2 && square.file <= 5 &&
+         square.rank >= 2 && square.rank >= 5;
+}
+
 }

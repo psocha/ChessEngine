@@ -20,6 +20,8 @@ bool RunAllPerformanceTests() {
   RunTimedEvaluationTest(STARTPOS, "Starting Position");
   RunTimedEvaluationTest("r7/1q4k1/8/8/3K4/4R3/8/8 b - - 0 1", "Q + R vs R");
   RunTimedEvaluationTest("6k1/R1p2pp1/2bp1n1p/8/2PP4/4BN2/5PPP/1r4K1 w - - 0 1", "Blocking Back Rank Mate");
+  RunTimedEvaluationTest("r4rk1/pp1bppbp/2np1np1/q7/2BNP3/2N1BP2/PPPQ2PP/2KR3R w - - 0 1", "Sicilian Dragon");
+  RunTimedEvaluationTest("r4rk1/p2nbp1p/1qp1bpp1/3p4/3P4/2NBPN2/PPQ2PPP/R4RK1 w - - 0 1", "Vanilla Middlegame");
   RunTimedEvaluationTest("r3k2r/p1Nn1p2/b1n1q1p1/4P2p/3P4/6Q1/PPP2PP1/2KR3R b kq - 0 1", "Family Fork");
 
   unsigned long ending_timestamp =

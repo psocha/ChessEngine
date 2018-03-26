@@ -42,6 +42,7 @@ bool operator<(const Square& first, const Square& second);
 int SquareDistance(Square first, Square second);
 bool SquaresAreOrthogonal(Square first, Square second);
 bool SquaresAreDiagonal(Square first, Square second);
+bool IsCentralSquare(Square square);
 
 }
 

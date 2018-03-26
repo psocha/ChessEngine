@@ -9,6 +9,8 @@
 #include <vector>
 #include <string>
 using core::Board;
+using core::WHITE;
+using core::BLACK;
 using core::Move;
 using core::Position;
 using core::Square;
@@ -36,8 +38,12 @@ bool RunAllPositionTests() {
 // STARTPOS: e4 Nc6 e5 Nxe5
 void TestSimpleSquaresAndMoves() {
   Board board = TestHelper::CreateBoardFromFen(STARTPOS);
+  Position position = board.GetPosition();
 
-  Move move = Move("e2e4", board.GetPosition());
+  TestHelper::AssertEqual(position.FindKing(WHITE).ToString(), "e1", "White king cached at e1");
+  TestHelper::AssertEqual(position.FindKing(BLACK).ToString(), "e8", "White king cached at e8");
+
+  Move move = Move("e2e4", position);
   TestHelper::AssertEqual(move.ToString(), "e2e4", "move ToString()");
   TestHelper::AssertEqual(move.start_square.ToString(), "e2", "start square ToString()");
   TestHelper::AssertEqual(move.end_square.ToString(), "e4", "end square ToString()");
@@ -56,7 +62,7 @@ void TestSimpleSquaresAndMoves() {
   TestHelper::AssertTrue(illegal_move.is_illegal_collision, "Rh2 opening move is illegal");
 
   board.LoadMove("e2e4");
-  Position position = board.GetPosition();
+  position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "e2", core::EMPTY, "e2e4 leaves e2 vacant");
   TestHelper::AssertContentsAt(position, "e4", core::PAWN_W, "e2e4 puts pawn on e4");
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "e3", "e2e4 leaves e3 en passant");
@@ -83,6 +89,8 @@ void TestSimpleSquaresAndMoves() {
   TestHelper::AssertTrue(position.GetCastle().black_kingside, "black O-O still allowed");
   TestHelper::AssertTrue(position.GetCastle().white_queenside, "white O-O-O still allowed");
   TestHelper::AssertTrue(position.GetCastle().black_queenside, "black O-O-O still allowed");
+  TestHelper::AssertEqual(position.FindKing(WHITE).ToString(), "e1", "white king still cached at e1");
+  TestHelper::AssertEqual(position.FindKing(BLACK).ToString(), "e8", "black king still cached at e8");
 }
 
 // Blank first ranks with kings and rooks all starting in castling position.
@@ -92,7 +100,7 @@ void TestCastlingPerformance() {
   Position position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "a6", core::PAWN_B, "Black pawn expected on a6");
   TestHelper::AssertContentsAt(position, "c2", core::PAWN_W, "White pawn expected on c2");
-  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)core::WHITE, "FEN with w means White is next");
+  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)WHITE, "FEN with w means White is next");
 
   board.LoadMove("h1f1");
   position = board.GetPosition();
@@ -121,6 +129,7 @@ void TestCastlingPerformance() {
   TestHelper::AssertContentsAt(position, "a1", core::EMPTY, "a1 empty after O-O-O");
   TestHelper::AssertFalse(position.GetCastle().white_kingside, "O-O-O shut off white O-O");
   TestHelper::AssertFalse(position.GetCastle().white_queenside, "O-O-O shut off white O-O-O");
+  TestHelper::AssertEqual(position.FindKing(WHITE).ToString(), "c1", "White king cached at c1 after O-O-O");
 
   Move move_e8g8("e8g8", position);
   TestHelper::AssertTrue(move_e8g8.is_castle, "e8g8 is castling");
@@ -137,6 +146,7 @@ void TestCastlingPerformance() {
   TestHelper::AssertContentsAt(position, "h8", core::EMPTY, "h8 empty after O-O");
   TestHelper::AssertFalse(position.GetCastle().black_kingside, "O-O shut off black O-O");
   TestHelper::AssertFalse(position.GetCastle().black_queenside, "O-O-O shut off black O-O-O");
+  TestHelper::AssertEqual(position.FindKing(BLACK).ToString(), "g8", "Black king cached at g8 after O-O");
 }
 
 // White gets rook captured, Black moves king.
@@ -146,7 +156,7 @@ void TestCastlingCancellation() {
   Position position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "d2", core::BISHOP_W, "White bishop expected on d2");
   TestHelper::AssertContentsAt(position, "b7", core::BISHOP_B, "Black bishop expected on b7");
-  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)core::BLACK, "FEN with b means Black is next");
+  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)BLACK, "FEN with b means Black is next");
 
   board.LoadMove("b7h1");
   position = board.GetPosition();
@@ -166,6 +176,7 @@ void TestCastlingCancellation() {
   position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "e8", core::EMPTY, "e8e7 left e8 empty");
   TestHelper::AssertContentsAt(position, "e7", core::KING_B, "e8e7 puts Black king on e7");
+  TestHelper::AssertEqual(position.FindKing(BLACK).ToString(), "e7", "King cache has black king at e7");
   TestHelper::AssertFalse(position.GetCastle().black_queenside, "King move blocks O-O");
   TestHelper::AssertFalse(position.GetCastle().black_kingside, "King move blocks O-O-O");
 }
@@ -237,6 +248,8 @@ void TestPromotion() {
   Position position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "h8", core::KNIGHT_B, "Black knight expected on h8");
   TestHelper::AssertFalse(position.GetCastle().white_kingside, "No castling in this endgame position");
+  TestHelper::AssertEqual(position.FindKing(WHITE).ToString(), "g4", "White king is cached at g4");
+  TestHelper::AssertEqual(position.FindKing(BLACK).ToString(), "c2", "Black king is cached at c2");
 
   Move move_g7h8q(Square("g7"), Square("h8"), position, core::QUEEN);
   TestHelper::AssertTrue(move_g7h8q.is_capture, "g7h8q is a pawn capture");
@@ -247,7 +260,7 @@ void TestPromotion() {
 
   board.LoadMove("g7h8q");
   position = board.GetPosition();
-  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)core::BLACK, "Black's turn after White's promotion move");
+  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)BLACK, "Black's turn after White's promotion move");
   TestHelper::AssertContentsAt(position, "g7", core::EMPTY, "g7h8q leaves g7 empty");
   TestHelper::AssertContentsAt(position, "h8", core::QUEEN_W, "g7h8q leaves White queen on h8");
 
@@ -260,7 +273,7 @@ void TestPromotion() {
 
   board.LoadMove("b2b1n");
   position = board.GetPosition();
-  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)core::WHITE, "White's turn after Black's promotion move");
+  TestHelper::AssertEqual((int)position.GetActiveColor(), (int)WHITE, "White's turn after Black's promotion move");
   TestHelper::AssertContentsAt(position, "b2", core::EMPTY, "b2b1n leaves b2 empty");
   TestHelper::AssertContentsAt(position, "b1", core::KNIGHT_B, "b2b1n leaves Black knight on b1");
 
@@ -281,15 +294,15 @@ void TestChecks() {
   Board board = TestHelper::CreateBoardFromFen("r3k2r/p6p/8/4b3/8/8/P6P/R3K2R b KQkq - 0 1");
 
   Position position = board.GetPosition();
-  TestHelper::AssertTrue(position.IsCheck(core::WHITE) == false, "White king not in check");
-  TestHelper::AssertTrue(position.IsCheck(core::BLACK) == false, "Black king not in check");
+  TestHelper::AssertTrue(position.IsCheck(WHITE) == false, "White king not in check");
+  TestHelper::AssertTrue(position.IsCheck(BLACK) == false, "Black king not in check");
 
   board.LoadMove("e5c3");
   position = board.GetPosition();
-  TestHelper::AssertEqual(position.FindKing(core::WHITE).ToString(), "e1", "Checked king is on original square");
-  TestHelper::AssertEqual(position.FindKing(core::BLACK).ToString(), "e8", "Checking side's king is on original square");
-  TestHelper::AssertTrue(position.IsCheck(core::WHITE) == true, "White is now in check");
-  TestHelper::AssertTrue(position.IsCheck(core::BLACK) == false, "Black is still not in check");
+  TestHelper::AssertEqual(position.FindKing(WHITE).ToString(), "e1", "Checked king is on original square");
+  TestHelper::AssertEqual(position.FindKing(BLACK).ToString(), "e8", "Checking side's king is on original square");
+  TestHelper::AssertTrue(position.IsCheck(WHITE) == true, "White is now in check");
+  TestHelper::AssertTrue(position.IsCheck(BLACK) == false, "Black is still not in check");
 
   vector<string> pseudolegal_moves = board.GetPseudolegalMoves();
   vector<string> legal_moves = board.GetLegalMoves();

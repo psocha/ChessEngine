@@ -24,6 +24,9 @@ struct HistoryData {
   Square last_end_square;
   SquareContents last_dest_square_contents;
 
+  Square white_king_location_cache;
+  Square black_king_location_cache;
+
   CastlesAllowed last_castles_allowed;
   Square last_en_passant_square;
   bool was_promotion;
@@ -70,6 +73,9 @@ private:
   Color active_color;
   CastlesAllowed castles_allowed;
   Square en_passant_square;
+
+  Square white_king_location_cache;
+  Square black_king_location_cache;
 
   std::vector<HistoryData> move_stack;
 

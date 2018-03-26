@@ -24,6 +24,8 @@ bool operator==(const HistoryData& left, const HistoryData& right) {
   return left.last_start_square == right.last_start_square &&
          left.last_end_square == right.last_end_square &&
          left.last_dest_square_contents == right.last_dest_square_contents &&
+         left.white_king_location_cache == right.white_king_location_cache &&
+         left.black_king_location_cache == right.black_king_location_cache &&
          left.last_castles_allowed == right.last_castles_allowed &&
          left.last_en_passant_square.ToString() == right.last_en_passant_square.ToString() &&
          left.was_promotion == right.was_promotion;
@@ -63,7 +65,7 @@ void Position::LoadFromFen(string fen) {
 
     if (ch == '/') {
       rank--;
-	  file = 2;
+      file = 2;
       continue;
     }
 
@@ -73,6 +75,13 @@ void Position::LoadFromFen(string fen) {
     } else {
       SquareContents piece = SquareContentsFromChar(ch);
       chessboard[rank][file] = piece;
+
+      if (piece == KING_W) {
+        white_king_location_cache = Square(rank - 2, file - 2);
+      } else if (piece == KING_B) {
+        black_king_location_cache = Square(rank - 2, file - 2);
+      }
+
       file++;
     }
   }
@@ -125,6 +134,8 @@ void Position::PerformMove(std::string mv) {
   history_data.last_end_square = move.end_square;
   history_data.last_dest_square_contents =
     chessboard[move.end_square.rank + 2][move.end_square.file + 2];
+  history_data.white_king_location_cache = this->white_king_location_cache;
+  history_data.black_king_location_cache = this->black_king_location_cache;
   history_data.last_castles_allowed = GetCastle();
   history_data.last_en_passant_square = GetEnPassant();
   history_data.was_promotion = false;
@@ -142,25 +153,27 @@ void Position::PerformMove(std::string mv) {
   if (moving_piece == KING_W) {
     castles_allowed.white_kingside = false;
     castles_allowed.white_queenside = false;
+    white_king_location_cache = move.end_square;
   }
   if (moving_piece == KING_B) {
     castles_allowed.black_kingside = false;
     castles_allowed.black_queenside = false;
+    black_king_location_cache = move.end_square;
   }
 
-  if (moving_piece == KING_W && move.ToString() == "e1g1") {
+  if (moving_piece == KING_W && mv == "e1g1") {
     chessboard[0 + 2][7 + 2] = EMPTY;
     chessboard[0 + 2][5 + 2] = ROOK_W;
   }
-  if (moving_piece == KING_W && move.ToString() == "e1c1") {
+  if (moving_piece == KING_W && mv== "e1c1") {
     chessboard[0 + 2][0 + 2] = EMPTY;
     chessboard[0 + 2][3 + 2] = ROOK_W;
   }
-  if (moving_piece == KING_B && move.ToString() == "e8g8") {
+  if (moving_piece == KING_B && mv == "e8g8") {
     chessboard[7 + 2][7 + 2] = EMPTY;
     chessboard[7 + 2][5 + 2] = ROOK_B;
   }
-  if (moving_piece == KING_B && move.ToString() == "e8c8") {
+  if (moving_piece == KING_B && mv == "e8c8") {
     chessboard[7 + 2][0 + 2] = EMPTY;
     chessboard[7 + 2][3 + 2] = ROOK_B;
   }
@@ -219,6 +232,9 @@ void Position::UndoLastMove() {
               [2 + history_data.last_end_square.file] = PAWN_W;
   }
   en_passant_square = history_data.last_en_passant_square;
+
+  white_king_location_cache = history_data.white_king_location_cache;
+  black_king_location_cache = history_data.black_king_location_cache;
 
   chessboard[history_data.last_start_square.rank + 2][history_data.last_start_square.file + 2] =
     chessboard[history_data.last_end_square.rank + 2][history_data.last_end_square.file + 2];
@@ -310,16 +326,11 @@ Square Position::GetEnPassant() const {
 }
 
 Square Position::FindKing(Color color) const {
-  SquareContents target = MakePiece(KING, color);
-  for (int rank = 0; rank < 8; rank++) {
-    for (int file = 0; file < 8; file++) {
-      Square square = Square(rank, file);
-      if (this->ContentsAt(square) == target) {
-        return square;
-      }
-    }
+  if (color == WHITE) {
+    return white_king_location_cache;
+  } else {
+    return black_king_location_cache;
   }
-  return Square("-");
 }
 
 bool Position::IsCheck(Color color) const {

@@ -27,7 +27,9 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
   vector<Move> pseudolegal_moves;
   Color color = position.GetActiveColor();
 
-  for (int rank = 0; rank < 8; rank++) {
+  int start_rank = color == WHITE ? 7 : 0;
+
+  for (int rank = start_rank; rank >= 0 && rank <= 7; rank += (color == WHITE ? -1 : 1)) {
     for (int file = 0; file < 8; file++) {
       Square square = Square(rank, file);
       SquareContents contents = position.ContentsAt(square);
@@ -99,19 +101,19 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
 
   vector<Move> ordered_pseudolegal_moves;
   for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
-    Move move = pseudolegal_moves.at(i);
+    Move move = pseudolegal_moves[i];
     if (move.is_capture) {
       ordered_pseudolegal_moves.push_back(move);
     }
   }
   for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
-    Move move = pseudolegal_moves.at(i);
+    Move move = pseudolegal_moves[i];
     if (!move.is_capture && IsCentralSquare(move.end_square)) {
       ordered_pseudolegal_moves.push_back(move);
     }
   }
   for (unsigned int i = 0; i < pseudolegal_moves.size(); i++) {
-    Move move = pseudolegal_moves.at(i);
+    Move move = pseudolegal_moves[i];
     if (!move.is_capture && !IsCentralSquare(move.end_square)) {
       ordered_pseudolegal_moves.push_back(move);
     }

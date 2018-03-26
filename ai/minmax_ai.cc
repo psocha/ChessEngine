@@ -48,7 +48,7 @@ string MinMaxAI::BestMove(core::Position* position) {
     std::cout << "info nodes " << this->positions_evaluated << " score cp " << centipawn_evaluation << std::endl;
   }
 
-  return legal_moves.at(result.move_index).ToString();
+  return (legal_moves[result.move_index]).ToString();
 }
 
 MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int beta, int move_index) {
@@ -69,7 +69,7 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int b
 
     int score;
     if (evaluation_cache->count(serialized_position) > 0) {
-      score = evaluation_cache->at(serialized_position);
+      score = (*evaluation_cache)[serialized_position];
     } else {
       score = Evaluate(position);
       (*evaluation_cache)[serialized_position] = score;
@@ -89,7 +89,7 @@ MoveScore MinMaxAI::MinMax(core::Position* position, int depth, int alpha, int b
   bool legal_move_found = false;
 
   for (unsigned int i = 0; i < next_moves.size(); i++) {
-    Move move = next_moves.at(i);
+    Move move = next_moves[i];
 
     position->PerformMove(move.ToString());
     MoveScore next_score = MinMax(position, depth - 1, alpha, beta, i);

@@ -32,7 +32,7 @@ std::string RandomAI::BestMove(core::Position* position) {
 
   std::cout << "info nodes 1 score cp " << centipawn_evaluation << std::endl;
 
-  return legal_moves.at(random_index).ToString();
+  return (legal_moves[random_index]).ToString();
 }
 
 }

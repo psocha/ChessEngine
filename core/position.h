@@ -56,7 +56,7 @@ public:
   Square GetEnPassant() const;
 
   inline SquareContents ContentsAt(Square square) const {
-    return chessboard.at(square.rank + 2).at(square.file + 2);
+    return chessboard[square.rank + 2][square.file + 2];
   }
 
   Square FindKing(Color color) const;

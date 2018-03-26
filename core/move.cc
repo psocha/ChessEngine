@@ -10,7 +10,7 @@ Move::Move(string coordinates, const Position& initial_position) {
   end_square = Square(coordinates.substr(2, 2));
 
   if (coordinates.length() == 5) {
-    char promotion = coordinates.at(4);
+    char promotion = coordinates[4];
     switch (promotion) {
     case 'q':
       promoted_piece = QUEEN;

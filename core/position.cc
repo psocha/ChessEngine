@@ -59,7 +59,7 @@ void Position::LoadFromFen(string fen) {
   int rank = 9;
   int file = 2;
   for (unsigned int i = 0; i < fen.length(); i++) {
-    char ch = fen.at(i);
+    char ch = fen[i];
 
     if (ch == '/') {
       rank--;
@@ -84,7 +84,7 @@ string Position::Serialize() const {
 
   for (int rank = 7; rank >= 0; rank--) {
     for (int file = 0; file <= 7; file++) {
-      SquareContents contents = chessboard.at(rank + 2).at(file + 2);
+      SquareContents contents = chessboard[rank + 2][file + 2];
       if (contents == EMPTY) {
         empties++;
       } else {
@@ -124,17 +124,17 @@ void Position::PerformMove(std::string mv) {
   history_data.last_start_square = move.start_square;
   history_data.last_end_square = move.end_square;
   history_data.last_dest_square_contents =
-    chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2);
+    chessboard[move.end_square.rank + 2][move.end_square.file + 2];
   history_data.last_castles_allowed = GetCastle();
   history_data.last_en_passant_square = GetEnPassant();
   history_data.was_promotion = false;
 
   SquareContents moving_piece = ContentsAt(move.start_square);
-  chessboard.at(move.start_square.rank + 2).at(move.start_square.file + 2) = EMPTY;
-  chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) = moving_piece;
+  chessboard[move.start_square.rank + 2][move.start_square.file + 2] = EMPTY;
+  chessboard[move.end_square.rank + 2][move.end_square.file + 2] = moving_piece;
 
   if (GetPieceType(moving_piece) == PAWN && move.promoted_piece != NULL_PIECE) {
-    chessboard.at(move.end_square.rank + 2).at(move.end_square.file + 2) =
+    chessboard[move.end_square.rank + 2][move.end_square.file + 2] =
       MakePiece(move.promoted_piece, this->active_color);
     history_data.was_promotion = true;
   }
@@ -270,7 +270,7 @@ void Position::UndoLastMove() {
 }
 
 void Position::SetActiveColor(std::string color_marker) {
-  active_color = ColorFromChar(color_marker.at(0));
+  active_color = ColorFromChar(color_marker[0]);
 }
 
 Color Position::GetActiveColor() const {

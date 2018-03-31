@@ -2,7 +2,6 @@
 #include "move.h"
 #include "movegen.h"
 
-#include <iterator>
 #include <iostream>
 
 using std::map;
@@ -23,12 +22,12 @@ bool operator!=(const CastlesAllowed& left, const CastlesAllowed& right) {
 }
 
 bool operator==(const HistoryData& left, const HistoryData& right) {
-  return left.last_start_square == right.last_start_square &&
+  return left.move_string == right.move_string &&
+         left.last_start_square == right.last_start_square &&
          left.last_end_square == right.last_end_square &&
          left.last_dest_square_contents == right.last_dest_square_contents &&
          left.white_king_location_cache == right.white_king_location_cache &&
          left.black_king_location_cache == right.black_king_location_cache &&
-         left.serialized_form == right.serialized_form &&
          left.last_castles_allowed == right.last_castles_allowed &&
          left.last_en_passant_square.ToString() == right.last_en_passant_square.ToString() &&
          left.was_promotion == right.was_promotion;
@@ -88,12 +87,9 @@ void Position::LoadFromFen(string fen) {
       file++;
     }
   }
-  past_position_counts.clear();
-  is_three_fold = false;
-  Serialize();
 }
 
-void Position::Serialize() {
+string Position::Serialize() const {
   string str = "";
   int empties = 0;
 
@@ -129,24 +125,31 @@ void Position::Serialize() {
   str += " ";
   str += GetEnPassant().ToString();
 
-  serialized_form = str;
-  past_position_counts[serialized_form]++;
-  if (past_position_counts[serialized_form] >= 3) {
-    is_three_fold = true;
+  return str;
+}
+
+bool Position::IsThreeFold() const {
+  int move_list_size = move_stack.size();
+  if (move_list_size < 8) {
+    return false;
   }
+  return move_stack[move_list_size - 1].move_string == move_stack[move_list_size - 5].move_string &&
+         move_stack[move_list_size - 2].move_string == move_stack[move_list_size - 6].move_string &&
+         move_stack[move_list_size - 3].move_string == move_stack[move_list_size - 7].move_string &&
+         move_stack[move_list_size - 4].move_string == move_stack[move_list_size - 8].move_string;
 }
 
 void Position::PerformMove(std::string mv) {
   Move move = Move(mv, *this);
 
   HistoryData history_data;
+  history_data.move_string = mv;
   history_data.last_start_square = move.start_square;
   history_data.last_end_square = move.end_square;
   history_data.last_dest_square_contents =
     chessboard[move.end_square.rank + 2][move.end_square.file + 2];
   history_data.white_king_location_cache = this->white_king_location_cache;
   history_data.black_king_location_cache = this->black_king_location_cache;
-  history_data.serialized_form = GetSerialization();
   history_data.last_castles_allowed = GetCastle();
   history_data.last_en_passant_square = GetEnPassant();
   history_data.was_promotion = false;
@@ -226,22 +229,9 @@ void Position::PerformMove(std::string mv) {
   }
 
   move_stack.push_back(history_data);
-  Serialize();
 }
 
 void Position::UndoLastMove() {
-  past_position_counts[GetSerialization()]--;
-  if (past_position_counts[GetSerialization()] == 2) {
-    is_three_fold = false;
-    for (std::map<std::string, int>::const_iterator it = past_position_counts.begin();
-         it != past_position_counts.end(); ++it) {
-      if (it->second >= 3) {
-        is_three_fold = true;
-        break;
-      }
-    }
-  }
-
   HistoryData history_data = move_stack.back();
   move_stack.pop_back();
 
@@ -307,7 +297,6 @@ void Position::UndoLastMove() {
   }
 
   active_color = active_color == WHITE ? BLACK : WHITE;
-  serialized_form = history_data.serialized_form;
 }
 
 void Position::SetCastle(std::string castle) {

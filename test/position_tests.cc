@@ -66,7 +66,7 @@ void TestSimpleSquaresAndMoves() {
   TestHelper::AssertContentsAt(position, "e2", core::EMPTY, "e2e4 leaves e2 vacant");
   TestHelper::AssertContentsAt(position, "e4", core::PAWN_W, "e2e4 puts pawn on e4");
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "e3", "e2e4 leaves e3 en passant");
-  TestHelper::AssertEqual(position.GetSerialization(), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3", "Correct FEN after e2e4");
+  TestHelper::AssertEqual(position.Serialize(), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3", "Correct FEN after e2e4");
 
   board.LoadMove("b8c6");
   position = board.GetPosition();
@@ -264,7 +264,7 @@ void TestPromotion() {
   TestHelper::AssertEqual((int)position.GetActiveColor(), (int)BLACK, "Black's turn after White's promotion move");
   TestHelper::AssertContentsAt(position, "g7", core::EMPTY, "g7h8q leaves g7 empty");
   TestHelper::AssertContentsAt(position, "h8", core::QUEEN_W, "g7h8q leaves White queen on h8");
-  TestHelper::AssertEqual(position.GetSerialization(), "7Q/P7/8/8/6K1/8/1pkp4/8 b - -", "Correct FEN after g7h8q");
+  TestHelper::AssertEqual(position.Serialize(), "7Q/P7/8/8/6K1/8/1pkp4/8 b - -", "Correct FEN after g7h8q");
 
   Move move_b2b1n("b2b1n", position);
   TestHelper::AssertEqual(move_b2b1n.ToString(), "b2b1n", "b2b1n to string");
@@ -278,21 +278,21 @@ void TestPromotion() {
   TestHelper::AssertEqual((int)position.GetActiveColor(), (int)WHITE, "White's turn after Black's promotion move");
   TestHelper::AssertContentsAt(position, "b2", core::EMPTY, "b2b1n leaves b2 empty");
   TestHelper::AssertContentsAt(position, "b1", core::KNIGHT_B, "b2b1n leaves Black knight on b1");
-  TestHelper::AssertEqual(position.GetSerialization(), "7Q/P7/8/8/6K1/8/2kp4/1n6 w - -", "Correct FEN after b2b1n");
+  TestHelper::AssertEqual(position.Serialize(), "7Q/P7/8/8/6K1/8/2kp4/1n6 w - -", "Correct FEN after b2b1n");
 
   board.LoadMove("a7a8r");
   position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "a7", core::EMPTY, "a7a8r leaves a7 empty");
   TestHelper::AssertContentsAt(position, "a8", core::ROOK_W, "a7a8r leaves White rook on a8");
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "-", "Promotion leaves no en passant behind");
-  TestHelper::AssertEqual(position.GetSerialization(), "R6Q/8/8/8/6K1/8/2kp4/1n6 b - -", "Correct FEN after a7a8r");
+  TestHelper::AssertEqual(position.Serialize(), "R6Q/8/8/8/6K1/8/2kp4/1n6 b - -", "Correct FEN after a7a8r");
 
   board.LoadMove("d2d1b");
   position = board.GetPosition();
   TestHelper::AssertContentsAt(position, "d2", core::EMPTY, "d2d1b leaves d2 empty");
   TestHelper::AssertContentsAt(position, "d1", core::BISHOP_B, "d2d1b leaves Black bishop on d1");
   TestHelper::AssertFalse(position.GetCastle().black_queenside, "Queenside castling rights don't return");
-  TestHelper::AssertEqual(position.GetSerialization(), "R6Q/8/8/8/6K1/8/2k5/1n1b4 w - -", "Correct FEN after d2d1b");
+  TestHelper::AssertEqual(position.Serialize(), "R6Q/8/8/8/6K1/8/2k5/1n1b4 w - -", "Correct FEN after d2d1b");
 }
 
 void TestChecks() {

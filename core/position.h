@@ -4,8 +4,6 @@
 #include "pieces.h"
 #include "square.h"
 
-#include <map>
-#include <map>
 #include <vector>
 
 namespace core {
@@ -21,6 +19,7 @@ bool operator==(const CastlesAllowed& left, const CastlesAllowed& right);
 bool operator!=(const CastlesAllowed& left, const CastlesAllowed& right);
 
 struct HistoryData {
+  std::string move_string;
   Square last_start_square;
   Square last_end_square;
   SquareContents last_dest_square_contents;
@@ -28,7 +27,6 @@ struct HistoryData {
   Square white_king_location_cache;
   Square black_king_location_cache;
 
-  std::string serialized_form;
   CastlesAllowed last_castles_allowed;
   Square last_en_passant_square;
   bool was_promotion;
@@ -45,12 +43,9 @@ public:
   void Print() const;
 
   void LoadFromFen(std::string fen);
-  std::string GetSerialization() const {
-    return serialized_form;
-  }
-  bool IsThreeFold() const {
-    return is_three_fold;
-  }
+  std::string Serialize() const;
+
+  bool IsThreeFold() const;
 
   void PerformMove(std::string move);
   void UndoLastMove();
@@ -94,15 +89,9 @@ private:
   Square white_king_location_cache;
   Square black_king_location_cache;
 
-  std::string serialized_form;
-
   std::vector<HistoryData> move_stack;
 
-  std::map<std::string, int> past_position_counts;
-  bool is_three_fold;
-
   void InitializeEmptyBoard();
-  void Serialize();
 };
 
 }

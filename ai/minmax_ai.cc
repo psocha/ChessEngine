@@ -2,10 +2,7 @@
 #include "../core/move.h"
 #include "../core/movegen.h"
 
-#include <cmath>
 #include <iostream>
-#include <sstream>
-#include <unordered_map>
 #include <vector>
 
 using core::Move;
@@ -15,20 +12,16 @@ using core::WHITE;
 using core::BLACK;
 using std::cout;
 using std::string;
-using std::unordered_map;
 using std::vector;
 
 namespace ai {
 
 MinMaxAI::MinMaxAI() : ChessAI() {
   max_depth = 5;
-  evaluation_cache = new unordered_map<string, int>();
   suppress_logs = false;
 }
 
-MinMaxAI::~MinMaxAI() {
-  delete evaluation_cache;
-}
+MinMaxAI::~MinMaxAI() {}
 
 string MinMaxAI::BestMove(Position* position) {
   vector<Move> legal_moves = MoveGen::AllLegalMoves(position);
@@ -38,10 +31,6 @@ string MinMaxAI::BestMove(Position* position) {
   }
 
   this->positions_evaluated = 0;
-
-  if (evaluation_cache->size() > EVAL_CACHE_MAX_SIZE) {
-    evaluation_cache->clear();
-  }
 
   MoveScore result = MinMax(position, max_depth, 2 * BLACK_MAX, 2 * WHITE_MAX, -1);
 
@@ -60,14 +49,11 @@ string MinMaxAI::BestMove(Position* position) {
 MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, int move_index) {
   int best_index = 0;
 
-  string serialized_position = position->GetSerialization();
-
   if (depth == 0) {
     if (position->IsCheck(position->GetActiveColor())) {
       vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(*position);
       if (!LegalMovesExist(position, pseudolegal_moves)) {
         int score = position->GetActiveColor() == WHITE ? BLACK_MAX : WHITE_MAX;
-        (*evaluation_cache)[serialized_position] = score;
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       }
     }
@@ -75,11 +61,8 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
     int score;
     if (position->IsThreeFold()) {
       score = 0;
-    } else if (evaluation_cache->count(serialized_position) > 0) {
-      score = (*evaluation_cache)[serialized_position];
     } else {
       score = Evaluate(position);
-      (*evaluation_cache)[serialized_position] = score;
     }
     this->positions_evaluated++;
 
@@ -130,10 +113,8 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
       if (position->IsCheck(position->GetActiveColor())) {
         int score = position->GetActiveColor() == WHITE ?
           BLACK_MAX - (100 * depth) : WHITE_MAX + (100 * depth);
-        (*evaluation_cache)[serialized_position] = score;
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       } else {
-        (*evaluation_cache)[serialized_position] = 0;
         return MoveScore(move_index == -1 ? 0 : move_index, 0);
       }
     }

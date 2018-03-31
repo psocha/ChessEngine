@@ -5,6 +5,7 @@
 #include "square.h"
 
 #include <map>
+#include <map>
 #include <vector>
 
 namespace core {
@@ -27,6 +28,7 @@ struct HistoryData {
   Square white_king_location_cache;
   Square black_king_location_cache;
 
+  std::string serialized_form;
   CastlesAllowed last_castles_allowed;
   Square last_en_passant_square;
   bool was_promotion;
@@ -43,20 +45,35 @@ public:
   void Print() const;
 
   void LoadFromFen(std::string fen);
-  std::string Serialize() const;
+  std::string GetSerialization() const {
+    return serialized_form;
+  }
+  bool IsThreeFold() const {
+    return is_three_fold;
+  }
 
   void PerformMove(std::string move);
   void UndoLastMove();
 
-  void SetActiveColor(std::string color_marker);
-  Color GetActiveColor() const;
+  Color GetActiveColor() const {
+    return active_color;
+  }
+  void SetActiveColor(std::string color_marker) {
+    active_color = ColorFromChar(color_marker[0]);
+  }
 
+  CastlesAllowed GetCastle() const {
+    return castles_allowed;
+  }
   void SetCastle(std::string castle);
-  CastlesAllowed GetCastle() const;
   std::string MakeCastleString() const;
 
-  void SetEnPassant(std::string en_passant);
-  Square GetEnPassant() const;
+  Square GetEnPassant() const {
+    return en_passant_square;
+  }
+  void SetEnPassant(std::string en_passant) {
+    en_passant_square = Square(en_passant);
+  }
 
   inline SquareContents ContentsAt(Square square) const {
     return chessboard[square.rank + 2][square.file + 2];
@@ -77,9 +94,15 @@ private:
   Square white_king_location_cache;
   Square black_king_location_cache;
 
+  std::string serialized_form;
+
   std::vector<HistoryData> move_stack;
 
+  std::map<std::string, int> past_position_counts;
+  bool is_three_fold;
+
   void InitializeEmptyBoard();
+  void Serialize();
 };
 
 }

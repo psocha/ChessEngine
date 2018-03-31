@@ -17,6 +17,7 @@ bool RunAITests() {
     TestSacrificeMateCombo();
     TestRescueStalemate();
     TestWinPieceWithCheck();
+    TestPerpetualCheck();
   } catch (FailingTestException fail) {
     std::cout << fail.GetMessage() << std::endl;
     return false;
@@ -102,6 +103,28 @@ void TestWinPieceWithCheck() {
   board.LoadMove("c5c4");
   suggested_move = ai.BestMove(board.GetPositionRef());
   TestHelper::AssertEqual(suggested_move, "e3g1", "Black wins rook");
+}
+
+void TestPerpetualCheck() {
+  Board board = TestHelper::CreateBoardFromFen("6k1/6p1/8/7Q/1r6/q2b4/8/3K4 w - - 0 1");
+
+  ai::MaterialPositionalAI ai;
+  ai.SetDepth(4);
+
+  board.LoadMove("h5e8");
+  board.LoadMove("g8h7");
+  board.LoadMove("e8h5");
+  board.LoadMove("h7g8");
+  string suggested_move = ai.BestMove(board.GetPositionRef());
+  TestHelper::AssertEqual(suggested_move, "h5e8", "White queen repeats original check");
+
+  board.LoadMove("h5e8");
+  suggested_move = ai.BestMove(board.GetPositionRef());
+  TestHelper::AssertEqual(suggested_move, "g8h7", "Black king plays only legal retreat move");
+
+  board.LoadMove("g8h7");
+  suggested_move = ai.BestMove(board.GetPositionRef());
+  TestHelper::AssertEqual(suggested_move, "e8h5", "White queen forces 3-fold repetition");
 }
 
 }

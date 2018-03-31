@@ -10,6 +10,7 @@ void TestRollingRook();
 void TestSacrificeMateCombo();
 void TestRescueStalemate();
 void TestWinPieceWithCheck();
+void TestPerpetualCheck();
 
 }
 

@@ -50,7 +50,7 @@ int MaterialPositionalAI::Evaluate(core::Position* position) {
   total_material.total_black_material += black_king_adjustment;
 
   return total_material.total_white_material - total_material.total_black_material
-         + RandomInt(-2, 2);
+         + RandomInt(-4, 4);
 }
 
 TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {

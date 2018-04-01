@@ -258,6 +258,8 @@ LegalMoveTestResult PerformTest(LegalMoveTest test) {
     board.LoadMove(move);
   }
 
+  board.Print();
+
   vector<std::string> test_moves = board.GetLegalMoves();
   vector<std::string> legal_but_omitted;
   vector<std::string> illegal_but_listed;

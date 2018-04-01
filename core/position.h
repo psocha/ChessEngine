@@ -70,8 +70,11 @@ public:
     en_passant_square = Square(en_passant);
   }
 
+  inline SquareContents ContentsAt(int rank, int file) const {
+    return chessboard[12*(rank + 2) + file + 2];
+  }
   inline SquareContents ContentsAt(Square square) const {
-    return chessboard[square.rank + 2][square.file + 2];
+    return chessboard[12*(square.rank + 2) + square.file + 2];
   }
 
   Square FindKing(Color color) const;
@@ -81,7 +84,8 @@ public:
   bool Equals(const Position& other, bool compare_stacks) const;
 
 private:
-  std::vector<std::vector<SquareContents>> chessboard;
+  SquareContents chessboard[144];
+
   Color active_color;
   CastlesAllowed castles_allowed;
   Square en_passant_square;
@@ -92,6 +96,10 @@ private:
   std::vector<HistoryData> move_stack;
 
   void InitializeEmptyBoard();
+
+  inline void SetContentsAt(int rank, int file, SquareContents contents) {
+    chessboard[12*(rank + 2) + file + 2] = contents;
+  }
 };
 
 }

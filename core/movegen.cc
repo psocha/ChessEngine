@@ -1,6 +1,7 @@
 #include "movegen.h"
 
 #include <algorithm>
+#include <string>
 #include <vector>
 using std::vector;
 
@@ -65,27 +66,27 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
           }
 
           if (contents == KING_W && square == Square("e1") &&
-            position.ContentsAt(Square("f1")) == EMPTY && position.ContentsAt(Square("g1")) == EMPTY &&
-            position.ContentsAt(Square("h1")) == ROOK_W && position.GetCastle().white_kingside) {
+            position.ContentsAt(0, 5) == EMPTY && position.ContentsAt(0, 6) == EMPTY &&
+            position.ContentsAt(0, 7) == ROOK_W && position.GetCastle().white_kingside) {
 
             square_moves.push_back(Move("e1g1", position));
           }
           if (contents == KING_W && square == Square("e1") &&
-            position.ContentsAt(Square("d1")) == EMPTY && position.ContentsAt(Square("c1")) == EMPTY &&
-            position.ContentsAt(Square("b1")) == EMPTY && position.ContentsAt(Square("a1")) == ROOK_W &&
+            position.ContentsAt(0, 3) == EMPTY && position.ContentsAt(0, 2) == EMPTY &&
+            position.ContentsAt(0, 1) == EMPTY && position.ContentsAt(0, 0) == ROOK_W &&
             position.GetCastle().white_queenside) {
 
             square_moves.push_back(Move("e1c1", position));
           }
           if (contents == KING_B && square == Square("e8") &&
-            position.ContentsAt(Square("f8")) == EMPTY && position.ContentsAt(Square("g8")) == EMPTY &&
-            position.ContentsAt(Square("h8")) == ROOK_B && position.GetCastle().black_kingside) {
+            position.ContentsAt(7, 5) == EMPTY && position.ContentsAt(7, 6) == EMPTY &&
+            position.ContentsAt(7, 7) == ROOK_B && position.GetCastle().black_kingside) {
 
             square_moves.push_back(Move("e8g8", position));
           }
           if (contents == KING_B && square == Square("e8") &&
-            position.ContentsAt(Square("d8")) == EMPTY && position.ContentsAt(Square("c8")) == EMPTY &&
-            position.ContentsAt(Square("b8")) == EMPTY && position.ContentsAt(Square("a8")) == ROOK_B &&
+            position.ContentsAt(7, 3) == EMPTY && position.ContentsAt(7, 2) == EMPTY &&
+            position.ContentsAt(7, 1) == EMPTY && position.ContentsAt(7, 0) == ROOK_B &&
             position.GetCastle().black_queenside) {
 
             square_moves.push_back(Move("e8c8", position));
@@ -124,24 +125,25 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
 
 bool MoveGen::IsPseudolegalMoveLegal(Position *position, Move move) {
   Color color = position->GetActiveColor();
-  position->PerformMove(move.ToString());
+  std::string move_str = move.ToString();
+  position->PerformMove(move_str);
 
   vector<Square> king_squares;
   king_squares.push_back(position->FindKing(color));
 
-  if (move.is_castle && move.ToString() == "e1g1") {
+  if (move.is_castle && move_str == "e1g1") {
     king_squares.push_back(Square("e1"));
     king_squares.push_back(Square("f1"));
   }
-  if (move.is_castle && move.ToString() == "e1c1") {
+  if (move.is_castle && move_str == "e1c1") {
     king_squares.push_back(Square("e1"));
     king_squares.push_back(Square("d1"));
   }
-  if (move.is_castle && move.ToString() == "e8g8") {
+  if (move.is_castle && move_str == "e8g8") {
     king_squares.push_back(Square("e8"));
     king_squares.push_back(Square("f8"));
   }
-  if (move.is_castle && move.ToString() == "e8c8") {
+  if (move.is_castle && move_str == "e8c8") {
     king_squares.push_back(Square("e8"));
     king_squares.push_back(Square("d8"));
   }
@@ -154,14 +156,6 @@ bool MoveGen::IsPseudolegalMoveLegal(Position *position, Move move) {
 
 bool MoveGen::IsInCheck(const Position& position, vector<Square> king_squares, Color color) {
   for (Square king_square : king_squares) {
-
-    SquareContents enemy_knight = MakePiece(KNIGHT, position.GetActiveColor());
-    vector<Square> knight_attack_squares = GetKnightSquares(king_square);
-    for (Square knight_square : knight_attack_squares) {
-      if (knight_square.is_real_square && position.ContentsAt(knight_square) == enemy_knight) {
-        return true;
-      }
-    }
 
     vector<Square> line_endings = {
       LineEndingSquare(position, king_square, 1, 0),
@@ -184,6 +178,14 @@ bool MoveGen::IsInCheck(const Position& position, vector<Square> king_squares, C
       }
 
       if (CanAttack(line_ending_contents, line_ending, king_square)) {
+        return true;
+      }
+    }
+
+    SquareContents enemy_knight = MakePiece(KNIGHT, position.GetActiveColor());
+    vector<Square> knight_attack_squares = GetKnightSquares(king_square);
+    for (Square knight_square : knight_attack_squares) {
+      if (knight_square.is_real_square && position.ContentsAt(knight_square) == enemy_knight) {
         return true;
       }
     }

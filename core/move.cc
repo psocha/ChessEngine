@@ -98,7 +98,9 @@ string Move::ToString() const {
 }
 
 bool operator==(const Move& first, const Move& second) {
-  return first.ToString() == second.ToString();
+  return first.start_square == second.start_square &&
+         first.end_square == second.end_square &&
+         first.promoted_piece == second.promoted_piece;
 }
 
 bool operator<(const Move& first, const Move& second) {

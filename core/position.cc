@@ -46,7 +46,7 @@ Position::~Position() {}
 void Position::Print() const {
   for (int rank = 9; rank >= 2; rank--) {
     for (int file = 2; file < 10; file++) {
-      SquareContents piece = chessboard[rank][file];
+      SquareContents piece = ContentsAt(rank - 2, file - 2);
       char piece_char = CharFromSquareContents(piece);
       std::cout << " " << piece_char << " ";
     }
@@ -76,7 +76,7 @@ void Position::LoadFromFen(string fen) {
       file += squares_to_skip;
     } else {
       SquareContents piece = SquareContentsFromChar(ch);
-      chessboard[rank][file] = piece;
+      SetContentsAt(rank - 2, file - 2, piece);
 
       if (piece == KING_W) {
         white_king_location_cache = Square(rank - 2, file - 2);
@@ -95,7 +95,7 @@ string Position::Serialize() const {
 
   for (int rank = 7; rank >= 0; rank--) {
     for (int file = 0; file <= 7; file++) {
-      SquareContents contents = chessboard[rank + 2][file + 2];
+      SquareContents contents = ContentsAt(rank, file);
       if (contents == EMPTY) {
         empties++;
       } else {
@@ -146,8 +146,7 @@ void Position::PerformMove(std::string mv) {
   history_data.move_string = mv;
   history_data.last_start_square = move.start_square;
   history_data.last_end_square = move.end_square;
-  history_data.last_dest_square_contents =
-    chessboard[move.end_square.rank + 2][move.end_square.file + 2];
+  history_data.last_dest_square_contents = ContentsAt(move.end_square.rank, move.end_square.file);
   history_data.white_king_location_cache = this->white_king_location_cache;
   history_data.black_king_location_cache = this->black_king_location_cache;
   history_data.last_castles_allowed = GetCastle();
@@ -155,12 +154,11 @@ void Position::PerformMove(std::string mv) {
   history_data.was_promotion = false;
 
   SquareContents moving_piece = ContentsAt(move.start_square);
-  chessboard[move.start_square.rank + 2][move.start_square.file + 2] = EMPTY;
-  chessboard[move.end_square.rank + 2][move.end_square.file + 2] = moving_piece;
+  SetContentsAt(move.start_square.rank, move.start_square.file, EMPTY);
+  SetContentsAt(move.end_square.rank, move.end_square.file, moving_piece);
 
   if (GetPieceType(moving_piece) == PAWN && move.promoted_piece != NULL_PIECE) {
-    chessboard[move.end_square.rank + 2][move.end_square.file + 2] =
-      MakePiece(move.promoted_piece, this->active_color);
+    SetContentsAt(move.end_square.rank, move.end_square.file, MakePiece(move.promoted_piece, this->active_color));
     history_data.was_promotion = true;
   }
 
@@ -176,20 +174,20 @@ void Position::PerformMove(std::string mv) {
   }
 
   if (moving_piece == KING_W && mv == "e1g1") {
-    chessboard[0 + 2][7 + 2] = EMPTY;
-    chessboard[0 + 2][5 + 2] = ROOK_W;
+    SetContentsAt(0, 7, EMPTY);
+    SetContentsAt(0, 5, ROOK_W);
   }
   if (moving_piece == KING_W && mv== "e1c1") {
-    chessboard[0 + 2][0 + 2] = EMPTY;
-    chessboard[0 + 2][3 + 2] = ROOK_W;
+    SetContentsAt(0, 0, EMPTY);
+    SetContentsAt(0, 3, ROOK_W);
   }
   if (moving_piece == KING_B && mv == "e8g8") {
-    chessboard[7 + 2][7 + 2] = EMPTY;
-    chessboard[7 + 2][5 + 2] = ROOK_B;
+    SetContentsAt(7, 7, EMPTY);
+    SetContentsAt(7, 5, ROOK_B);
   }
   if (moving_piece == KING_B && mv == "e8c8") {
-    chessboard[7 + 2][0 + 2] = EMPTY;
-    chessboard[7 + 2][3 + 2] = ROOK_B;
+    SetContentsAt(7, 0, EMPTY);
+    SetContentsAt(7, 3, ROOK_B);
   }
 
   if (move.start_square == Square("h1") || move.end_square == Square("h1")) {
@@ -207,9 +205,9 @@ void Position::PerformMove(std::string mv) {
 
   if (GetPieceType(moving_piece) == PAWN && move.end_square == this->en_passant_square) {
     if (active_color == WHITE) {
-      chessboard[2 + en_passant_square.rank - 1][2 + en_passant_square.file] = EMPTY;
+      SetContentsAt(en_passant_square.rank - 1, en_passant_square.file, EMPTY);
     } else {
-      chessboard[2 + en_passant_square.rank + 1][2 + en_passant_square.file] = EMPTY;
+      SetContentsAt(en_passant_square.rank + 1, en_passant_square.file, EMPTY);
     }
   }
 
@@ -237,62 +235,58 @@ void Position::UndoLastMove() {
 
   if (active_color == BLACK && ContentsAt(history_data.last_end_square) == PAWN_W &&
       history_data.last_end_square == history_data.last_en_passant_square) {
-    chessboard[2 + history_data.last_end_square.rank - 1]
-              [2 + history_data.last_end_square.file] = PAWN_B;
+    SetContentsAt(history_data.last_end_square.rank - 1, history_data.last_end_square.file, PAWN_B);
   }
   if (active_color == WHITE && ContentsAt(history_data.last_end_square) == PAWN_B &&
       history_data.last_end_square == history_data.last_en_passant_square) {
-    chessboard[2 + history_data.last_end_square.rank + 1]
-              [2 + history_data.last_end_square.file] = PAWN_W;
+    SetContentsAt(history_data.last_end_square.rank + 1, history_data.last_end_square.file, PAWN_W);
   }
   en_passant_square = history_data.last_en_passant_square;
 
   white_king_location_cache = history_data.white_king_location_cache;
   black_king_location_cache = history_data.black_king_location_cache;
 
-  chessboard[history_data.last_start_square.rank + 2][history_data.last_start_square.file + 2] =
-    chessboard[history_data.last_end_square.rank + 2][history_data.last_end_square.file + 2];
+  SetContentsAt(history_data.last_start_square.rank, history_data.last_start_square.file,
+      ContentsAt(history_data.last_end_square.rank, history_data.last_end_square.file));
 
-  chessboard[history_data.last_end_square.rank + 2][history_data.last_end_square.file + 2] =
-    history_data.last_dest_square_contents;
+  SetContentsAt(history_data.last_end_square.rank, history_data.last_end_square.file,
+    history_data.last_dest_square_contents);
 
   if (history_data.last_start_square.ToString() == "e1" &&
       history_data.last_end_square.ToString() == "g1" &&
       history_data.last_dest_square_contents == EMPTY &&
       ContentsAt(Square("f1")) == ROOK_W) {
-    chessboard[0 + 2][5 + 2] = EMPTY;
-    chessboard[0 + 2][7 + 2] = ROOK_W;
+    SetContentsAt(0, 5, EMPTY);
+    SetContentsAt(0, 7, ROOK_W);
   }
   if (history_data.last_start_square.ToString() == "e1" &&
       history_data.last_end_square.ToString() == "c1" &&
       history_data.last_dest_square_contents == EMPTY &&
       ContentsAt(Square("d1")) == ROOK_W) {
-    chessboard[0 + 2][3 + 2] = EMPTY;
-    chessboard[0 + 2][0 + 2] = ROOK_W;
+    SetContentsAt(0, 3, EMPTY);
+    SetContentsAt(0, 0, ROOK_W);
   }
   if (history_data.last_start_square.ToString() == "e8" &&
       history_data.last_end_square.ToString() == "g8" &&
       history_data.last_dest_square_contents == EMPTY &&
       ContentsAt(Square("f8")) == ROOK_B) {
-    chessboard[7 + 2][5 + 2] = EMPTY;
-    chessboard[7 + 2][7 + 2] = ROOK_B;
+    SetContentsAt(7, 5, EMPTY);
+    SetContentsAt(7, 7, ROOK_B);
   }
   if (history_data.last_start_square.ToString() == "e8" &&
       history_data.last_end_square.ToString() == "c8" &&
       history_data.last_dest_square_contents == EMPTY &&
       ContentsAt(Square("f1")) == ROOK_W) {
-    chessboard[7 + 2][3 + 2] = EMPTY;
-    chessboard[7 + 2][0 + 2] = ROOK_B;
+    SetContentsAt(7, 3, EMPTY);
+    SetContentsAt(7, 0, ROOK_B);
   }
   castles_allowed = history_data.last_castles_allowed;
 
   if (history_data.was_promotion) {
     if (history_data.last_end_square.rank == 7) {
-      chessboard[history_data.last_start_square.rank + 2]
-                [history_data.last_start_square.file + 2] = PAWN_W;
+      SetContentsAt(history_data.last_start_square.rank, history_data.last_start_square.file, PAWN_W);
     } else if (history_data.last_end_square.rank == 0) {
-      chessboard[history_data.last_start_square.rank + 2]
-                [history_data.last_start_square.file + 2] = PAWN_B;
+      SetContentsAt(history_data.last_start_square.rank, history_data.last_start_square.file, PAWN_B);
     }
   }
 
@@ -350,7 +344,7 @@ bool Position::Equals(const Position& other, bool compare_stacks) const {
 
   for (int i = 0; i < 12; i++) {
     for (int j = 0; j < 12; j++) {
-      if (chessboard[i][j] != other.chessboard[i][j]) {
+      if (chessboard[12*i + j] != other.chessboard[12*i + j]) {
         std::cout << "Position mismatch on board" << std::endl;
         return false;
       }
@@ -375,23 +369,22 @@ bool Position::Equals(const Position& other, bool compare_stacks) const {
 
 void Position::InitializeEmptyBoard() {
   for (int i = 0; i < 12; i++) {
-    chessboard.push_back(vector<SquareContents>(12));
     for (int j = 0; j < 12; j++) {
-      chessboard[i][j] = EMPTY;
+      chessboard[12*i + j] = EMPTY;
     }
   }
 
   for (int i = 0; i < 12; i++) {
     if (i < 2 || i > 9) {
       for (int j = 0; j < 12; j++) {
-        chessboard[i][j] = OUT_OF_BOUNDS;
+        chessboard[12*i + j] = OUT_OF_BOUNDS;
       }
     }
     else {
-      chessboard[i][0] = OUT_OF_BOUNDS;
-      chessboard[i][1] = OUT_OF_BOUNDS;
-      chessboard[i][10] = OUT_OF_BOUNDS;
-      chessboard[i][11] = OUT_OF_BOUNDS;
+      chessboard[12*i + 0] = OUT_OF_BOUNDS;
+      chessboard[12*i + 1] = OUT_OF_BOUNDS;
+      chessboard[12*i + 10] = OUT_OF_BOUNDS;
+      chessboard[12*i + 11] = OUT_OF_BOUNDS;
     }
   }
 

@@ -47,20 +47,14 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
         } else if (piece_type == ROOK) {
           square_moves = GetOrthogonalMoves(position, square, false);
         } else if (piece_type == QUEEN) {
-          vector<Move> diagonal_moves = GetDiagonalMoves(position, square, false);
+          square_moves = GetDiagonalMoves(position, square, false);
           vector<Move> orthogonal_moves = GetOrthogonalMoves(position, square, false);
-          for (Move move : diagonal_moves) {
-            square_moves.push_back(move);
-          }
           for (Move move : orthogonal_moves) {
             square_moves.push_back(move);
           }
         } else if (piece_type == KING) {
-          vector<Move> diagonal_moves = GetDiagonalMoves(position, square, true);
+          square_moves = GetDiagonalMoves(position, square, true);
           vector<Move> orthogonal_moves = GetOrthogonalMoves(position, square, true);
-          for (Move move : diagonal_moves) {
-            square_moves.push_back(move);
-          }
           for (Move move : orthogonal_moves) {
             square_moves.push_back(move);
           }
@@ -157,30 +151,14 @@ bool MoveGen::IsPseudolegalMoveLegal(Position *position, const Move& move) {
 bool MoveGen::IsInCheck(const Position& position, const vector<Square>& king_squares, Color color) {
   for (Square king_square : king_squares) {
 
-    vector<Square> line_endings = {
-      LineEndingSquare(position, king_square, 1, 0),
-      LineEndingSquare(position, king_square, 1, 1),
-      LineEndingSquare(position, king_square, 0, 1),
-      LineEndingSquare(position, king_square, -1, 1),
-      LineEndingSquare(position, king_square, -1, 0),
-      LineEndingSquare(position, king_square, -1, -1),
-      LineEndingSquare(position, king_square, 0, -1),
-      LineEndingSquare(position, king_square, 1, -1)
-    };
-
-    for (Square line_ending : line_endings) {
-      if (!line_ending.is_real_square) {
-        continue;
-      }
-      SquareContents line_ending_contents = position.ContentsAt(line_ending);
-      if (ColorOfContents(line_ending_contents) == color) {
-        continue;
-      }
-
-      if (CanAttack(line_ending_contents, line_ending, king_square)) {
-        return true;
-      }
-    }
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, 1, 0), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, 1, 1), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, 0, 1), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, -1, 1), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, -1, 0), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, -1, -1), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, 0, -1), color)) return true;
+    if (CanLineEndingSquareAttack(position, king_square, LineEndingSquare(position, king_square, 1, -1), color)) return true;
 
     SquareContents enemy_knight = MakePiece(KNIGHT, position.GetActiveColor());
     vector<Square> knight_attack_squares = GetKnightSquares(king_square);
@@ -190,6 +168,21 @@ bool MoveGen::IsInCheck(const Position& position, const vector<Square>& king_squ
       }
     }
 
+  }
+  return false;
+}
+
+bool MoveGen::CanLineEndingSquareAttack(const Position& position, const Square& target_square, 
+                                        const Square& attack_square, Color color) {
+  if (!attack_square.is_real_square) {
+    return false;
+  }
+  SquareContents attack_contents = position.ContentsAt(attack_square);
+  if (ColorOfContents(attack_contents) == color) {
+    return false;
+  }
+  if (CanAttack(attack_contents, attack_square, target_square)) {
+    return true;
   }
   return false;
 }
@@ -223,7 +216,7 @@ vector<Move> MoveGen::GetPawnMoves(const Position& position, const Square& squar
     one_ahead_valid = false;
     two_ahead_valid = false;
   }
-  if (!IsValidDestSquare(position, two_ahead, color)) {
+  if (two_ahead_valid && !IsValidDestSquare(position, two_ahead, color)) {
     two_ahead_valid = false;
   }
   if (!IsValidDestSquare(position, capture_left, color)) {
@@ -233,10 +226,10 @@ vector<Move> MoveGen::GetPawnMoves(const Position& position, const Square& squar
     capture_right_valid = false;
   }
 
-  if (color == WHITE && !is_second_rank) {
+  if (two_ahead_valid && color == WHITE && !is_second_rank) {
     two_ahead_valid = false;
   }
-  if (color == BLACK && !is_seventh_rank) {
+  if (two_ahead_valid && color == BLACK && !is_seventh_rank) {
     two_ahead_valid = false;
   }
 
@@ -244,14 +237,14 @@ vector<Move> MoveGen::GetPawnMoves(const Position& position, const Square& squar
     one_ahead_valid = false;
     two_ahead_valid = false;
   }
-  if (IsPawnCaptureSquare(position, two_ahead, color)) {
+  if (two_ahead_valid && IsPawnCaptureSquare(position, two_ahead, color)) {
     two_ahead_valid = false;
   }
 
-  if (!IsPawnCaptureSquare(position, capture_left, color)) {
+  if (capture_left_valid && !IsPawnCaptureSquare(position, capture_left, color)) {
     capture_left_valid = false;
   }
-  if (!IsPawnCaptureSquare(position, capture_right, color)) {
+  if (capture_right_valid && !IsPawnCaptureSquare(position, capture_right, color)) {
     capture_right_valid = false;
   }
 
@@ -365,28 +358,25 @@ Square MoveGen::LineEndingSquare(const Position& position, const Square& start_s
 }
 
 // Assumes all in-between squares are empty.
-bool MoveGen::CanAttack(SquareContents source_contents, const Square& source_square, const Square& dest_square) {
-  if (source_contents == PAWN_W) {
-    Square capture_left = Square(source_square.rank + 1, source_square.file - 1);
-    Square capture_right = Square(source_square.rank + 1, source_square.file + 1);
-    return (dest_square == capture_left || dest_square == capture_right);
+bool MoveGen::CanAttack(SquareContents attack_contents, const Square& attack_square, const Square& target_square) {
+  if (attack_contents == PAWN_W) {
+    Square capture_left = Square(attack_square.rank + 1, attack_square.file - 1);
+    Square capture_right = Square(attack_square.rank + 1, attack_square.file + 1);
+    return (target_square == capture_left || target_square == capture_right);
   }
-  if (source_contents == PAWN_B) {
-    Square capture_left = Square(source_square.rank - 1, source_square.file - 1);
-    Square capture_right = Square(source_square.rank - 1, source_square.file + 1);
-    return (dest_square == capture_left || dest_square == capture_right);
+  if (attack_contents == PAWN_B) {
+    Square capture_left = Square(attack_square.rank - 1, attack_square.file - 1);
+    Square capture_right = Square(attack_square.rank - 1, attack_square.file + 1);
+    return (target_square == capture_left || target_square == capture_right);
   }
 
-  PieceType attacking_piece = GetPieceType(source_contents);
-  if (attacking_piece == KING) {
-    return SquareDistance(source_square, dest_square) <= 1;
-  } else if (attacking_piece == BISHOP) {
-    return SquaresAreDiagonal(source_square, dest_square);
-  } else if (attacking_piece == ROOK) {
-    return SquaresAreOrthogonal(source_square, dest_square);
-  } else if (attacking_piece == QUEEN) {
-    return SquaresAreDiagonal(source_square, dest_square) ||
-      SquaresAreOrthogonal(source_square, dest_square);
+  PieceType attacking_piece = GetPieceType(attack_contents);
+  switch (attacking_piece) {
+    case KING: return SquareDistance(attack_square, target_square) <= 1;
+    case BISHOP: return SquaresAreDiagonal(attack_square, target_square);
+    case ROOK: return SquaresAreOrthogonal(attack_square, target_square);
+    case QUEEN: return SquaresAreDiagonal(attack_square, target_square) || SquaresAreOrthogonal(attack_square, target_square);
+    default: return false;
   }
   return false;
 }

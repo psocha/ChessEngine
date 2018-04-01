@@ -31,7 +31,8 @@ private:
   static std::vector<Square> GetKnightSquares(const Square& square);
   static Square LineEndingSquare(const Position& position, const Square& start_square,
                                  int rank_increment, int file_increment);
-  static bool CanAttack(SquareContents source_contents, const Square& source_square, const Square& dest_square);
+  static bool CanAttack(SquareContents attack_contents, const Square& attack_square, const Square& target_square);
+  static bool CanLineEndingSquareAttack(const Position& position, const Square& target_square, const Square& attack_square, Color color);
 
   static void AddLineMoves(const Position& position, const Square& square, int rank_increment, int column_increment,
                            bool limit_to_one, std::vector<Move> *moves);

@@ -49,7 +49,6 @@ void TestSimpleSquaresAndMoves() {
   TestHelper::AssertEqual(move.end_square.ToString(), "e4", "end square ToString()");
   TestHelper::AssertEqual((int)move.moving_piece, core::PAWN, "e2e4 involves the move of a pawn");
   TestHelper::AssertEqual((int)move.promoted_piece, (int)core::NULL_PIECE, "No promotion means null piece");
-  TestHelper::AssertFalse(move.is_en_passant, "No en passant means en passant flag is false");
   TestHelper::AssertFalse(move.is_castle, "No castling means castling flag is false");
   TestHelper::AssertFalse(move.is_capture, "e2e4 is not a capture");
 
@@ -57,9 +56,6 @@ void TestSimpleSquaresAndMoves() {
   TestHelper::AssertEqual(move.start_square.file, 4, "file of e2");
   TestHelper::AssertEqual(move.end_square.rank, 3, "rank of e4");
   TestHelper::AssertEqual(move.end_square.file, 4, "file of e4");
-
-  Move illegal_move("h1h2", board.GetPosition());
-  TestHelper::AssertTrue(illegal_move.is_illegal_collision, "Rh2 opening move is illegal");
 
   board.LoadMove("e2e4");
   position = board.GetPosition();
@@ -190,9 +186,6 @@ void TestEnPassant() {
   Position position = board.GetPosition();
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "d3", "d2d4 leaves d3 en passant");
 
-  Move move_f7f5("f7f5", position);
-  TestHelper::AssertFalse(move_f7f5.is_en_passant, "f7f5 is not en passant");
-
   board.LoadMove("f7f5");
   position = board.GetPosition();
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "f6", "f7f5 leaves f6 en passant");
@@ -204,9 +197,6 @@ void TestEnPassant() {
   board.LoadMove("c7c5");
   position = board.GetPosition();
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "c6", "c7c5 leaves c6 en passant");
-
-  Move move_d5c6("d5c6", position);
-  TestHelper::AssertTrue(move_d5c6.is_en_passant, "d5c6 is en passant");
 
   board.LoadMove("d5c6");
   position = board.GetPosition();
@@ -230,9 +220,6 @@ void TestEnPassant() {
   board.LoadMove("g2g4");
   position = board.GetPosition();
   TestHelper::AssertEqual(position.GetEnPassant().ToString(), "g3", "g2g4 leaves g3 en passant");
-
-  Move move_f4g3(Square(3, 5), Square(2, 6), position);
-  TestHelper::AssertTrue(move_f4g3.is_en_passant, "f4g3 is en passant");
 
   board.LoadMove("f4g3");
   position = board.GetPosition();
@@ -271,7 +258,6 @@ void TestPromotion() {
   TestHelper::AssertEqual((int)move_b2b1n.moving_piece, (int)core::PAWN, "b2b1n is considered a pawn move");
   TestHelper::AssertEqual((int)move_b2b1n.promoted_piece, (int)core::KNIGHT, "b2b1n's promoted piece is an n");
   TestHelper::AssertFalse(move_b2b1n.is_capture, "b2b1n is not a capture");
-  TestHelper::AssertFalse(move_b2b1n.is_en_passant, "b2b1n is not en passant");
 
   board.LoadMove("b2b1n");
   position = board.GetPosition();

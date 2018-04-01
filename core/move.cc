@@ -1,6 +1,5 @@
 #include "move.h"
 
-#include <set>
 using std::string;
 
 namespace core {
@@ -55,20 +54,16 @@ void Move::DescribeFromPosition(const Position &initial_position) {
   Color end_color = ColorOfContents(initial_position.ContentsAt(end_square));
   if (OppositeColors(start_color, end_color)) {
     is_capture = true;
-  } else if (SameColors(start_color, end_color)) {
-    is_illegal_collision = true;
   }
 
-  if (moving_piece == KING &&
-     (start_square.ToString() == "e1" || start_square.ToString() == "e8")) {
-    std::set<string> castle_moves = {"e1g1", "e1c1", "e8g8", "e8c8"};
-    if (castle_moves.count(this->ToString()) > 0) {
-        is_castle = true;
+  if (moving_piece == KING) {
+    if (start_color == WHITE && start_square == Square(0, 4) &&  // e1
+       (end_square == Square(0, 6) || end_square == Square(0, 2))) {  // g1 or c1
+      is_castle = true;
+    } else if (start_color == BLACK && start_square == Square(7, 4) &&  // e8
+       (end_square == Square(7, 6) || end_square == Square(7, 2))) {  // g8 or c8
+      is_castle = true;
     }
-  }
-
-  if (moving_piece == PAWN && end_square == initial_position.GetEnPassant()) {
-    is_en_passant = true;
   }
 }
 

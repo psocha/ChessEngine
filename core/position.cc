@@ -281,7 +281,7 @@ void Position::UndoLastMove() {
   if (history_data.last_start_square.ToString() == "e8" &&
       history_data.last_end_square.ToString() == "c8" &&
       history_data.last_dest_square_contents == EMPTY &&
-      ContentsAt(Square("f1")) == ROOK_W) {
+      ContentsAt(Square("d8")) == ROOK_B) {
     SetContentsAt(7, 3, EMPTY);
     SetContentsAt(7, 0, ROOK_B);
   }

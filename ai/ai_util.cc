@@ -1,7 +1,6 @@
 #include "ai_util.h"
 
 using core::Position;
-using core::Square;
 using core::SquareContents;
 
 namespace ai {
@@ -13,8 +12,7 @@ int MaterialDifference(const Position& position, int pawn_value,
   int difference = 0;
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
-      Square square(rank, file);
-      SquareContents contents = position.ContentsAt(square);
+      SquareContents contents = position.ContentsAt(rank, file);
       if (contents == core::EMPTY) continue;
 
       int piece_value = 0;

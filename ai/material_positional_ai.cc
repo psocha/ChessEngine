@@ -49,8 +49,7 @@ int MaterialPositionalAI::Evaluate(core::Position* position) {
   total_material.total_white_material += white_king_adjustment;
   total_material.total_black_material += black_king_adjustment;
 
-  return total_material.total_white_material - total_material.total_black_material
-         + RandomInt(-4, 4);
+  return total_material.total_white_material - total_material.total_black_material + RandomInt(-4, 4);
 }
 
 TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {
@@ -58,8 +57,7 @@ TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {
 
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
-      Square square(rank, file);
-      SquareContents contents = position.ContentsAt(square);
+      SquareContents contents = position.ContentsAt(rank, file);
       if (contents == core::EMPTY) continue;
       Color color = ColorOfContents(contents);
 
@@ -85,9 +83,9 @@ TotalMaterial MaterialPositionalAI::GetTotalMaterial(const Position& position) {
           break;
         case core::KING:
           if (color == WHITE) {
-            material.white_king_square = square;
+            material.white_king_square = Square(rank, file);
           } else {
-            material.black_king_square = square;
+            material.black_king_square = Square(rank, file);
           }
           break;
         default:

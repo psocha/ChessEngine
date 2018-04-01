@@ -14,11 +14,8 @@ struct Move {
   PieceType moving_piece;
 
   bool is_castle = false;
-  bool is_en_passant = false;
-  PieceType promoted_piece = NULL_PIECE;
-
   bool is_capture = false;
-  bool is_illegal_collision = false;
+  PieceType promoted_piece = NULL_PIECE;
 
   Move(std::string coordinates, const Position &initial_position);
   Move(Square start, Square end, const Position &initial_position);

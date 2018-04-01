@@ -139,11 +139,11 @@ bool Position::IsThreeFold() const {
          move_stack[move_list_size - 4].move_string == move_stack[move_list_size - 8].move_string;
 }
 
-void Position::PerformMove(std::string mv) {
-  Move move = Move(mv, *this);
+void Position::PerformMove(const Move& move) {
+  string move_str = move.ToString();
 
   HistoryData history_data;
-  history_data.move_string = mv;
+  history_data.move_string = move_str;
   history_data.last_start_square = move.start_square;
   history_data.last_end_square = move.end_square;
   history_data.last_dest_square_contents = ContentsAt(move.end_square.rank, move.end_square.file);
@@ -173,19 +173,19 @@ void Position::PerformMove(std::string mv) {
     black_king_location_cache = move.end_square;
   }
 
-  if (moving_piece == KING_W && mv == "e1g1") {
+  if (moving_piece == KING_W && move_str == "e1g1") {
     SetContentsAt(0, 7, EMPTY);
     SetContentsAt(0, 5, ROOK_W);
   }
-  if (moving_piece == KING_W && mv== "e1c1") {
+  if (moving_piece == KING_W && move_str == "e1c1") {
     SetContentsAt(0, 0, EMPTY);
     SetContentsAt(0, 3, ROOK_W);
   }
-  if (moving_piece == KING_B && mv == "e8g8") {
+  if (moving_piece == KING_B && move_str == "e8g8") {
     SetContentsAt(7, 7, EMPTY);
     SetContentsAt(7, 5, ROOK_B);
   }
-  if (moving_piece == KING_B && mv == "e8c8") {
+  if (moving_piece == KING_B && move_str == "e8c8") {
     SetContentsAt(7, 0, EMPTY);
     SetContentsAt(7, 3, ROOK_B);
   }
@@ -227,6 +227,11 @@ void Position::PerformMove(std::string mv) {
   }
 
   move_stack.push_back(history_data);
+}
+
+void Position::PerformMove(std::string mv) {
+  Move move = Move(mv, *this);
+  PerformMove(move);
 }
 
 void Position::UndoLastMove() {

@@ -8,6 +8,8 @@
 
 namespace core {
 
+struct Move;
+
 struct CastlesAllowed {
   bool white_kingside = true;
   bool white_queenside = true;
@@ -47,6 +49,7 @@ public:
 
   bool IsThreeFold() const;
 
+  void PerformMove(const Move& move);
   void PerformMove(std::string move);
   void UndoLastMove();
 
@@ -73,7 +76,7 @@ public:
   inline SquareContents ContentsAt(int rank, int file) const {
     return chessboard[12*(rank + 2) + file + 2];
   }
-  inline SquareContents ContentsAt(Square square) const {
+  inline SquareContents ContentsAt(const Square& square) const {
     return chessboard[12*(square.rank + 2) + square.file + 2];
   }
 

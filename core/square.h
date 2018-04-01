@@ -39,10 +39,10 @@ bool operator==(const Square& first, const Square& second);
 bool operator!=(const Square& first, const Square& second);
 bool operator<(const Square& first, const Square& second);
 
-int SquareDistance(Square first, Square second);
-bool SquaresAreOrthogonal(Square first, Square second);
-bool SquaresAreDiagonal(Square first, Square second);
-bool IsCentralSquare(Square square);
+int SquareDistance(const Square& first, const Square& second);
+bool SquaresAreOrthogonal(const Square& first, const Square& second);
+bool SquaresAreDiagonal(const Square& first, const Square& second);
+bool IsCentralSquare(const Square& square);
 
 }
 

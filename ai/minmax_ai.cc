@@ -81,7 +81,7 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
   for (unsigned int i = 0; i < next_moves.size(); i++) {
     Move move = next_moves[i];
 
-    position->PerformMove(move.ToString());
+    position->PerformMove(move);
     MoveScore next_score = MinMax(position, depth - 1, alpha, beta, i);
     position->UndoLastMove();
 

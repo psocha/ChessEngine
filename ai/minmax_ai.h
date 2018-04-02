@@ -41,7 +41,7 @@ class MinMaxAI : public ChessAI {
   int max_depth;
   bool suppress_logs;
 
-  bool LegalMovesExist(core::Position* position, std::vector<core::Move> pseudolegal_moves);
+  bool LegalMovesExist(core::Position* position, const std::vector<core::Move>& moves, bool guaranteed_legal_moves);
 };
 
 }

@@ -17,7 +17,7 @@ using std::vector;
 namespace ai {
 
 MinMaxAI::MinMaxAI() : ChessAI() {
-  max_depth = 5;
+  max_depth = 6;
   suppress_logs = false;
 }
 
@@ -52,7 +52,7 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
   if (depth == 0) {
     if (position->IsCheck(position->GetActiveColor())) {
       vector<Move> pseudolegal_moves = MoveGen::AllPseudolegalMoves(*position);
-      if (!LegalMovesExist(position, pseudolegal_moves)) {
+      if (!LegalMovesExist(position, pseudolegal_moves, false)) {
         int score = position->GetActiveColor() == WHITE ? BLACK_MAX : WHITE_MAX;
         return MoveScore(move_index == -1 ? 0 : move_index, score);
       }
@@ -70,8 +70,10 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
   }
 
   vector<Move> next_moves;
-  if (depth == this->max_depth) {
+  bool legal_moves_guaranteed = false;
+  if (depth == this->max_depth || depth == this->max_depth - 1 || depth == this->max_depth - 2) {
     next_moves = MoveGen::AllLegalMoves(position);
+    legal_moves_guaranteed = true;
   } else {
     next_moves = MoveGen::AllPseudolegalMoves(*position);
   }
@@ -87,7 +89,7 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
 
     if (position->GetActiveColor() == WHITE) {
       if (next_score.score > alpha) {
-        if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
+        if (legal_moves_guaranteed || MoveGen::IsPseudolegalMoveLegal(position, move)) {
           alpha = next_score.score;
           best_index = i;
           legal_move_found = true;
@@ -95,7 +97,7 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
       }
     } else {
       if (next_score.score < beta) {
-        if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
+        if (legal_moves_guaranteed || MoveGen::IsPseudolegalMoveLegal(position, move)) {
           beta = next_score.score;
           best_index = i;
           legal_move_found = true;
@@ -109,7 +111,7 @@ MoveScore MinMaxAI::MinMax(Position* position, int depth, int alpha, int beta, i
   }
 
   if (!legal_move_found) {
-    if (!LegalMovesExist(position, next_moves)) {
+    if (!LegalMovesExist(position, next_moves, legal_moves_guaranteed)) {
       if (position->IsCheck(position->GetActiveColor())) {
         int score = position->GetActiveColor() == WHITE ?
           BLACK_MAX - (100 * depth) : WHITE_MAX + (100 * depth);
@@ -131,8 +133,11 @@ void MinMaxAI::SetSuppressLogs(bool suppress) {
   suppress_logs = suppress;
 }
 
-bool MinMaxAI::LegalMovesExist(Position* position, vector<Move> pseudolegal_moves) {
-  for (Move move : pseudolegal_moves) {
+bool MinMaxAI::LegalMovesExist(Position* position, const vector<Move>& moves, bool legal_moves_guaranteed) {
+  if (legal_moves_guaranteed) {
+    return moves.size() > 0;
+  }
+  for (Move move : moves) {
     if (MoveGen::IsPseudolegalMoveLegal(position, move)) {
       return true;
     }

@@ -174,32 +174,32 @@ void Position::PerformMove(const Move& move) {
   }
 
   if (moving_piece == KING_W && move_str == "e1g1") {
-    SetContentsAt(0, 7, EMPTY);
-    SetContentsAt(0, 5, ROOK_W);
+    SetContentsAt(h1, EMPTY);
+    SetContentsAt(f1, ROOK_W);
   }
   if (moving_piece == KING_W && move_str == "e1c1") {
-    SetContentsAt(0, 0, EMPTY);
-    SetContentsAt(0, 3, ROOK_W);
+    SetContentsAt(a1, EMPTY);
+    SetContentsAt(d1, ROOK_W);
   }
   if (moving_piece == KING_B && move_str == "e8g8") {
-    SetContentsAt(7, 7, EMPTY);
-    SetContentsAt(7, 5, ROOK_B);
+    SetContentsAt(h8, EMPTY);
+    SetContentsAt(f8, ROOK_B);
   }
   if (moving_piece == KING_B && move_str == "e8c8") {
-    SetContentsAt(7, 0, EMPTY);
-    SetContentsAt(7, 3, ROOK_B);
+    SetContentsAt(a8, EMPTY);
+    SetContentsAt(d8, ROOK_B);
   }
 
-  if (move.start_square == Square("h1") || move.end_square == Square("h1")) {
+  if (move.start_square == h1 || move.end_square == h1) {
     castles_allowed.white_kingside = false;
   }
-  if (move.start_square == Square("a1") || move.end_square == Square("a1")) {
+  if (move.start_square == a1|| move.end_square == a1) {
     castles_allowed.white_queenside = false;
   }
-  if (move.start_square == Square("h8") || move.end_square == Square("h8")) {
+  if (move.start_square == h8 || move.end_square == h8) {
     castles_allowed.black_kingside = false;
   }
-  if (move.start_square == Square("a8") || move.end_square == Square("a8")) {
+  if (move.start_square == a8 || move.end_square == a8) {
     castles_allowed.black_queenside = false;
   }
 
@@ -257,33 +257,33 @@ void Position::UndoLastMove() {
   SetContentsAt(history_data.last_end_square.rank, history_data.last_end_square.file,
     history_data.last_dest_square_contents);
 
-  if (history_data.last_start_square.ToString() == "e1" &&
-      history_data.last_end_square.ToString() == "g1" &&
+  if (history_data.last_start_square == e1 &&
+      history_data.last_end_square == g1 &&
       history_data.last_dest_square_contents == EMPTY &&
-      ContentsAt(Square("f1")) == ROOK_W) {
-    SetContentsAt(0, 5, EMPTY);
-    SetContentsAt(0, 7, ROOK_W);
+      ContentsAt(f1) == ROOK_W) {
+    SetContentsAt(f1, EMPTY);
+    SetContentsAt(h1, ROOK_W);
   }
-  if (history_data.last_start_square.ToString() == "e1" &&
-      history_data.last_end_square.ToString() == "c1" &&
+  if (history_data.last_start_square == e1 &&
+      history_data.last_end_square == c1 &&
       history_data.last_dest_square_contents == EMPTY &&
-      ContentsAt(Square("d1")) == ROOK_W) {
-    SetContentsAt(0, 3, EMPTY);
-    SetContentsAt(0, 0, ROOK_W);
+      ContentsAt(d1) == ROOK_W) {
+    SetContentsAt(d1, EMPTY);
+    SetContentsAt(a1, ROOK_W);
   }
-  if (history_data.last_start_square.ToString() == "e8" &&
-      history_data.last_end_square.ToString() == "g8" &&
+  if (history_data.last_start_square == e8 &&
+      history_data.last_end_square == g8 &&
       history_data.last_dest_square_contents == EMPTY &&
-      ContentsAt(Square("f8")) == ROOK_B) {
-    SetContentsAt(7, 5, EMPTY);
-    SetContentsAt(7, 7, ROOK_B);
+      ContentsAt(f8) == ROOK_B) {
+    SetContentsAt(f8, EMPTY);
+    SetContentsAt(h8, ROOK_B);
   }
-  if (history_data.last_start_square.ToString() == "e8" &&
-      history_data.last_end_square.ToString() == "c8" &&
+  if (history_data.last_start_square == e8 &&
+      history_data.last_end_square == c8 &&
       history_data.last_dest_square_contents == EMPTY &&
-      ContentsAt(Square("d8")) == ROOK_B) {
-    SetContentsAt(7, 3, EMPTY);
-    SetContentsAt(7, 0, ROOK_B);
+      ContentsAt(d8) == ROOK_B) {
+    SetContentsAt(d8, EMPTY);
+    SetContentsAt(a8, ROOK_B);
   }
   castles_allowed = history_data.last_castles_allowed;
 

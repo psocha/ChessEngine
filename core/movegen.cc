@@ -52,31 +52,31 @@ vector<Move> MoveGen::AllPseudolegalMoves(const Position& position) {
           GetDiagonalMoves(position, square, true, &pseudolegal_moves);
           GetOrthogonalMoves(position, square, true, &pseudolegal_moves);
 
-          if (contents == KING_W && square == Square("e1") &&
-            position.ContentsAt(0, 5) == EMPTY && position.ContentsAt(0, 6) == EMPTY &&
-            position.ContentsAt(0, 7) == ROOK_W && position.GetCastle().white_kingside) {
+          if (contents == KING_W && square == e1 &&
+            position.ContentsAt(f1) == EMPTY && position.ContentsAt(g1) == EMPTY &&
+            position.ContentsAt(h1) == ROOK_W && position.GetCastle().white_kingside) {
 
-            pseudolegal_moves.push_back(Move(Square(0, 4), Square(0, 6), position));  // e1g1
+            pseudolegal_moves.push_back(Move(e1, g1, position));
           }
-          if (contents == KING_W && square == Square("e1") &&
-            position.ContentsAt(0, 3) == EMPTY && position.ContentsAt(0, 2) == EMPTY &&
-            position.ContentsAt(0, 1) == EMPTY && position.ContentsAt(0, 0) == ROOK_W &&
+          if (contents == KING_W && square == e1 &&
+            position.ContentsAt(d1) == EMPTY && position.ContentsAt(c1) == EMPTY &&
+            position.ContentsAt(b1) == EMPTY && position.ContentsAt(a1) == ROOK_W &&
             position.GetCastle().white_queenside) {
 
-            pseudolegal_moves.push_back(Move(Square(0, 4), Square(0, 2), position));  // e1c1
+            pseudolegal_moves.push_back(Move(e1, c1, position));
           }
-          if (contents == KING_B && square == Square("e8") &&
-            position.ContentsAt(7, 5) == EMPTY && position.ContentsAt(7, 6) == EMPTY &&
-            position.ContentsAt(7, 7) == ROOK_B && position.GetCastle().black_kingside) {
+          if (contents == KING_B && square == e8 &&
+            position.ContentsAt(f8) == EMPTY && position.ContentsAt(g8) == EMPTY &&
+            position.ContentsAt(h8) == ROOK_B && position.GetCastle().black_kingside) {
 
-            pseudolegal_moves.push_back(Move(Square(7, 4), Square(7, 6), position));  // e8g8
+            pseudolegal_moves.push_back(Move(e8, g8, position));
           }
-          if (contents == KING_B && square == Square("e8") &&
-            position.ContentsAt(7, 3) == EMPTY && position.ContentsAt(7, 2) == EMPTY &&
-            position.ContentsAt(7, 1) == EMPTY && position.ContentsAt(7, 0) == ROOK_B &&
+          if (contents == KING_B && square == e8 &&
+            position.ContentsAt(d8) == EMPTY && position.ContentsAt(c8) == EMPTY &&
+            position.ContentsAt(b8) == EMPTY && position.ContentsAt(a8) == ROOK_B &&
             position.GetCastle().black_queenside) {
 
-            pseudolegal_moves.push_back(Move(Square(7, 4), Square(7, 2), position));  // e8c8
+            pseudolegal_moves.push_back(Move(e8, c8, position));
           }
 
         }
@@ -115,19 +115,18 @@ bool MoveGen::IsPseudolegalMoveLegal(Position *position, const Move& move) {
   king_squares.push_back(position->FindKing(color));
 
   if (move.is_castle) {
-    std::string move_str = move.ToString();
-    if (move_str == "e1g1") {
-      king_squares.push_back(Square("e1"));
-      king_squares.push_back(Square("f1"));
-    } else if (move_str == "e1c1") {
-      king_squares.push_back(Square("e1"));
-      king_squares.push_back(Square("d1"));
-    } else if (move_str == "e8g8") {
-      king_squares.push_back(Square("e8"));
-      king_squares.push_back(Square("f8"));
-    } else if (move_str == "e8c8") {
-      king_squares.push_back(Square("e8"));
-      king_squares.push_back(Square("d8"));
+    if (move.start_square == e1 && move.end_square == g1) {
+      king_squares.push_back(e1);
+      king_squares.push_back(f1);
+    } else if (move.start_square == e1 && move.end_square == c1) {
+      king_squares.push_back(e1);
+      king_squares.push_back(d1);
+    } else if (move.start_square == e8 && move.end_square == g8) {
+      king_squares.push_back(e8);
+      king_squares.push_back(f8);
+    } else if (move.start_square == e8 && move.end_square == c8) {
+      king_squares.push_back(e8);
+      king_squares.push_back(d8);
     }
   }
 

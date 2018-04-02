@@ -57,11 +57,9 @@ void Move::DescribeFromPosition(const Position &initial_position) {
   }
 
   if (moving_piece == KING) {
-    if (start_color == WHITE && start_square == Square(0, 4) &&  // e1
-       (end_square == Square(0, 6) || end_square == Square(0, 2))) {  // g1 or c1
+    if (start_color == WHITE && start_square == e1 && (end_square == g1 || end_square == c1)) {
       is_castle = true;
-    } else if (start_color == BLACK && start_square == Square(7, 4) &&  // e8
-       (end_square == Square(7, 6) || end_square == Square(7, 2))) {  // g8 or c8
+    } else if (start_color == BLACK && start_square == e8 && (end_square == g8 || end_square == c8)) {
       is_castle = true;
     }
   }

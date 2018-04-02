@@ -100,6 +100,9 @@ private:
 
   void InitializeEmptyBoard();
 
+  inline void SetContentsAt(Square square, SquareContents contents) {
+    chessboard[12*(square.rank + 2) + square.file + 2] = contents;
+  }
   inline void SetContentsAt(int rank, int file, SquareContents contents) {
     chessboard[12*(rank + 2) + file + 2] = contents;
   }
